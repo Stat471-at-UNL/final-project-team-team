@@ -6,13 +6,23 @@ editor: visual
 
 ## 1. Motivation
 
-
+The motivation of our project is to explore the city data, and explore imputation methods using location information. We want analyze the effect that location in different forms has on the imputation process and in linear model itself.
 
 ## 2. Plan
 
+1.  The first step will be to explore NYC Airbnb data and understand variables and types that are in play.
+2.  The data set will then need to be cleaned so that imputation and model building can take place.
+3.  We will then evaluate the missing value pattern in our data especially with the unit price variable.
+4.  A model will then be built to predict the price value of the unit. This model will be ran and summarized.
+5.  An imputation model on the price variable will be imputed with values from the model and other that are suspected to be impactfull.
+6.  The next step will be to transform the latitude and longitude into UTM from degrees.
+7.  Then re run imputation methods with new location variables.
+8.  Then we will compare methods between the two location forms and analyze the differences.
+9.  The write up will include differences between degrees and UTM. Why to use one and why to use the other. What our results showed and how the model was impacted by each method.
 
+## 3. Data Documentation
 
-## 3. Team
+## 4. Team Information
 
 Team name: Team Team
 
