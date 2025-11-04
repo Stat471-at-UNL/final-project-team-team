@@ -3,12 +3,12 @@
 library(rcompendium)
 
 # URL to download NYC AirBNB listings
-url <- "https://data.insideairbnb.com/the-netherlands/north-holland/amsterdam/2025-09-11/visualisations/listings.csv"
-destination<- "Amsterdamlistings.csv"
+url <- "https://data.insideairbnb.com/united-states/ny/new-york-city/2025-10-01/data/listings.csv.gz"
+destination<- "NYClistings.csv"
 download.file(url, destination)
 
 # Add data to .gitignore
-add_to_gitignore("Amsterdamlistings.csv")
+add_to_gitignore("NYClistings.csv")
 
 # Data read
-df <- read.csv("Amsterdamlistings.csv")
+df <- read.csv("NYClistings.csv")
