@@ -1,0 +1,19 @@
+---
+title: "Topic"
+format: html
+editor: visual
+---
+
+## 1. Motivation
+
+
+
+## 2. Plan
+
+
+
+## 3. Team
+
+Team name: Team Team
+
+Members: Grey Gergen, Tyler Davis, Jesus Rodriguez, Jack Macfadyen
