@@ -6,11 +6,7 @@ editor: visual
 
 ## 1. Motivation
 
-
-
 ## 2. Plan
-
-
 
 ## 3. Team
 
