@@ -10,7 +10,7 @@ library(tidyverse)
 
 ## 1. Motivation
 
-The motivation of our project is to explore the city data, and explore imputation methods using location information. We want analyze the effect that location in different forms has on the imputation process and in linear model itself.
+The motivation of our project is to explore the New York Airbnb data, while analyzing imputations methods response to various coordinate information. We want learn more about the effect that location in different forms has on the imputation process and in linear model itself.
 
 ## 2. Plan
 
