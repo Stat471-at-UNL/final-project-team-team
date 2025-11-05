@@ -4,6 +4,10 @@ format: html
 editor: visual
 ---
 
+```{r setup, echo = F, message = F, warning = F, output = F}
+library(tidyverse)
+```
+
 ## 1. Motivation
 
 The motivation of our project is to explore the city data, and explore imputation methods using location information. We want analyze the effect that location in different forms has on the imputation process and in linear model itself.
@@ -29,12 +33,14 @@ data_documentation <-
     skip = 7, # removed the first 7 rows
     col_names = T) %>% 
   slice(1:(79-4)) # removed the last 4 rows
+```
 
+```{r, warning = F, message = F}
 head(data_documentation)
 tail(data_documentation)
 ```
 
-From the given data documentation ([source](https://docs.google.com/spreadsheets/d/1iWCNJcSutYqpULSQHlNyGInUvHg2BoUGoNRIGa6Szc4/edit?gid=1322284596#gid=1322284596)), it is missing four variables that are present in the listing dataset from Inside Airbnb. 
+From the given data documentation ([codebook](https://docs.google.com/spreadsheets/d/1iWCNJcSutYqpULSQHlNyGInUvHg2BoUGoNRIGa6Szc4/edit?gid=1322284596#gid=1322284596) and [website](https://insideairbnb.com/get-the-data/)), it is missing four variables that are present in the listing dataset from Inside Airbnb. 
 
 These four variables are:
 

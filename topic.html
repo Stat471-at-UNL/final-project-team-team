@@ -122,60 +122,44 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>data_documentation <span class="ot">&lt;-</span> </span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  readr<span class="sc">::</span><span class="fu">read_csv</span>(</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Inside Airbnb Data Dictionary - listings.csv detail v4.3.csv"</span>,</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">skip =</span> <span class="dv">7</span>,</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">col_names =</span> T)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>data_documentation</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 79 × 5
-   Field                 Type     Calculated Description               Reference
-   &lt;chr&gt;                 &lt;chr&gt;    &lt;chr&gt;      &lt;chr&gt;                     &lt;chr&gt;    
- 1 id                    integer  &lt;NA&gt;       "Airbnb's unique identif… &lt;NA&gt;     
- 2 listing_url           text     y           &lt;NA&gt;                     &lt;NA&gt;     
- 3 scrape_id             bigint   y          "Inside Airbnb \"Scrape\… &lt;NA&gt;     
- 4 last_scraped          datetime y          "UTC. The date and time … &lt;NA&gt;     
- 5 source                text     &lt;NA&gt;       "One of \"neighbourhood … &lt;NA&gt;     
- 6 name                  text     &lt;NA&gt;       "Name of the listing"     &lt;NA&gt;     
- 7 description           text     &lt;NA&gt;       "Detailed description of… &lt;NA&gt;     
- 8 neighborhood_overview text     &lt;NA&gt;       "Host's description of t… &lt;NA&gt;     
- 9 picture_url           text     &lt;NA&gt;       "URL to the Airbnb hoste… &lt;NA&gt;     
-10 host_id               integer  &lt;NA&gt;       "Airbnb's unique identif… &lt;NA&gt;     
-# ℹ 69 more rows</code></pre>
-</div>
-</div>
-<section id="preview-of-new-york-city-airbnb-listings" class="level3">
-<h3 class="anchored" data-anchor-id="preview-of-new-york-city-airbnb-listings">Preview of New York City AirBnb Listings</h3>
-<div class="cell" data-wanring="false">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>airbnb_data <span class="ot">&lt;-</span> </span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"NYClistings.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">skip =</span> <span class="dv">7</span>, <span class="co"># removed the first 7 rows</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">col_names =</span> T) <span class="sc">%&gt;%</span> </span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span><span class="sc">:</span>(<span class="dv">79-4</span>)) <span class="co"># removed the last 4 rows</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>airbnb_data <span class="ot">&lt;-</span> </span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  airbnb_data <span class="sc">%&gt;%</span> </span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">scrape_id =</span> <span class="fu">as.factor</span>(scrape_id))</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(airbnb_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(data_documentation)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 79
-        id listing_url           scrape_id last_scraped source name  description
-     &lt;dbl&gt; &lt;chr&gt;                 &lt;fct&gt;     &lt;date&gt;       &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;      
-1 40824219 https://www.airbnb.c… 20251001… 2025-10-02   city … "Roo… This cozy …
-2 40833186 https://www.airbnb.c… 20251001… 2025-10-02   previ… "Soh… &lt;NA&gt;       
-3 40837137 https://www.airbnb.c… 20251001… 2025-10-02   previ… "Sun… Cozy, love…
-4 40838018 https://www.airbnb.c… 20251001… 2025-10-02   previ… "Coz… This sunny…
-5 40839416 https://www.airbnb.c… 20251001… 2025-10-02   city … "\U0… New York C…
-6 40843980 https://www.airbnb.c… 20251001… 2025-10-01   city … "Coz… This 2 bed…
-# ℹ 72 more variables: neighborhood_overview &lt;chr&gt;, picture_url &lt;chr&gt;,
-#   host_id &lt;dbl&gt;, host_url &lt;chr&gt;, host_name &lt;chr&gt;, host_since &lt;date&gt;,
-#   host_location &lt;chr&gt;, host_about &lt;chr&gt;, host_response_time &lt;chr&gt;,
-#   host_response_rate &lt;chr&gt;, host_acceptance_rate &lt;chr&gt;,
-#   host_is_superhost &lt;lgl&gt;, host_thumbnail_url &lt;chr&gt;, host_picture_url &lt;chr&gt;,
-#   host_neighbourhood &lt;chr&gt;, host_listings_count &lt;dbl&gt;,
-#   host_total_listings_count &lt;dbl&gt;, host_verifications &lt;chr&gt;, …</code></pre>
+<pre><code># A tibble: 6 × 5
+  Field        Type     Calculated Description                         Reference
+  &lt;chr&gt;        &lt;chr&gt;    &lt;chr&gt;      &lt;chr&gt;                               &lt;chr&gt;    
+1 id           integer  &lt;NA&gt;       "Airbnb's unique identifier for th… &lt;NA&gt;     
+2 listing_url  text     y           &lt;NA&gt;                               &lt;NA&gt;     
+3 scrape_id    bigint   y          "Inside Airbnb \"Scrape\" this was… &lt;NA&gt;     
+4 last_scraped datetime y          "UTC. The date and time this listi… &lt;NA&gt;     
+5 source       text     &lt;NA&gt;       "One of \"neighbourhood search\" o… &lt;NA&gt;     
+6 name         text     &lt;NA&gt;       "Name of the listing"               &lt;NA&gt;     </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tail</span>(data_documentation)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+  Field                                   Type  Calculated Description Reference
+  &lt;chr&gt;                                   &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;       &lt;chr&gt;    
+1 instant_bookable                        bool… &lt;NA&gt;       "[t=true; … &lt;NA&gt;     
+2 calculated_host_listings_count          inte… y          "The numbe… &lt;NA&gt;     
+3 calculated_host_listings_count_entire_… inte… y          "The numbe… &lt;NA&gt;     
+4 calculated_host_listings_count_private… inte… y          "The numbe… &lt;NA&gt;     
+5 calculated_host_listings_count_shared_… inte… y          "The numbe… &lt;NA&gt;     
+6 reviews_per_month                       nume… y          "The avera… &lt;NA&gt;     </code></pre>
 </div>
 </div>
-</section>
+<p>From the given data documentation (<a href="https://docs.google.com/spreadsheets/d/1iWCNJcSutYqpULSQHlNyGInUvHg2BoUGoNRIGa6Szc4/edit?gid=1322284596#gid=1322284596">codebook</a> and <a href="https://insideairbnb.com/get-the-data/">website</a>), it is missing four variables that are present in the listing dataset from Inside Airbnb.</p>
+<p>These four variables are:</p>
+<ul>
+<li><code>availability_eoy</code></li>
+<li><code>number_of_reviews_ly</code></li>
+<li><code>estimtaed_occupancy_l365d</code></li>
+<li><code>estimtaed_revenue_l365d</code></li>
+</ul>
 </section>
 <section id="team-information" class="level2">
 <h2 class="anchored" data-anchor-id="team-information">4. Team Information</h2>
