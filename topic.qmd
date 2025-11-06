@@ -6,11 +6,14 @@ editor: visual
 
 ```{r setup, echo = F, message = F, warning = F, output = F}
 library(tidyverse)
+source("data_pull.R")
 ```
 
 ## 1. Motivation
 
-The motivation of our project is to explore the New York Airbnb data, while analyzing imputations methods response to various coordinate information. We want learn more about the effect that location in different forms has on the imputation process and in linear model itself.
+Airbnb data has been scraped by a team of contributors and gathered on a website [here](https://insideairbnb.com/get-the-data/)). Their motivation is to show transparency in how spaces are being rented to tourists in their communities.
+
+When coming across this dataset, we found several missing values in the price of different Airbnb listings. Of the `r nrow(df)` listings we found `r sum(is.na(df$price))`. We believe that we can use the beds, bathrooms, and neighborhood location among other variables to impute the missing pricing data for these listings.
 
 ## 2. Plan
 
