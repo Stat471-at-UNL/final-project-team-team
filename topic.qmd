@@ -13,7 +13,7 @@ source("data_pull.R")
 
 Airbnb data has been scraped by a team of contributors and gathered on a website [here](https://insideairbnb.com/get-the-data/)). Their motivation is to show transparency in how spaces are being rented to tourists in their communities.
 
-When coming across this dataset, we found several missing values in the price of different Airbnb listings. Of the `r nrow(df)` listings we found `r sum(is.na(df$price))`. We believe that we can use the beds, bathrooms, and neighborhood location among other variables to impute the missing pricing data for these listings.
+When coming across this dataset, we found several missing values in the price of different Airbnb listings. Of the `r nrow(df)` listings we found `r sum(is.empty(df$price))` missing prices. We believe that we can use the beds, bathrooms, and neighborhood location among other variables to impute the missing pricing data for these listings.
 
 ## 2. Plan
 
