@@ -16,18 +16,30 @@ source("data_pull.R")
 
 Airbnb data has been scraped by a team of contributors and gathered on a website [here](https://insideairbnb.com/get-the-data/)). Their motivation is to show transparency in how spaces are being rented to tourists in their communities.
 
-When coming across this dataset, we found several missing values in the price of different Airbnb listings. Of the `r nrow(df)` listings we found `r sum(is.na(df$price))`. We believe that we can use the beds, bathrooms, and neighborhood location among other variables to impute the missing pricing data for these listings.
+When coming across this dataset, we found several missing values in the price of different Airbnb listings. Of the `r nrow(df)` listings we found `r sum(is.empty(df$price))` missing prices. We believe that we can use the beds, bathrooms, and neighborhood location among other variables to impute the missing pricing data for these listings.
 
-## 2. Plan
+## 2. Plan and Data Exploration
 
 1.  The first step will be to explore NYC Airbnb data and understand variables and types that are in play.
-2.  The data set will then need to be cleaned so that imputation and model building can take place.
+
+2.  The data set will then need to be cleaned
+
+    1.  
+
 3.  We will then evaluate the missing value pattern in our data especially with the unit price variable.
+
 4.  A model will then be built to predict the price value of the unit. This model will be ran and summarized.
-5.  Missing values from price will then be imputed with decided impactful variables. Then a the model will be re run with then new imputed data set.
+
+    1.  
+
+5.  Missing values from price will then be imputed with decided i\*\*\*\*\*\*. Then a the model will be re run with then new imputed data set.
+
 6.  The next step will be to transform the latitude and longitude into UTM from degrees.
+
 7.  Then re run imputation with new transformed latitude and longitude variables.
+
 8.  Then we will compare methods between the two location forms and analyze the differences.
+
 9.  The write up will include differences between degrees and UTM. Why to use one and why to use the other. What our results showed and how the model was impacted by each method.
 
 ## 3. Data Documentation
