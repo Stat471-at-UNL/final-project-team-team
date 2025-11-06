@@ -40,7 +40,7 @@ head(data_documentation)
 tail(data_documentation)
 ```
 
-From the given data documentation ([codebook](https://docs.google.com/spreadsheets/d/1iWCNJcSutYqpULSQHlNyGInUvHg2BoUGoNRIGa6Szc4/edit?gid=1322284596#gid=1322284596) and [website](https://insideairbnb.com/get-the-data/)), it is missing four variables that are present in the listing dataset from Inside Airbnb. 
+From the given data documentation ([codebook](https://docs.google.com/spreadsheets/d/1iWCNJcSutYqpULSQHlNyGInUvHg2BoUGoNRIGa6Szc4/edit?gid=1322284596#gid=1322284596) and [website](https://insideairbnb.com/get-the-data/)), it is missing four variables that are present in the listing dataset from Inside Airbnb.
 
 These four variables are:
 
@@ -53,5 +53,4 @@ These four variables are:
 
 Team name: Team Team
 
-Members: Grey Gergen, Tyler Davis, Jesus Rodriguez, Jack Macfadyen
->>>>>>> df18e3e1bc1fc4652db8f2846a365ec50e577b10
+Members: Grey Gergen, Tyler Davis, Jesus Rodriguez, Jack Macfadyen \>\>\>\>\>\>\> df18e3e1bc1fc4652db8f2846a365ec50e577b10
