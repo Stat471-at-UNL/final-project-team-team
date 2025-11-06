@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+#<<<<<<< HEAD
 # Install package to add file to .gitignore if not already installed
 #install.packages("rcompendium")
 library(rcompendium)
@@ -13,7 +13,7 @@ add_to_gitignore("NYClistings.csv")
 
 # Data read
 df <- read.csv("NYClistings.csv")
-=======
+#=======
 # Install package to add file to .gitignore if not already installed
 #install.packages("rcompendium")
 library(rcompendium)
