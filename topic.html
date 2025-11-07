@@ -1207,11 +1207,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </table>
 </div>
 </div>
+<section id="selecting-our-columns-for-further-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="selecting-our-columns-for-further-analysis">Selecting our columns for further analysis</h3>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>filter_df <span class="ot">&lt;-</span> </span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>df <span class="sc">%&gt;%</span> </span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="dv">1</span>,<span class="dv">6</span>,<span class="dv">7</span>,<span class="dv">8</span>,<span class="dv">10</span>,<span class="dv">13</span>,<span class="dv">15</span>,<span class="dv">16</span>,<span class="dv">17</span>,<span class="dv">18</span>,<span class="dv">19</span>,<span class="dv">23</span>,<span class="dv">24</span>,<span class="dv">28</span>,<span class="dv">29</span>,<span class="dv">30</span><span class="sc">:</span><span class="dv">41</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</section>
+<section id="vis_miss-visualization" class="level3">
+<h3 class="anchored" data-anchor-id="vis_miss-visualization"><code>vis_miss</code> visualization</h3>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>filter_df <span class="sc">%&gt;%</span> </span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">vis_miss</span>(., <span class="at">warn_large_data =</span> F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1223,6 +1228,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+</section>
+<section id="mcar_test" class="level3">
+<h3 class="anchored" data-anchor-id="mcar_test"><code>mcar_test</code></h3>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>filter_df <span class="sc">%&gt;%</span> </span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(price, latitude, longitude) <span class="sc">%&gt;%</span> </span>
@@ -1234,6 +1242,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 1  3.69e-23     0       0                1</code></pre>
 </div>
 </div>
+</section>
 </section>
 
 </main>
