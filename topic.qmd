@@ -17,33 +17,9 @@ source("data_pull.R")
 
 Airbnb data has been scraped by a team of contributors and gathered on a website [here](https://insideairbnb.com/get-the-data/)). Their motivation is to show transparency in how spaces are being rented to tourists in their communities.
 
-When coming across this dataset, we found several missing values in the price of different Airbnb listings. Of the `r nrow(df)` listings we found `r sum(rapportools::is.empty(df$price))` missing prices. We believe that we can use the beds, bathrooms, and neighborhood location among other variables to impute the missing pricing data for these listings.
+When coming across this dataset, we found several missing values in the price of different Airbnb listings. Of the `r nrow(df)` listings we found `r sum(rapportools::is.empty(df$price))` missing prices. We believe that we can use the latitude, longitude, beds, bathrooms, and neighborhood location among other variables to impute the missing pricing data for these listings.
 
-## 2. Plan and Data Exploration
-
-1.  The first step will be to explore NYC Airbnb data and understand variables and types that are in play.
-
-2.  The data set will then need to be cleaned
-
-    1.  
-
-3.  We will then evaluate the missing value pattern in our data especially with the unit price variable.
-
-4.  A model will then be built to predict the price value of the unit. This model will be ran and summarized.
-
-    1.  
-
-5.  Missing values from price will then be imputed with decided i\*\*\*\*\*\*. Then a the model will be re run with then new imputed data set.
-
-6.  The next step will be to transform the latitude and longitude into UTM from degrees.
-
-7.  Then re run imputation with new transformed latitude and longitude variables.
-
-8.  Then we will compare methods between the two location forms and analyze the differences.
-
-9.  The write up will include differences between degrees and UTM. Why to use one and why to use the other. What our results showed and how the model was impacted by each method.
-
-## 3. Data Documentation
+## 2. Data Documentation
 
 ```{r, warning = F, message = F}
 data_documentation <- 
@@ -68,17 +44,19 @@ These four variables are:
 -   `estimtaed_occupancy_l365d`
 -   `estimtaed_revenue_l365d`
 
-## 4. Team Information
+## 3. Team Information
 
 Team name: Team Team
 
 Members: Grey Gergen, Tyler Davis, Jesus Rodriguez, Jack Macfadyen
 
-## 5. Brief Look at Data (with some cleaning)
+## 4. Plan of Action and Brief Look at Data (with some cleaning)
 
-The data was downloaded from [Inside Airbnb](insideairbnb.com/get-the-data). 
+The first step in the process is a bit of data exploration. We will need to understand the NYC Airbnb data, such as number of observations, missing value information, variables of interest, etc. This information is obtained below.
 
-This data is for New York City, New York, United States. The original dataset has 36111 observations of 79 variables. Columns that were not relevant for analysis or provided important information were removed from the data in order for a cleaner dataset to work with for further analysis.
+The data was downloaded from [Inside Airbnb](insideairbnb.com/get-the-data).
+
+This data is for New York City, New York, United States. The original data set has 36111 observations of 79 variables. Columns that were not relevant for analysis or provided important information were removed from the data in order for a cleaner data set to work with for further analysis.
 
 ```{r}
 filter_df <- 
@@ -86,7 +64,7 @@ filter_df <-
   select(1,6,7,8,10,13,15,16,17,18,19,23,24,28,29,30:41)
 ```
 
-Some more small cleaning was done in order to visualize and find missing values. Some missing values were listing as `N/A` or left blank ` `. This was fixed so that all missing values were listed as `NA` values.
+Some more small cleaning was done in order to visualize and find missing values. Some missing values were listing as `N/A` or left blank . This was fixed so that all missing values were listed as `NA` values.
 
 ```{r}
 ## fixing missing values
@@ -118,7 +96,9 @@ skim(filter_df)
 
 It is important to note that some columns, such as `host_response_rate` is listed as a character variable because their values are formatted as "50%", "32%", "xx%"...
 
-Further analysis should make sure the columns selected are formatted correctly. 
+Further analysis should make sure the columns selected are formatted correctly.
+
+The next step in the analysis will be to analyze the missing pattern in our data especially for the price variable.
 
 ### `vis_miss` visualization
 
@@ -126,12 +106,12 @@ Further analysis should make sure the columns selected are formatted correctly.
 filter_df %>% 
   vis_miss(., warn_large_data = F)
 ```
-The `vis_miss()` plot shows that occurence of missing values in our data. 
 
+The `vis_miss()` plot shows that occurence of missing values in our data.
 
 ### `mcar_test`
 
-Here are a few missing completely at random test. We believe that we can use the beds, bathrooms, and neighborhood location among other variables to impute the missing pricing data for these listings. 
+Here are a few missing completely at random test. We believe that we can use the beds, bathrooms, and neighborhood location among other variables to impute the missing pricing data for these listings.
 
 These tests show that there are some missing patterns in our data.
 
@@ -140,8 +120,21 @@ filter_df %>%
   select(price, latitude, longitude) %>% 
   mcar_test(.)
 ```
+
 ```{r}
 filter_df %>% 
   select(price, beds) %>% 
   mcar_test(.)
 ```
+
+The price variable was tested against beds along with latitude and longitude with little's MCAR test. The results show that the data is not missing completely at random which is shown by the significance in the previous tests. These tests results tell us that the price variable's missingness is dependent upon other variables within the data.
+
+The next step in the analysis will be to build a model with price as the response variable. The predictors will be values that are suspected to be indicators of price such as beds, lat and long, accommodates, bathrooms, etc. This model will then be run and coefficients values and significance will be documented. This will all be done without imputation.
+
+The price data will then be imputed by the predictors used in the model in the current form they are in. The mice package will be used to complete the imputation and it will be done multiple times. The multiple imputations will then be pooled and a model for price will then be created and ran. The predictors will be the same. We will then document the coefficients and significance values from the model summary.
+
+The price data will then be imputed by the predictors with a transformation done to the latitude and longitude. The transformation will change the latitude and longitude from degrees to Universal Transverse Mercator (UTM). This transformations will hopefully give our regression model a better sense of overall distance between units in NYC. The UTM is a flat coordinate system that is measured in meters and allows the regression model to better pick up distances. This imputation will be run and then the same model will be run to predict price. The coefficients and significance of the model will then be documented.
+
+The next step is the comparison between the three models run and their coefficients. We can then compare the coefficients by looking at the pooled estimates and the standard errors across all three models. We can do this with an understanding of Rubin's Rules and how they apply to pooled models. These results will allow us to gain insight into the models and how the two imputed models differ and if they differ from the unimputed model.
+
+This alone may not allow us to make a strong conclusion on which imputation predictors are better for our price variable. This will then lead us to do a comparison test by testing the correlation between the imputed and true values of our price variable between our two methods. This can be done by masking values that we already have in our price variable, then imputing these values using both methods. We will then calculate the correlation between the true and imputed values testing which predictor set is better, degrees or UTM. This will show any major differences between the two methods and give us a sense for price which method is better. This alone will not tell us if using UTM vs degrees is better in all cases but it could open the door for further discussion and digging into the topic.
