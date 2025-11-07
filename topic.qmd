@@ -71,7 +71,7 @@ These four variables are:
 
 Team name: Team Team
 
-Members: Grey Gergen, Tyler Davis, Jesus Rodriguez, Jack Macfadyen 
+Members: Grey Gergen, Tyler Davis, Jesus Rodriguez, Jack Macfadyen
 
 ## 5. Brief Look at Data
 
