@@ -9,6 +9,7 @@ library(tidyverse)
 library(naniar)
 library(skimr)
 library(visdat)
+library(rapportools) # added, couldn't render is.empty() w/out it
 source("data_pull.R")
 ```
 
@@ -16,7 +17,7 @@ source("data_pull.R")
 
 Airbnb data has been scraped by a team of contributors and gathered on a website [here](https://insideairbnb.com/get-the-data/)). Their motivation is to show transparency in how spaces are being rented to tourists in their communities.
 
-When coming across this dataset, we found several missing values in the price of different Airbnb listings. Of the `r nrow(df)` listings we found `r sum(is.empty(df$price))` missing prices. We believe that we can use the beds, bathrooms, and neighborhood location among other variables to impute the missing pricing data for these listings.
+When coming across this dataset, we found several missing values in the price of different Airbnb listings. Of the `r nrow(df)` listings we found `r sum(rapportools::is.empty(df$price))` missing prices. We believe that we can use the beds, bathrooms, and neighborhood location among other variables to impute the missing pricing data for these listings.
 
 ## 2. Plan and Data Exploration
 
@@ -73,21 +74,51 @@ Team name: Team Team
 
 Members: Grey Gergen, Tyler Davis, Jesus Rodriguez, Jack Macfadyen
 
-## 5. Brief Look at Data
+## 5. Brief Look at Data (with some cleaning)
 
-The data was downloaded from [Inside Airbnb](insideairbnb.com/get-the-data)
+The data was downloaded from [Inside Airbnb](insideairbnb.com/get-the-data). 
 
-```{r}
-skim(df)
-```
-
-### Selecting our columns for further analysis
+This data is for New York City, New York, United States. The original dataset has 36111 observations of 79 variables. Columns that were not relevant for analysis or provided important information were removed from the data in order for a cleaner dataset to work with for further analysis.
 
 ```{r}
 filter_df <- 
-df %>% 
+  df %>% 
   select(1,6,7,8,10,13,15,16,17,18,19,23,24,28,29,30:41)
 ```
+
+Some more small cleaning was done in order to visualize and find missing values. Some missing values were listing as `N/A` or left blank ` `. This was fixed so that all missing values were listed as `NA` values.
+
+```{r}
+## fixing missing values
+filter_df[filter_df == "N/A"] <- NA
+filter_df[filter_df == ""] <- NA
+filter_df[filter_df == "[]"] <- NA
+filter_df[filter_df == "-"] <- NA
+```
+
+The `price` variable, which is our variable of interest, is also formatted as character. This needed to be changed so that `price` should be numeric. Since, values were listed as `$xxx.00` or `$xx,xxx.00`, all dollar signs and commas were removed in order for there to be no missing values added due to coercion before the format of price was changed.
+
+```{r}
+## changing price from chr to numeric
+filter_df <-
+  filter_df %>% 
+  mutate(
+    price = str_remove_all(price, "\\$"),
+    price = str_remove_all(price, "\\,"),
+    price = as.numeric(price), 
+    id = as.factor(id)
+  )
+```
+
+### Info about data, `skim()`
+
+```{r}
+skim(filter_df)
+```
+
+It is important to note that some columns, such as `host_response_rate` is listed as a character variable because their values are formatted as "50%", "32%", "xx%"...
+
+Further analysis should make sure the columns selected are formatted correctly. 
 
 ### `vis_miss` visualization
 
@@ -95,11 +126,22 @@ df %>%
 filter_df %>% 
   vis_miss(., warn_large_data = F)
 ```
+The `vis_miss()` plot shows that occurence of missing values in our data. 
+
 
 ### `mcar_test`
+
+Here are a few missing completely at random test. We believe that we can use the beds, bathrooms, and neighborhood location among other variables to impute the missing pricing data for these listings. 
+
+These tests show that there are some missing patterns in our data.
 
 ```{r}
 filter_df %>% 
   select(price, latitude, longitude) %>% 
+  mcar_test(.)
+```
+```{r}
+filter_df %>% 
+  select(price, beds) %>% 
   mcar_test(.)
 ```

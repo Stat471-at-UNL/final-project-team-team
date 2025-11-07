@@ -19,5 +19,3 @@ if (file.exists("NYClistings.csv")) {
 }
 
 
-
-
