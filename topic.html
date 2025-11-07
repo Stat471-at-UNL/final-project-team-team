@@ -101,20 +101,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="motivation" class="level2">
 <h2 class="anchored" data-anchor-id="motivation">1. Motivation</h2>
 <p>Airbnb data has been scraped by a team of contributors and gathered on a website <a href="https://insideairbnb.com/get-the-data/">here</a>). Their motivation is to show transparency in how spaces are being rented to tourists in their communities.</p>
-<p>When coming across this dataset, we found several missing values in the price of different Airbnb listings. Of the 36111 listings we found 0. We believe that we can use the beds, bathrooms, and neighborhood location among other variables to impute the missing pricing data for these listings.</p>
+<p>When coming across this dataset, we found several missing values in the price of different Airbnb listings. Of the 36111 listings we found 14783 missing prices. We believe that we can use the beds, bathrooms, and neighborhood location among other variables to impute the missing pricing data for these listings.</p>
 </section>
-<section id="plan" class="level2">
-<h2 class="anchored" data-anchor-id="plan">2. Plan</h2>
+<section id="plan-and-data-exploration" class="level2">
+<h2 class="anchored" data-anchor-id="plan-and-data-exploration">2. Plan and Data Exploration</h2>
 <ol type="1">
-<li>The first step will be to explore NYC Airbnb data and understand variables and types that are in play.</li>
-<li>The data set will then need to be cleaned so that imputation and model building can take place.</li>
-<li>We will then evaluate the missing value pattern in our data especially with the unit price variable.</li>
-<li>A model will then be built to predict the price value of the unit. This model will be ran and summarized.</li>
-<li>Missing values from price will then be imputed with decided impactful variables. Then a the model will be re run with then new imputed data set.</li>
-<li>The next step will be to transform the latitude and longitude into UTM from degrees.</li>
-<li>Then re run imputation with new transformed latitude and longitude variables.</li>
-<li>Then we will compare methods between the two location forms and analyze the differences.</li>
-<li>The write up will include differences between degrees and UTM. Why to use one and why to use the other. What our results showed and how the model was impacted by each method.</li>
+<li><p>The first step will be to explore NYC Airbnb data and understand variables and types that are in play.</p></li>
+<li><p>The data set will then need to be cleaned</p>
+<ol type="1">
+<li></li>
+</ol></li>
+<li><p>We will then evaluate the missing value pattern in our data especially with the unit price variable.</p></li>
+<li><p>A model will then be built to predict the price value of the unit. This model will be ran and summarized.</p>
+<ol type="1">
+<li></li>
+</ol></li>
+<li><p>Missing values from price will then be imputed with decided i******. Then a the model will be re run with then new imputed data set.</p></li>
+<li><p>The next step will be to transform the latitude and longitude into UTM from degrees.</p></li>
+<li><p>Then re run imputation with new transformed latitude and longitude variables.</p></li>
+<li><p>Then we will compare methods between the two location forms and analyze the differences.</p></li>
+<li><p>The write up will include differences between degrees and UTM. Why to use one and why to use the other. What our results showed and how the model was impacted by each method.</p></li>
 </ol>
 </section>
 <section id="data-documentation" class="level2">
@@ -169,16 +175,44 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="brief-look-at-data" class="level2">
 <h2 class="anchored" data-anchor-id="brief-look-at-data">5. Brief Look at Data</h2>
-<p>The data was downloaded from <a href="insideairbnb.com/get-the-data">Inside Airbnb</a></p>
+<p>The data was downloaded from <a href="insideairbnb.com/get-the-data">Inside Airbnb</a>.</p>
+<p>This data is for New York City, New York, United States. The original dataset has 36111 observations of 79 variables. Columns that were not relevant for analysis or provided important information were removed from the data in order for a cleaner dataset to work with for further analysis.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">skim</span>(df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>filter_df <span class="ot">&lt;-</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  df <span class="sc">%&gt;%</span> </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="dv">1</span>,<span class="dv">6</span>,<span class="dv">7</span>,<span class="dv">8</span>,<span class="dv">10</span>,<span class="dv">13</span>,<span class="dv">15</span>,<span class="dv">16</span>,<span class="dv">17</span>,<span class="dv">18</span>,<span class="dv">19</span>,<span class="dv">23</span>,<span class="dv">24</span>,<span class="dv">28</span>,<span class="dv">29</span>,<span class="dv">30</span><span class="sc">:</span><span class="dv">41</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Some more small cleaning was done in order to visualize and find missing values. Some missing values were listing as <code>N/A</code> or left blank <code></code>. This was fixed so that all missing values were listed as <code>NA</code> values.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="do">## fixing missing values</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>filter_df[filter_df <span class="sc">==</span> <span class="st">"N/A"</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>filter_df[filter_df <span class="sc">==</span> <span class="st">""</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>filter_df[filter_df <span class="sc">==</span> <span class="st">"[]"</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>filter_df[filter_df <span class="sc">==</span> <span class="st">"-"</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The <code>price</code> variable, which is our variable of interest, is also formatted as character. This needed to be changed so that <code>price</code> should be numeric. Since, values were listed as <code>$xxx.00</code> or <code>$xx,xxx.00</code>, all dollar signs and commas were removed in order for there to be no missing values added due to coercion before the format of price was changed.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="do">## changing price from chr to numeric</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>filter_df <span class="ot">&lt;-</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  filter_df <span class="sc">%&gt;%</span> </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">price =</span> <span class="fu">str_remove_all</span>(price, <span class="st">"</span><span class="sc">\\</span><span class="st">$"</span>),</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">price =</span> <span class="fu">str_remove_all</span>(price, <span class="st">"</span><span class="sc">\\</span><span class="st">,"</span>),</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">price =</span> <span class="fu">as.numeric</span>(price), </span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">id =</span> <span class="fu">as.factor</span>(id)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="info-about-data-skim" class="level3">
+<h3 class="anchored" data-anchor-id="info-about-data-skim">Info about data, <code>skim()</code></h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">skim</span>(filter_df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <caption>Data summary</caption>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">Name</td>
-<td style="text-align: left;">df</td>
+<td style="text-align: left;">filter_df</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Number of rows</td>
@@ -186,7 +220,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Number of columns</td>
-<td style="text-align: left;">79</td>
+<td style="text-align: left;">27</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">_______________________</td>
@@ -198,15 +232,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 <tr class="even">
 <td style="text-align: left;">character</td>
-<td style="text-align: left;">36</td>
+<td style="text-align: left;">16</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">logical</td>
+<td style="text-align: left;">factor</td>
 <td style="text-align: left;">1</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">numeric</td>
-<td style="text-align: left;">42</td>
+<td style="text-align: left;">10</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">________________________</td>
@@ -244,402 +278,212 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">listing_url</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">33</td>
-<td style="text-align: right;">48</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">36111</td>
-<td style="text-align: right;">0</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">last_scraped</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">0</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">source</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">11</td>
-<td style="text-align: right;">15</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">0</td>
-</tr>
-<tr class="even">
 <td style="text-align: left;">name</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1.00</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: right;">154</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">34447</td>
+<td style="text-align: right;">34446</td>
 <td style="text-align: right;">0</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">description</td>
-<td style="text-align: right;">0</td>
+<td style="text-align: right;">960</td>
+<td style="text-align: right;">0.97</td>
 <td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
 <td style="text-align: right;">1000</td>
-<td style="text-align: right;">957</td>
-<td style="text-align: right;">29848</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">29845</td>
 <td style="text-align: right;">0</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">neighborhood_overview</td>
-<td style="text-align: right;">0</td>
+<td style="text-align: right;">17421</td>
+<td style="text-align: right;">0.52</td>
 <td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
 <td style="text-align: right;">1012</td>
-<td style="text-align: right;">17406</td>
-<td style="text-align: right;">13991</td>
 <td style="text-align: right;">0</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">picture_url</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">60</td>
-<td style="text-align: right;">156</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">35367</td>
-<td style="text-align: right;">0</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">host_url</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">38</td>
-<td style="text-align: right;">43</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">21382</td>
-<td style="text-align: right;">0</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">host_name</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">45</td>
-<td style="text-align: right;">1166</td>
-<td style="text-align: right;">8297</td>
+<td style="text-align: right;">13988</td>
 <td style="text-align: right;">0</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">host_since</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">10</td>
 <td style="text-align: right;">1167</td>
-<td style="text-align: right;">5177</td>
+<td style="text-align: right;">0.97</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">5176</td>
 <td style="text-align: right;">0</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">host_location</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">46</td>
-<td style="text-align: right;">8700</td>
-<td style="text-align: right;">982</td>
-<td style="text-align: right;">0</td>
-</tr>
-<tr class="even">
 <td style="text-align: left;">host_about</td>
-<td style="text-align: right;">0</td>
+<td style="text-align: right;">16495</td>
+<td style="text-align: right;">0.54</td>
 <td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
 <td style="text-align: right;">7094</td>
-<td style="text-align: right;">16483</td>
-<td style="text-align: right;">11254</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">11251</td>
 <td style="text-align: right;">22</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">host_response_time</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
+<td style="text-align: right;">15774</td>
+<td style="text-align: right;">0.56</td>
+<td style="text-align: right;">12</td>
 <td style="text-align: right;">18</td>
-<td style="text-align: right;">1167</td>
-<td style="text-align: right;">6</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4</td>
 <td style="text-align: right;">0</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">host_response_rate</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
+<td style="text-align: right;">15774</td>
+<td style="text-align: right;">0.56</td>
+<td style="text-align: right;">2</td>
 <td style="text-align: right;">4</td>
-<td style="text-align: right;">1167</td>
-<td style="text-align: right;">72</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">70</td>
 <td style="text-align: right;">0</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">host_acceptance_rate</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
+<td style="text-align: right;">15595</td>
+<td style="text-align: right;">0.57</td>
+<td style="text-align: right;">2</td>
 <td style="text-align: right;">4</td>
-<td style="text-align: right;">1167</td>
-<td style="text-align: right;">99</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">97</td>
 <td style="text-align: right;">0</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">host_is_superhost</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
 <td style="text-align: right;">384</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">0</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">host_thumbnail_url</td>
-<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.99</td>
+<td style="text-align: right;">1</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">131</td>
-<td style="text-align: right;">1167</td>
-<td style="text-align: right;">20796</td>
-<td style="text-align: right;">0</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">host_picture_url</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">134</td>
-<td style="text-align: right;">1167</td>
-<td style="text-align: right;">20796</td>
-<td style="text-align: right;">0</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">host_neighbourhood</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">44</td>
-<td style="text-align: right;">8484</td>
-<td style="text-align: right;">524</td>
-<td style="text-align: right;">0</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">host_verifications</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
 <td style="text-align: right;">2</td>
-<td style="text-align: right;">32</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">8</td>
-<td style="text-align: right;">0</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">host_has_profile_pic</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">1167</td>
-<td style="text-align: right;">3</td>
 <td style="text-align: right;">0</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">host_identity_verified</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">1167</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">0</td>
-</tr>
-<tr class="odd">
 <td style="text-align: left;">neighbourhood</td>
+<td style="text-align: right;">17406</td>
+<td style="text-align: right;">0.52</td>
+<td style="text-align: right;">23</td>
+<td style="text-align: right;">23</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">23</td>
-<td style="text-align: right;">17406</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">0</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">neighbourhood_cleansed</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.00</td>
 <td style="text-align: right;">4</td>
 <td style="text-align: right;">26</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">224</td>
 <td style="text-align: right;">0</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">neighbourhood_group_cleansed</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.00</td>
 <td style="text-align: right;">5</td>
 <td style="text-align: right;">13</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">5</td>
 <td style="text-align: right;">0</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">property_type</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.00</td>
 <td style="text-align: right;">4</td>
 <td style="text-align: right;">34</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">74</td>
 <td style="text-align: right;">0</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">room_type</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.00</td>
 <td style="text-align: right;">10</td>
 <td style="text-align: right;">15</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">4</td>
 <td style="text-align: right;">0</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">bathrooms_text</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">17</td>
 <td style="text-align: right;">114</td>
-<td style="text-align: right;">33</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">32</td>
 <td style="text-align: right;">0</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">amenities</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">2</td>
+<td style="text-align: right;">116</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">8</td>
 <td style="text-align: right;">2162</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">29271</td>
-<td style="text-align: right;">0</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">price</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">14783</td>
-<td style="text-align: right;">1151</td>
-<td style="text-align: right;">0</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">has_availability</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">5665</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">0</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">calendar_last_scraped</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">0</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">first_review</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">11188</td>
-<td style="text-align: right;">4492</td>
-<td style="text-align: right;">0</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">last_review</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">11188</td>
-<td style="text-align: right;">3401</td>
-<td style="text-align: right;">0</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">license</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">18</td>
-<td style="text-align: right;">30735</td>
-<td style="text-align: right;">1963</td>
-<td style="text-align: right;">0</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">instant_bookable</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">2</td>
+<td style="text-align: right;">29270</td>
 <td style="text-align: right;">0</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Variable type: logical</strong></p>
+<p><strong>Variable type: factor</strong></p>
 <table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 11%">
+<col style="width: 16%">
+<col style="width: 9%">
+<col style="width: 10%">
+<col style="width: 36%">
+</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">skim_variable</th>
 <th style="text-align: right;">n_missing</th>
 <th style="text-align: right;">complete_rate</th>
-<th style="text-align: right;">mean</th>
-<th style="text-align: left;">count</th>
+<th style="text-align: left;">ordered</th>
+<th style="text-align: right;">n_unique</th>
+<th style="text-align: left;">top_counts</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">calendar_updated</td>
-<td style="text-align: right;">36111</td>
+<td style="text-align: left;">id</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">NaN</td>
-<td style="text-align: left;">:</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">36111</td>
+<td style="text-align: left;">259: 1, 684: 1, 687: 1, 699: 1</td>
 </tr>
 </tbody>
 </table>
 <p><strong>Variable type: numeric</strong></p>
 <table class="caption-top table table-sm table-striped small">
 <colgroup>
-<col style="width: 26%">
+<col style="width: 18%">
+<col style="width: 7%">
+<col style="width: 10%">
+<col style="width: 9%">
+<col style="width: 9%">
 <col style="width: 5%">
 <col style="width: 8%">
 <col style="width: 8%">
-<col style="width: 7%">
-<col style="width: 7%">
-<col style="width: 8%">
-<col style="width: 8%">
-<col style="width: 8%">
-<col style="width: 8%">
-<col style="width: 3%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 4%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -658,588 +502,181 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">id</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1.00</td>
-<td style="text-align: right;">4.667906e+17</td>
-<td style="text-align: right;">5.448721e+17</td>
-<td style="text-align: right;">2.5950e+03</td>
-<td style="text-align: right;">2.159415e+07</td>
-<td style="text-align: right;">5.095308e+07</td>
-<td style="text-align: right;">9.747695e+17</td>
-<td style="text-align: right;">1.521848e+18</td>
-<td style="text-align: left;">▇▁▂▂▂</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">scrape_id</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1.00</td>
-<td style="text-align: right;">2.025100e+13</td>
-<td style="text-align: right;">0.000000e+00</td>
-<td style="text-align: right;">2.0251e+13</td>
-<td style="text-align: right;">2.025100e+13</td>
-<td style="text-align: right;">2.025100e+13</td>
-<td style="text-align: right;">2.025100e+13</td>
-<td style="text-align: right;">2.025100e+13</td>
-<td style="text-align: left;">▁▁▇▁▁</td>
-</tr>
-<tr class="odd">
 <td style="text-align: left;">host_id</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">1.00</td>
-<td style="text-align: right;">1.756195e+08</td>
-<td style="text-align: right;">1.945624e+08</td>
-<td style="text-align: right;">1.6780e+03</td>
-<td style="text-align: right;">1.795864e+07</td>
-<td style="text-align: right;">8.832602e+07</td>
-<td style="text-align: right;">3.107737e+08</td>
-<td style="text-align: right;">7.214431e+08</td>
+<td style="text-align: right;">175619453.11</td>
+<td style="text-align: right;">194562427.81</td>
+<td style="text-align: right;">1678.00</td>
+<td style="text-align: right;">17958645.00</td>
+<td style="text-align: right;">88326021.00</td>
+<td style="text-align: right;">310773702.00</td>
+<td style="text-align: right;">721443059.00</td>
 <td style="text-align: left;">▇▂▁▂▁</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">host_listings_count</td>
 <td style="text-align: right;">1167</td>
 <td style="text-align: right;">0.97</td>
-<td style="text-align: right;">1.122600e+02</td>
-<td style="text-align: right;">5.924200e+02</td>
-<td style="text-align: right;">1.0000e+00</td>
-<td style="text-align: right;">1.000000e+00</td>
-<td style="text-align: right;">2.000000e+00</td>
-<td style="text-align: right;">8.000000e+00</td>
-<td style="text-align: right;">5.478000e+03</td>
+<td style="text-align: right;">112.26</td>
+<td style="text-align: right;">592.42</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">8.00</td>
+<td style="text-align: right;">5478.00</td>
 <td style="text-align: left;">▇▁▁▁▁</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">host_total_listings_count</td>
 <td style="text-align: right;">1167</td>
 <td style="text-align: right;">0.97</td>
-<td style="text-align: right;">1.940100e+02</td>
-<td style="text-align: right;">9.004100e+02</td>
-<td style="text-align: right;">1.0000e+00</td>
-<td style="text-align: right;">1.000000e+00</td>
-<td style="text-align: right;">3.000000e+00</td>
-<td style="text-align: right;">1.200000e+01</td>
-<td style="text-align: right;">9.764000e+03</td>
+<td style="text-align: right;">194.01</td>
+<td style="text-align: right;">900.41</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">3.00</td>
+<td style="text-align: right;">12.00</td>
+<td style="text-align: right;">9764.00</td>
 <td style="text-align: left;">▇▁▁▁▁</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">latitude</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">1.00</td>
-<td style="text-align: right;">4.073000e+01</td>
-<td style="text-align: right;">6.000000e-02</td>
-<td style="text-align: right;">4.0500e+01</td>
-<td style="text-align: right;">4.069000e+01</td>
-<td style="text-align: right;">4.073000e+01</td>
-<td style="text-align: right;">4.076000e+01</td>
-<td style="text-align: right;">4.091000e+01</td>
+<td style="text-align: right;">40.73</td>
+<td style="text-align: right;">0.06</td>
+<td style="text-align: right;">40.50</td>
+<td style="text-align: right;">40.69</td>
+<td style="text-align: right;">40.73</td>
+<td style="text-align: right;">40.76</td>
+<td style="text-align: right;">40.91</td>
 <td style="text-align: left;">▁▂▇▅▁</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">longitude</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">1.00</td>
-<td style="text-align: right;">-7.395000e+01</td>
-<td style="text-align: right;">5.000000e-02</td>
-<td style="text-align: right;">-7.4250e+01</td>
-<td style="text-align: right;">-7.398000e+01</td>
-<td style="text-align: right;">-7.396000e+01</td>
-<td style="text-align: right;">-7.393000e+01</td>
-<td style="text-align: right;">-7.371000e+01</td>
+<td style="text-align: right;">-73.95</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">-74.25</td>
+<td style="text-align: right;">-73.98</td>
+<td style="text-align: right;">-73.96</td>
+<td style="text-align: right;">-73.93</td>
+<td style="text-align: right;">-73.71</td>
 <td style="text-align: left;">▁▁▇▂▁</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">accommodates</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">1.00</td>
-<td style="text-align: right;">2.730000e+00</td>
-<td style="text-align: right;">1.870000e+00</td>
-<td style="text-align: right;">1.0000e+00</td>
-<td style="text-align: right;">2.000000e+00</td>
-<td style="text-align: right;">2.000000e+00</td>
-<td style="text-align: right;">4.000000e+00</td>
-<td style="text-align: right;">1.600000e+01</td>
+<td style="text-align: right;">2.73</td>
+<td style="text-align: right;">1.87</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">4.00</td>
+<td style="text-align: right;">16.00</td>
 <td style="text-align: left;">▇▁▁▁▁</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">bathrooms</td>
 <td style="text-align: right;">14411</td>
 <td style="text-align: right;">0.60</td>
-<td style="text-align: right;">1.190000e+00</td>
-<td style="text-align: right;">5.500000e-01</td>
-<td style="text-align: right;">0.0000e+00</td>
-<td style="text-align: right;">1.000000e+00</td>
-<td style="text-align: right;">1.000000e+00</td>
-<td style="text-align: right;">1.000000e+00</td>
-<td style="text-align: right;">1.550000e+01</td>
+<td style="text-align: right;">1.19</td>
+<td style="text-align: right;">0.55</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">15.50</td>
 <td style="text-align: left;">▇▁▁▁▁</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">bedrooms</td>
 <td style="text-align: right;">5949</td>
 <td style="text-align: right;">0.84</td>
-<td style="text-align: right;">1.390000e+00</td>
-<td style="text-align: right;">9.400000e-01</td>
-<td style="text-align: right;">0.0000e+00</td>
-<td style="text-align: right;">1.000000e+00</td>
-<td style="text-align: right;">1.000000e+00</td>
-<td style="text-align: right;">2.000000e+00</td>
-<td style="text-align: right;">1.600000e+01</td>
+<td style="text-align: right;">1.39</td>
+<td style="text-align: right;">0.94</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">16.00</td>
 <td style="text-align: left;">▇▁▁▁▁</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">beds</td>
 <td style="text-align: right;">14468</td>
 <td style="text-align: right;">0.60</td>
-<td style="text-align: right;">1.620000e+00</td>
-<td style="text-align: right;">1.210000e+00</td>
-<td style="text-align: right;">0.0000e+00</td>
-<td style="text-align: right;">1.000000e+00</td>
-<td style="text-align: right;">1.000000e+00</td>
-<td style="text-align: right;">2.000000e+00</td>
-<td style="text-align: right;">4.000000e+01</td>
+<td style="text-align: right;">1.62</td>
+<td style="text-align: right;">1.21</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">40.00</td>
 <td style="text-align: left;">▇▁▁▁▁</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">minimum_nights</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1.00</td>
-<td style="text-align: right;">2.861000e+01</td>
-<td style="text-align: right;">2.917000e+01</td>
-<td style="text-align: right;">1.0000e+00</td>
-<td style="text-align: right;">3.000000e+01</td>
-<td style="text-align: right;">3.000000e+01</td>
-<td style="text-align: right;">3.000000e+01</td>
-<td style="text-align: right;">1.124000e+03</td>
-<td style="text-align: left;">▇▁▁▁▁</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">maximum_nights</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1.00</td>
-<td style="text-align: right;">6.003553e+04</td>
-<td style="text-align: right;">1.130082e+07</td>
-<td style="text-align: right;">1.0000e+00</td>
-<td style="text-align: right;">1.500000e+02</td>
-<td style="text-align: right;">3.650000e+02</td>
-<td style="text-align: right;">1.125000e+03</td>
-<td style="text-align: right;">2.147484e+09</td>
-<td style="text-align: left;">▇▁▁▁▁</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">minimum_minimum_nights</td>
-<td style="text-align: right;">12</td>
-<td style="text-align: right;">1.00</td>
-<td style="text-align: right;">2.840000e+01</td>
-<td style="text-align: right;">2.893000e+01</td>
-<td style="text-align: right;">1.0000e+00</td>
-<td style="text-align: right;">3.000000e+01</td>
-<td style="text-align: right;">3.000000e+01</td>
-<td style="text-align: right;">3.000000e+01</td>
-<td style="text-align: right;">1.124000e+03</td>
-<td style="text-align: left;">▇▁▁▁▁</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">maximum_minimum_nights</td>
-<td style="text-align: right;">12</td>
-<td style="text-align: right;">1.00</td>
-<td style="text-align: right;">3.871000e+01</td>
-<td style="text-align: right;">6.342000e+01</td>
-<td style="text-align: right;">1.0000e+00</td>
-<td style="text-align: right;">3.000000e+01</td>
-<td style="text-align: right;">3.000000e+01</td>
-<td style="text-align: right;">3.000000e+01</td>
-<td style="text-align: right;">1.124000e+03</td>
-<td style="text-align: left;">▇▁▁▁▁</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">minimum_maximum_nights</td>
-<td style="text-align: right;">12</td>
-<td style="text-align: right;">1.00</td>
-<td style="text-align: right;">2.980906e+05</td>
-<td style="text-align: right;">2.527220e+07</td>
-<td style="text-align: right;">1.0000e+00</td>
-<td style="text-align: right;">3.000000e+02</td>
-<td style="text-align: right;">3.650000e+02</td>
-<td style="text-align: right;">1.125000e+03</td>
-<td style="text-align: right;">2.147484e+09</td>
-<td style="text-align: left;">▇▁▁▁▁</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">maximum_maximum_nights</td>
-<td style="text-align: right;">12</td>
-<td style="text-align: right;">1.00</td>
-<td style="text-align: right;">9.524952e+05</td>
-<td style="text-align: right;">4.520140e+07</td>
-<td style="text-align: right;">1.0000e+00</td>
-<td style="text-align: right;">3.650000e+02</td>
-<td style="text-align: right;">7.300000e+02</td>
-<td style="text-align: right;">1.125000e+03</td>
-<td style="text-align: right;">2.147484e+09</td>
-<td style="text-align: left;">▇▁▁▁▁</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">minimum_nights_avg_ntm</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1.00</td>
-<td style="text-align: right;">2.946000e+01</td>
-<td style="text-align: right;">3.368000e+01</td>
-<td style="text-align: right;">1.0000e+00</td>
-<td style="text-align: right;">3.000000e+01</td>
-<td style="text-align: right;">3.000000e+01</td>
-<td style="text-align: right;">3.000000e+01</td>
-<td style="text-align: right;">1.124000e+03</td>
-<td style="text-align: left;">▇▁▁▁▁</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">maximum_nights_avg_ntm</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1.00</td>
-<td style="text-align: right;">6.986474e+05</td>
-<td style="text-align: right;">3.579217e+07</td>
-<td style="text-align: right;">1.0000e+00</td>
-<td style="text-align: right;">3.650000e+02</td>
-<td style="text-align: right;">3.750000e+02</td>
-<td style="text-align: right;">1.125000e+03</td>
-<td style="text-align: right;">2.147484e+09</td>
-<td style="text-align: left;">▇▁▁▁▁</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">availability_30</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1.00</td>
-<td style="text-align: right;">8.700000e+00</td>
-<td style="text-align: right;">1.211000e+01</td>
-<td style="text-align: right;">0.0000e+00</td>
-<td style="text-align: right;">0.000000e+00</td>
-<td style="text-align: right;">0.000000e+00</td>
-<td style="text-align: right;">2.100000e+01</td>
-<td style="text-align: right;">3.000000e+01</td>
-<td style="text-align: left;">▇▁▁▁▃</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">availability_60</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1.00</td>
-<td style="text-align: right;">2.136000e+01</td>
-<td style="text-align: right;">2.454000e+01</td>
-<td style="text-align: right;">0.0000e+00</td>
-<td style="text-align: right;">0.000000e+00</td>
-<td style="text-align: right;">5.000000e+00</td>
-<td style="text-align: right;">4.800000e+01</td>
-<td style="text-align: right;">6.000000e+01</td>
-<td style="text-align: left;">▇▁▂▁▃</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">availability_90</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1.00</td>
-<td style="text-align: right;">3.537000e+01</td>
-<td style="text-align: right;">3.693000e+01</td>
-<td style="text-align: right;">0.0000e+00</td>
-<td style="text-align: right;">0.000000e+00</td>
-<td style="text-align: right;">2.300000e+01</td>
-<td style="text-align: right;">7.500000e+01</td>
-<td style="text-align: right;">9.000000e+01</td>
-<td style="text-align: left;">▇▁▁▂▅</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">availability_365</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1.00</td>
-<td style="text-align: right;">1.621900e+02</td>
-<td style="text-align: right;">1.472600e+02</td>
-<td style="text-align: right;">0.0000e+00</td>
-<td style="text-align: right;">0.000000e+00</td>
-<td style="text-align: right;">1.500000e+02</td>
-<td style="text-align: right;">3.150000e+02</td>
-<td style="text-align: right;">3.650000e+02</td>
-<td style="text-align: left;">▇▂▂▂▆</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">number_of_reviews</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1.00</td>
-<td style="text-align: right;">2.732000e+01</td>
-<td style="text-align: right;">7.031000e+01</td>
-<td style="text-align: right;">0.0000e+00</td>
-<td style="text-align: right;">0.000000e+00</td>
-<td style="text-align: right;">3.000000e+00</td>
-<td style="text-align: right;">2.300000e+01</td>
-<td style="text-align: right;">3.736000e+03</td>
-<td style="text-align: left;">▇▁▁▁▁</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">number_of_reviews_ltm</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1.00</td>
-<td style="text-align: right;">3.980000e+00</td>
-<td style="text-align: right;">1.947000e+01</td>
-<td style="text-align: right;">0.0000e+00</td>
-<td style="text-align: right;">0.000000e+00</td>
-<td style="text-align: right;">0.000000e+00</td>
-<td style="text-align: right;">1.000000e+00</td>
-<td style="text-align: right;">1.699000e+03</td>
-<td style="text-align: left;">▇▁▁▁▁</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">number_of_reviews_l30d</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1.00</td>
-<td style="text-align: right;">3.000000e-01</td>
-<td style="text-align: right;">1.450000e+00</td>
-<td style="text-align: right;">0.0000e+00</td>
-<td style="text-align: right;">0.000000e+00</td>
-<td style="text-align: right;">0.000000e+00</td>
-<td style="text-align: right;">0.000000e+00</td>
-<td style="text-align: right;">1.080000e+02</td>
-<td style="text-align: left;">▇▁▁▁▁</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">availability_eoy</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1.00</td>
-<td style="text-align: right;">3.587000e+01</td>
-<td style="text-align: right;">3.737000e+01</td>
-<td style="text-align: right;">0.0000e+00</td>
-<td style="text-align: right;">0.000000e+00</td>
-<td style="text-align: right;">2.300000e+01</td>
-<td style="text-align: right;">7.600000e+01</td>
-<td style="text-align: right;">9.200000e+01</td>
-<td style="text-align: left;">▇▁▁▂▅</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">number_of_reviews_ly</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1.00</td>
-<td style="text-align: right;">3.540000e+00</td>
-<td style="text-align: right;">1.897000e+01</td>
-<td style="text-align: right;">0.0000e+00</td>
-<td style="text-align: right;">0.000000e+00</td>
-<td style="text-align: right;">0.000000e+00</td>
-<td style="text-align: right;">1.000000e+00</td>
-<td style="text-align: right;">1.797000e+03</td>
-<td style="text-align: left;">▇▁▁▁▁</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">estimated_occupancy_l365d</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1.00</td>
-<td style="text-align: right;">4.695000e+01</td>
-<td style="text-align: right;">8.500000e+01</td>
-<td style="text-align: right;">0.0000e+00</td>
-<td style="text-align: right;">0.000000e+00</td>
-<td style="text-align: right;">0.000000e+00</td>
-<td style="text-align: right;">6.000000e+01</td>
-<td style="text-align: right;">2.550000e+02</td>
-<td style="text-align: left;">▇▁▁▁▁</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">estimated_revenue_l365d</td>
+<td style="text-align: left;">price</td>
 <td style="text-align: right;">14783</td>
 <td style="text-align: right;">0.59</td>
-<td style="text-align: right;">1.809287e+04</td>
-<td style="text-align: right;">1.543908e+05</td>
-<td style="text-align: right;">0.0000e+00</td>
-<td style="text-align: right;">0.000000e+00</td>
-<td style="text-align: right;">0.000000e+00</td>
-<td style="text-align: right;">1.887000e+04</td>
-<td style="text-align: right;">1.276326e+07</td>
-<td style="text-align: left;">▇▁▁▁▁</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">review_scores_rating</td>
-<td style="text-align: right;">11188</td>
-<td style="text-align: right;">0.69</td>
-<td style="text-align: right;">4.720000e+00</td>
-<td style="text-align: right;">4.600000e-01</td>
-<td style="text-align: right;">0.0000e+00</td>
-<td style="text-align: right;">4.650000e+00</td>
-<td style="text-align: right;">4.860000e+00</td>
-<td style="text-align: right;">5.000000e+00</td>
-<td style="text-align: right;">5.000000e+00</td>
-<td style="text-align: left;">▁▁▁▁▇</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">review_scores_accuracy</td>
-<td style="text-align: right;">11198</td>
-<td style="text-align: right;">0.69</td>
-<td style="text-align: right;">4.760000e+00</td>
-<td style="text-align: right;">4.500000e-01</td>
-<td style="text-align: right;">0.0000e+00</td>
-<td style="text-align: right;">4.710000e+00</td>
-<td style="text-align: right;">4.900000e+00</td>
-<td style="text-align: right;">5.000000e+00</td>
-<td style="text-align: right;">5.000000e+00</td>
-<td style="text-align: left;">▁▁▁▁▇</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">review_scores_cleanliness</td>
-<td style="text-align: right;">11189</td>
-<td style="text-align: right;">0.69</td>
-<td style="text-align: right;">4.660000e+00</td>
-<td style="text-align: right;">5.100000e-01</td>
-<td style="text-align: right;">0.0000e+00</td>
-<td style="text-align: right;">4.540000e+00</td>
-<td style="text-align: right;">4.810000e+00</td>
-<td style="text-align: right;">5.000000e+00</td>
-<td style="text-align: right;">5.000000e+00</td>
-<td style="text-align: left;">▁▁▁▁▇</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">review_scores_checkin</td>
-<td style="text-align: right;">11202</td>
-<td style="text-align: right;">0.69</td>
-<td style="text-align: right;">4.830000e+00</td>
-<td style="text-align: right;">3.800000e-01</td>
-<td style="text-align: right;">0.0000e+00</td>
-<td style="text-align: right;">4.820000e+00</td>
-<td style="text-align: right;">4.950000e+00</td>
-<td style="text-align: right;">5.000000e+00</td>
-<td style="text-align: right;">5.000000e+00</td>
-<td style="text-align: left;">▁▁▁▁▇</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">review_scores_communication</td>
-<td style="text-align: right;">11194</td>
-<td style="text-align: right;">0.69</td>
-<td style="text-align: right;">4.820000e+00</td>
-<td style="text-align: right;">4.300000e-01</td>
-<td style="text-align: right;">0.0000e+00</td>
-<td style="text-align: right;">4.820000e+00</td>
-<td style="text-align: right;">4.960000e+00</td>
-<td style="text-align: right;">5.000000e+00</td>
-<td style="text-align: right;">5.000000e+00</td>
-<td style="text-align: left;">▁▁▁▁▇</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">review_scores_location</td>
-<td style="text-align: right;">11204</td>
-<td style="text-align: right;">0.69</td>
-<td style="text-align: right;">4.740000e+00</td>
-<td style="text-align: right;">4.000000e-01</td>
-<td style="text-align: right;">0.0000e+00</td>
-<td style="text-align: right;">4.660000e+00</td>
-<td style="text-align: right;">4.860000e+00</td>
-<td style="text-align: right;">5.000000e+00</td>
-<td style="text-align: right;">5.000000e+00</td>
-<td style="text-align: left;">▁▁▁▁▇</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">review_scores_value</td>
-<td style="text-align: right;">11204</td>
-<td style="text-align: right;">0.69</td>
-<td style="text-align: right;">4.630000e+00</td>
-<td style="text-align: right;">5.000000e-01</td>
-<td style="text-align: right;">0.0000e+00</td>
-<td style="text-align: right;">4.520000e+00</td>
-<td style="text-align: right;">4.760000e+00</td>
-<td style="text-align: right;">4.940000e+00</td>
-<td style="text-align: right;">5.000000e+00</td>
-<td style="text-align: left;">▁▁▁▁▇</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">calculated_host_listings_count</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1.00</td>
-<td style="text-align: right;">6.746000e+01</td>
-<td style="text-align: right;">2.156800e+02</td>
-<td style="text-align: right;">1.0000e+00</td>
-<td style="text-align: right;">1.000000e+00</td>
-<td style="text-align: right;">2.000000e+00</td>
-<td style="text-align: right;">9.000000e+00</td>
-<td style="text-align: right;">1.148000e+03</td>
-<td style="text-align: left;">▇▁▁▁▁</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">calculated_host_listings_count_entire_homes</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1.00</td>
-<td style="text-align: right;">4.866000e+01</td>
-<td style="text-align: right;">2.045400e+02</td>
-<td style="text-align: right;">0.0000e+00</td>
-<td style="text-align: right;">0.000000e+00</td>
-<td style="text-align: right;">1.000000e+00</td>
-<td style="text-align: right;">2.000000e+00</td>
-<td style="text-align: right;">1.148000e+03</td>
-<td style="text-align: left;">▇▁▁▁▁</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">calculated_host_listings_count_private_rooms</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1.00</td>
-<td style="text-align: right;">1.796000e+01</td>
-<td style="text-align: right;">7.902000e+01</td>
-<td style="text-align: right;">0.0000e+00</td>
-<td style="text-align: right;">0.000000e+00</td>
-<td style="text-align: right;">1.000000e+00</td>
-<td style="text-align: right;">2.000000e+00</td>
-<td style="text-align: right;">5.670000e+02</td>
-<td style="text-align: left;">▇▁▁▁▁</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">calculated_host_listings_count_shared_rooms</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1.00</td>
-<td style="text-align: right;">5.000000e-02</td>
-<td style="text-align: right;">7.800000e-01</td>
-<td style="text-align: right;">0.0000e+00</td>
-<td style="text-align: right;">0.000000e+00</td>
-<td style="text-align: right;">0.000000e+00</td>
-<td style="text-align: right;">0.000000e+00</td>
-<td style="text-align: right;">2.000000e+01</td>
-<td style="text-align: left;">▇▁▁▁▁</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">reviews_per_month</td>
-<td style="text-align: right;">11188</td>
-<td style="text-align: right;">0.69</td>
-<td style="text-align: right;">8.200000e-01</td>
-<td style="text-align: right;">1.920000e+00</td>
-<td style="text-align: right;">1.0000e-02</td>
-<td style="text-align: right;">7.000000e-02</td>
-<td style="text-align: right;">2.500000e-01</td>
-<td style="text-align: right;">9.000000e-01</td>
-<td style="text-align: right;">1.227600e+02</td>
+<td style="text-align: right;">680.53</td>
+<td style="text-align: right;">4480.45</td>
+<td style="text-align: right;">10.00</td>
+<td style="text-align: right;">89.00</td>
+<td style="text-align: right;">154.00</td>
+<td style="text-align: right;">279.00</td>
+<td style="text-align: right;">50104.00</td>
 <td style="text-align: left;">▇▁▁▁▁</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
-<section id="selecting-our-columns-for-further-analysis" class="level3">
-<h3 class="anchored" data-anchor-id="selecting-our-columns-for-further-analysis">Selecting our columns for further analysis</h3>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>filter_df <span class="ot">&lt;-</span> </span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>df <span class="sc">%&gt;%</span> </span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="dv">1</span>,<span class="dv">6</span>,<span class="dv">7</span>,<span class="dv">8</span>,<span class="dv">10</span>,<span class="dv">13</span>,<span class="dv">15</span>,<span class="dv">16</span>,<span class="dv">17</span>,<span class="dv">18</span>,<span class="dv">19</span>,<span class="dv">23</span>,<span class="dv">24</span>,<span class="dv">28</span>,<span class="dv">29</span>,<span class="dv">30</span><span class="sc">:</span><span class="dv">41</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
+<p>It is important to note that some columns, such as <code>host_response_rate</code> is listed as a character variable because their values are formatted as “50%”, “32%”, “xx%”…</p>
+<p>Further analysis should make sure the columns selected are formatted correctly.</p>
 </section>
 <section id="vis_miss-visualization" class="level3">
 <h3 class="anchored" data-anchor-id="vis_miss-visualization"><code>vis_miss</code> visualization</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>filter_df <span class="sc">%&gt;%</span> </span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">vis_miss</span>(., <span class="at">warn_large_data =</span> F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>filter_df <span class="sc">%&gt;%</span> </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">vis_miss</span>(., <span class="at">warn_large_data =</span> F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="topic_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="topic_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
+<p>The <code>vis_miss()</code> plot shows that occurence of missing values in our data.</p>
 </section>
 <section id="mcar_test" class="level3">
 <h3 class="anchored" data-anchor-id="mcar_test"><code>mcar_test</code></h3>
+<p>Here are a few missing completely at random test. We believe that we can use the beds, bathrooms, and neighborhood location among other variables to impute the missing pricing data for these listings.</p>
+<p>These tests show that there are some missing patterns in our data.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>filter_df <span class="sc">%&gt;%</span> </span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(price, latitude, longitude) <span class="sc">%&gt;%</span> </span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mcar_test</span>(.)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>filter_df <span class="sc">%&gt;%</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(price, latitude, longitude) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mcar_test</span>(.)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 4
   statistic    df p.value missing.patterns
       &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;            &lt;int&gt;
-1  3.69e-23     0       0                1</code></pre>
+1      218.     2       0                2</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>filter_df <span class="sc">%&gt;%</span> </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(price, beds) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mcar_test</span>(.)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 4
+  statistic    df   p.value missing.patterns
+      &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;            &lt;int&gt;
+1      22.8     2 0.0000110                4</code></pre>
 </div>
 </div>
 </section>
