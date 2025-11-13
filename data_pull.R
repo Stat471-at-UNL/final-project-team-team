@@ -18,4 +18,6 @@ if (file.exists("NYClistings.csv")) {
   df <- read.csv("NYClistings.csv")
 }
 
+df <- read_csv("listings.csv.gz")
+
 
