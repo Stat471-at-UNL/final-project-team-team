@@ -52,7 +52,11 @@ Members: Grey Gergen, Tyler Davis, Jesus Rodriguez, Jack Macfadyen
 
 ## 4. Plan of Action and Brief Look at Data (with some cleaning)
 
+<<<<<<< HEAD
+The data was downloaded from [Inside Airbnb](insideairbnb.com/get-the-data).
+=======
 The first step in the process is a bit of data exploration. We will need to understand the NYC Airbnb data, such as number of observations, missing value information, variables of interest, etc. This information is obtained below.
+>>>>>>> 7edea630a722a67b835d1e71e062b8392095ba6e
 
 The data was downloaded from [Inside Airbnb](insideairbnb.com/get-the-data).
 
@@ -147,3 +151,65 @@ The price data will then be imputed by the predictors with a transformation done
 The next step is the comparison between the three models run and their coefficients. We can then compare the coefficients by looking at the pooled estimates and the standard errors across all three models. We can do this with an understanding of Rubin's Rules and how they apply to pooled models. These results will allow us to gain insight into the models and how the two imputed models differ and if they differ from the unimputed model.
 
 This alone may not allow us to make a strong conclusion on which imputation predictors are better for our price variable. This will then lead us to do a comparison test by testing the correlation between the imputed and true values of our price variable between our two methods. This can be done by masking values that we already have in our price variable, then imputing these values using both methods. We will then calculate the correlation between the true and imputed values testing which predictor set is better, degrees or UTM. This will show any major differences between the two methods and give us a sense for price which method is better. This alone will not tell us if using UTM vs degrees is better in all cases but it could open the door for further discussion and digging into the topic.
+
+# Modeling
+
+> The next step in the analysis will be to build a model with price as the response variable. The predictors will be values that are suspected to be indicators of price such as beds, lat and long, accommodates, bathrooms, etc. This model will then be run and coefficients values and significance will be documented. This will all be done without imputation.
+
+## Matrix Plot
+
+```{r, warning = F, message = F}
+library(GGally)
+ggpairs(
+  filter_df %>% 
+    select(
+      price, 
+      bedrooms, beds,
+      latitude, longitude,
+      accommodates, bathrooms
+      # host_is_superhost
+    ),
+  # columns = 17:25, 
+  cardinality_threshold = 32
+)
+```
+
+```{r}
+library(psych)
+filter_df %>%
+  select(
+      price, 
+      bedrooms, beds,
+      latitude, longitude,
+      accommodates, bathrooms,
+      host_is_superhost
+    ) %>%
+pairs.panels(.,
+             method = "pearson", # this is the correlation method
+             hist.col = "#00AFBB",
+             density = TRUE, # this shows density plots
+             ellipses = TRUE, # show correlation ellipses
+             lm = TRUE
+)
+```
+
+```{r}
+model <- 
+  filter_df %>% 
+  lm(price ~ bedrooms + beds + latitude + longitude + accommodates + bathrooms, data = .) ; summary(model)
+```
+
+# Removing Prices that are Greater than 10000, Also keeping NA values
+
+
+```{r}
+price_10k_df <- 
+  filter_df %>% 
+  filter(price <= 10000 | is.na(price))
+```
+
+```{r}
+model <- 
+  price_10k_df %>% 
+  lm(price ~ bedrooms + beds + latitude + longitude + accommodates + bathrooms, data = .) ; summary(model)
+```
