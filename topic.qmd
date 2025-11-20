@@ -129,6 +129,15 @@ filter_df %>%
 
 The price variable was tested against beds along with latitude and longitude with little's MCAR test. The results show that the data is not missing completely at random which is shown by the significance in the previous tests. These tests results tell us that the price variable's missingness is dependent upon other variables within the data.
 
+```{r}
+filter_df$host_response_rate <- as.numeric(sub("%", "", filter_df$host_response_rate)) / 100
+filter_df$host_acceptance_rate <- as.numeric(sub("%", "", filter_df$host_acceptance_rate)) / 100
+filter_df$bathrooms <- ifelse(is.na(filter_df$bathrooms), as.numeric(sub(" .*", "", filter_df$bathrooms_text)), filter_df$bathrooms)
+
+ggplot(filter_df, aes(x = neighbourhood_group_cleansed, y = price)) +
+  geom_point()
+```
+
 The next step in the analysis will be to build a model with price as the response variable. The predictors will be values that are suspected to be indicators of price such as beds, lat and long, accommodates, bathrooms, etc. This model will then be run and coefficients values and significance will be documented. This will all be done without imputation.
 
 The price data will then be imputed by the predictors used in the model in the current form they are in. The mice package will be used to complete the imputation and it will be done multiple times. The multiple imputations will then be pooled and a model for price will then be created and ran. The predictors will be the same. We will then document the coefficients and significance values from the model summary.
