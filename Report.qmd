@@ -1,0 +1,32 @@
+---
+format: pdf
+author: "Tyler Davis, Grey Gergen, Jack Macfadyen, Jesus Rodriguez"
+editor: visual
+---
+
+# STAT 471 Final Report: Modeling New York City Airbnb Listings
+
+
+## Introduction
+
+There are many considerations that must be made when finding temporary housing, either for vacations or business trips. Airbnb is a popular website that allows individuals or businesses
+
+## Methods
+
+```{r}
+
+
+
+```
+
+## Results
+
+
+
+
+
+## Conclusion
+
+
+
+
