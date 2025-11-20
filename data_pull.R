@@ -1,6 +1,7 @@
 # Install package to add file to .gitignore if not already installed
 #install.packages("rcompendium")
-library(rcompendium)
+library(tidyverse)
+library(readxl)
 
 if (file.exists("NYClistings.csv")) {
   # Data read
@@ -19,5 +20,3 @@ if (file.exists("NYClistings.csv")) {
 }
 
 df <- read_csv("listings.csv.gz")
-
-
