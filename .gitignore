@@ -6,3 +6,5 @@
 .quarto
 NYClistings.csv
 Amsterdamlistings.csv
+NYClistings.csv.gz
+data/NYClistings.csv.gz

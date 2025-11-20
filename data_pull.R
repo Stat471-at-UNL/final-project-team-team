@@ -7,7 +7,7 @@ if (file.exists("NYClistings.csv")) {
   df <- read.csv("NYClistings.csv")
 } else {
   # URL to download NYC AirBNB listings
-  url <- "https://data.insideairbnb.com/united-states/ny/new-york-city/2025-10-01/visualisations/listings.csv"
+  url <- "https://data.insideairbnb.com/united-states/ny/new-york-city/2025-10-01/data/listings.csv.gz"
   destination<- "NYClistings.csv"
   download.file(url, destination)
 
@@ -17,5 +17,3 @@ if (file.exists("NYClistings.csv")) {
   # Data read
   df <- read.csv("NYClistings.csv")
 }
-
-
