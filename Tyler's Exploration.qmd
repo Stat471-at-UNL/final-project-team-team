@@ -1,0 +1,175 @@
+---
+title: "data exploration"
+author: "Tyler Davis"
+format: html
+editor: visual
+---
+
+```{r}
+
+filter_data <- filter_df %>%
+  filter(price < 5000 | is.na(price))
+
+sum(is.na(filter_data$price))
+
+hist(filter_data$price)
+hist(log(filter_df$price))
+
+latlong <- data.frame(
+  latitude  = c(max(filter_df$latitude),min(filter_df$latitude)),
+  longitude = c(max(filter_df$longitude),min(filter_df$longitude)))
+
+model_dat <- filter_data %>%
+  select("price","latitude","longitude","bathrooms","bedrooms")
+
+model1 <- glm(price ~ latitude + longitude + bathrooms + bedrooms, family = Gamma(link = "log"), data = model_dat)
+
+
+summary(model1)
+
+exp(coef(model1))
+```
+
+```{r}
+
+library(mice)
+
+imp <- mice(model_dat, m = 5, method = "pmm", maxit = 10, seed = 123)
+
+fit1 <- with(imp, glm(price ~ latitude + longitude  + bathrooms + bedrooms, family = Gamma(link = "log")))
+
+pooled <- pool(fit1)
+summary(pooled)
+exp(pooled$pooled$estimate)
+
+```
+
+```{r}
+library(sf)
+
+
+points <- st_as_sf(model_dat, coords = c("longitude", "latitude"), crs = 4326)
+
+
+points_utm <- st_transform(points, crs = 32618)
+
+points_utm
+coords <- st_coordinates(points_utm)  # gives X = easting, Y = northing
+
+# Combine with price (variable to impute)
+updates <- data.frame(
+  price = model_dat$price,
+  X = scale(coords[,1]),
+  Y = scale(coords[,2]),
+  bathrooms = model_dat$bathrooms,
+  bedrooms = model_dat$bedrooms
+)
+
+sum(is.na(updates$price))
+summary(updates)
+cor(updates$price, updates$Y)
+
+cor_matrix <- cor(updates, use = "pairwise.complete.obs", method = "pearson")
+
+
+
+
+impA <- mice(updates, m = 5, method = "pmm", seed = 123)
+
+fit <- with(impA, glm(price ~ X*Y+ bathrooms + bedrooms, family = Gamma(link = "log")))
+
+pooled <- pool(fit)
+summary(pooled)
+exp(pooled$pooled$estimate)
+```
+
+```{r}
+
+
+densityplot(impA)
+densityplot(imp)
+
+
+
+get_avg_fit <- function(model) {
+  models <- model$analyses   # list of glm fits (one per imputation)
+  
+  aic_vals      <- sapply(models, AIC)
+  deviance_vals <- sapply(models, function(m) m$deviance)
+
+  data.frame(
+    mean_AIC      = mean(aic_vals),
+    mean_deviance = mean(deviance_vals)
+  )
+}
+
+
+total_fit <- data.frame(
+Total_Fit_latlong =  get_avg_fit(fit1),
+Total_Fit_utm = get_avg_fit(fit))
+
+
+```
+
+```{r}
+
+updates$lat <- model_dat$latitude
+updates$long <- model_dat$longitude
+
+
+data_mask <- updates
+data_mask$y2 <- data_mask$Y^2
+data_mask$x2 <- data_mask$X^2
+data_mask$xy <- data_mask$X*data_mask$Y
+
+mask <- sample(which(!is.na(data_mask$price)), size = floor(0.1 * nrow(data_mask)))
+data_mask$price_mask <- data_mask$price
+data_mask$price_mask[mask] <- NA
+
+
+
+library(mice)
+
+# Only impute price
+meth <- make.method(data_mask)
+meth["price_mask"] <- "pmm"
+meth[c("bathrooms","bedrooms","X","Y","x2","y2", "xy", "lat","long")] <- ""  # complete variables
+
+predA <- make.predictorMatrix(data_mask)
+predA["price_mask", ] <- 0
+predA["price_mask", c("X","Y","x2","y2","xy")] <- 1
+
+
+predB <- make.predictorMatrix(data_mask)
+predB["price_mask", ] <- 0
+predB["price_mask", c("lat","long")] <- 1
+
+
+
+impA <- mice(data_mask, m = 5, method = meth, predictorMatrix = predA, seed = 145)
+impB <- mice(data_mask, m = 5, method = meth, predictorMatrix = predB, seed = 276)
+
+
+rmse_mask <- function(imp_obj, mask) {
+  # long format to average imputations
+  completed <- complete(imp_obj, "long")  # .imp and .id columns
+  # average over imputations
+  avg_imp <- aggregate(price_mask ~ .id, data = completed, FUN = mean)
+  
+  # RMSE on masked indices
+  true_vals <- data_mask$price[mask]
+  pred_vals <- avg_imp$price_mask[mask]
+  
+  sqrt(mean((pred_vals - true_vals)^2))
+}
+
+rmse_results <- data.frame(
+  Predictor_Set = c("UTM", "LatLong"),
+  RMSE = c(rmse_mask(impA, mask),
+           rmse_mask(impB, mask))
+)
+
+rmse_results
+
+
+```
