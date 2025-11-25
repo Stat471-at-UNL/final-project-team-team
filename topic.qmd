@@ -94,6 +94,14 @@ filter_df <-
 skim(filter_df)
 ```
 
+
+```{r}
+hotel_data <- filter_df %>%
+  filter(price < 10000)
+```
+
+We decided to consider all listings at or above the price of $10,000 per night an outlier. There were a considerable group of listings above this number, going all the way to $50,000 per night. Many of the listings we examined manually had different, more realistic prices on the actual Airbnb website, indicating that either the listing was improper during the webscrape, or the webscrape itself had flaws. We chose $10,000 as the cutoff point as there was a listing at $9,999 per night that was verifiable.
+
 It is important to note that some columns, such as `host_response_rate` is listed as a character variable because their values are formatted as "50%", "32%", "xx%"...
 
 Further analysis should make sure the columns selected are formatted correctly.

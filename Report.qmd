@@ -9,15 +9,16 @@ editor: visual
 
 ## Introduction
 
-There are many considerations that must be made when finding temporary housing, either for vacations or business trips. Airbnb is a popular website that allows individuals or businesses
+There are many considerations that must be made when finding temporary housing, either for vacations or business trips. Airbnb is a popular website that allows individuals or businesses to list potential places for users to choose. These users can choose where they wish to stay based on location, accommodations, how many beds they need, and price. We sought to create a model that predicts the price of an Airbnb listing based on various variables.
 
 ## Methods
 
 ```{r}
 
 
-
 ```
+
+We decided to consider all listings at or above the price of $10,000 per night an outlier. There were a considerable group of listings above this number, going all the way to $50,000 per night. Many of the listings we examined manually had different, more realistic prices on the actual Airbnb website, indicating that either the listing was improper during the webscrape, or the webscrape itself had flaws. We chose $10,000 as the cutoff point as there was a listing at $9,999 per night that was verifiable.
 
 ## Results
 
