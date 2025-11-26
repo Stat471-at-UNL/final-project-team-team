@@ -16,7 +16,9 @@ source("data_pull.R")
 
 ## 1. Motivation
 
-Airbnb data has been scraped by a team of contributors and gathered on a website [here](https://insideairbnb.com/get-the-data/)). Their motivation is to show transparency in how spaces are being rented to tourists in their communities.
+There are many considerations that must be made when finding temporary housing, either for vacations or business trips. Airbnb is a popular website that allows individuals or businesses to list potential places for users to choose. These users can choose where they wish to stay based on location, accommodations, how many beds they need, and price. We sought to create a model that predicts the price of an Airbnb listing based on various variables.
+
+Airbnb data has been scraped by a team of contributors and gathered on a website [here](https://insideairbnb.com/get-the-data/). Their motivation is to show transparency in how spaces are being rented to tourists in their communities.
 
 When coming across this dataset, we found several missing values in the price of different Airbnb listings. Of the `r nrow(df)` listings we found `r sum(rapportools::is.empty(df$price))` missing prices. We believe that we can use the latitude, longitude, beds, bathrooms, and neighborhood location among other variables to impute the missing pricing data for these listings.
 
@@ -87,7 +89,7 @@ filter_df <-
   )
 ```
 
-There seemed to be inconsistent listings when prices were over \$10,000. The link provided would take you to an Airbnb listing that didn't have the same price as recorded in the data extracted. So to solve this incosistency, we removed rows with prices greater than \$10,000. 
+We decided to consider all listings at or above the price of \$10,000 per night an outlier. There were a considerable amount of listings above this number, going all the way to \$50,000 per night. Many of the listings we examined manually had different, more realistic prices on the actual Airbnb website, indicating that either the listing was improper during the webscrape, or the webscrape itself had flaws. We chose \$10,000 as the cutoff point as there were multiple listings at or below \$9,999 per night that were verifiable. We removed all listings that were \$10,000 per night or greater.
 
 ```{r}
 filter_df <- 
@@ -95,7 +97,7 @@ filter_df <-
   filter(price <= 10000 | is.na(price))
 ```
 
-One more step in cleaning was cleaning the `bathrooms` column. There was some missing values, however the `bathrooms_text` column provided the number of bathrooms the listing had, so the number of bathrooms was extracted from the `bathrooms_text` if needed. 
+One more step in cleaning was cleaning the `bathrooms` column. There was some missing values, however the `bathrooms_text` column provided the number of bathrooms the listing had, so the number of bathrooms was extracted from the `bathrooms_text` if needed.
 
 ```{r}
 filter_df <- 
@@ -110,7 +112,6 @@ filter_df <-
       )
   )
 ```
-
 
 ### Info about data, `skim()`
 
@@ -180,19 +181,33 @@ This alone may not allow us to make a strong conclusion on which imputation pred
 ## Matrix Plot
 
 <!-- # ```{r, warning = F, message = F} -->
+
 <!-- # library(GGally) -->
+
 <!-- # ggpairs( -->
+
 <!-- #   filter_df %>%  -->
+
 <!-- #     select( -->
+
 <!-- #       price,  -->
+
 <!-- #       bedrooms, beds, -->
+
 <!-- #       latitude, longitude, -->
+
 <!-- #       accommodates, bathrooms -->
+
 <!-- #       # host_is_superhost -->
+
 <!-- #     ), -->
+
 <!-- #   # columns = 17:25,  -->
+
 <!-- #   cardinality_threshold = 32 -->
+
 <!-- # ) -->
+
 <!-- # ``` -->
 
 ```{r}
@@ -213,9 +228,10 @@ pairs.panels(.,
              lm = TRUE
 )
 ```
-The matrix plot shows that price isn't really correlated substantially with any other variable. 
 
-Perhaps a log transformation would help better model the effect of the variables of interest with price. 
+The matrix plot shows that price isn't really correlated substantially with any other variable.
+
+Perhaps a log transformation would help better model the effect of the variables of interest with price.
 
 Is it also worthy to note that bedrooms, bathrooms, and beds seem to be correlated, so maybe in further analysis, multicollinearity should be checked.
 
@@ -315,14 +331,13 @@ summary(model)$coef
 summary(pooled)
 ```
 
-
 ## Interpretation
 
 It looks like after imputation, there are a few changes to our results.
 
--   The `beds` predictor variable becomes smaller and is found to be no longer significant in the model, while the `bathrooms` predictor variable increases and stays significant 
+-   The `beds` predictor variable becomes smaller and is found to be no longer significant in the model, while the `bathrooms` predictor variable increases and stays significant
 -   Effects of other varibales change slightly, but not enough for any significant difference
 
-This suggests that msising data in variables `bathrooms` and `beds` may have been introducing bias or instability in the original model. 
+This suggests that msising data in variables `bathrooms` and `beds` may have been introducing bias or instability in the original model.
 
 Despite these differences, location indicators `latitude` and `longitude` and whether the host is a classified as a superhost (`host_is_superhost`) effect the model greatly and stay very significant, indicating that imputation only helped improve these relationships by improving reliability for other variables with missing values.
