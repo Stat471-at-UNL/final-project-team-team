@@ -5,20 +5,41 @@ format: html
 editor: visual
 ---
 
-```{r, eval = F}
+```{r}
 # # adding this just so I can render this file - Jesus R.
 # library(tidyverse)
 # source("data_pull.R")
-# 
-# filter_df <- 
-#   df %>% 
+#
+# filter_df <-
+#   df %>%
 #   select(1,6,7,8,10,13,15,16,17,18,19,23,24,28,29,30:41)
 
-# Sorry I couldn't get it to render, I didn't change anything, I only added this code chunk. 
+# Sorry I couldn't get it to render, I didn't change anything, I only added this code chunk.
 ```
 
 ```{r}
+library(tidyverse)
+source("data_pull.R")
 
+filter_df <-
+  df %>%
+  select(1,6,7,8,10,13,15,16,17,18,19,23,24,28,29,30:41)
+
+## fixing missing values
+filter_df[filter_df == "N/A"] <- NA
+filter_df[filter_df == ""] <- NA
+filter_df[filter_df == "[]"] <- NA
+filter_df[filter_df == "-"] <- NA
+
+## changing price from chr to numeric
+filter_df <-
+  filter_df %>% 
+  mutate(
+    price = str_remove_all(price, "\\$"),
+    price = str_remove_all(price, "\\,"),
+    price = as.numeric(price), 
+    id = as.factor(id)
+  )
 filter_data <- filter_df %>%
   filter(price < 5000 | is.na(price))
 
@@ -119,6 +140,77 @@ get_avg_fit <- function(model) {
 total_fit <- data.frame(
 Total_Fit_latlong =  get_avg_fit(fit1),
 Total_Fit_utm = get_avg_fit(fit))
+total_fit
+
+```
+
+```{r}
+
+updates$lat <- model_dat$latitude
+updates$long <- model_dat$longitude
+
+
+data_mask <- updates
+data_mask$y2 <- data_mask$Y^2
+data_mask$x2 <- data_mask$X^2
+data_mask$xy <- data_mask$X*data_mask$Y
+data_mask$latlong <- data_mask$lat*data_mask$long
+
+mask <- sample(which(!is.na(data_mask$price)), size = floor(0.1 * nrow(data_mask)))
+data_mask$price_mask <- data_mask$price
+data_mask$price_mask[mask] <- NA
+
+
+
+library(mice)
+
+# Only impute price
+meth <- make.method(data_mask)
+meth[] <- "" 
+meth["price_mask"] <- "pmm"
+
+
+predA <- make.predictorMatrix(data_mask)
+predA[, ] <- 0
+predA["price_mask", c("X","Y","xy")] <- 1
+
+
+predB <- make.predictorMatrix(data_mask)
+predB[, ] <- 0
+predB["price_mask", c("lat","long","latlong")] <- 1
+
+
+predC <- make.predictorMatrix(data_mask)
+predC[, ] <- 0
+predC["price_mask", c("X","Y","lat","long","xy","latlong")] <- 1
+
+
+impA <- mice(data_mask, m = 5, method = meth, predictorMatrix = predA, seed = 145)
+impB <- mice(data_mask, m = 5, method = meth, predictorMatrix = predB, seed = 276)
+impC <- mice(data_mask, m = 5, method = meth, predictorMatrix = predC, seed = 34908)
+
+rmse_mask <- function(imp_obj, mask) {
+  # long format to average imputations
+  completed <- complete(imp_obj, "long")  # .imp and .id columns
+  # average over imputations
+  avg_imp <- aggregate(price_mask ~ .id, data = completed, FUN = mean)
+   avg_imp <- avg_imp[order(avg_imp$.id), ]
+  
+  # RMSE on masked indices
+  true_vals <- data_mask$price[mask]
+  pred_vals <- avg_imp$price_mask[mask]
+  
+  sqrt(mean((pred_vals - true_vals)^2))
+}
+
+rmse_results <- data.frame(
+  Predictor_Set = c("UTM", "LatLong","Combined"),
+  RMSE = c(rmse_mask(impA, mask),
+           rmse_mask(impB, mask),
+           rmse_mask(impC,mask))
+)
+
+rmse_results
 
 
 ```
@@ -133,55 +225,67 @@ data_mask <- updates
 data_mask$y2 <- data_mask$Y^2
 data_mask$x2 <- data_mask$X^2
 data_mask$xy <- data_mask$X*data_mask$Y
+data_mask$latlong <- data_mask$lat*data_mask$long
 
-mask <- sample(which(!is.na(data_mask$price)), size = floor(0.1 * nrow(data_mask)))
-data_mask$price_mask <- data_mask$price
-data_mask$price_mask[mask] <- NA
+
+predictor_sets <- list(
+  UTM = predA,
+  LatLong = predB,
+  Combined = predC
+)
+
 
 
 
 library(mice)
 
-# Only impute price
-meth <- make.method(data_mask)
-meth["price_mask"] <- "pmm"
-meth[c("bathrooms","bedrooms","X","Y","x2","y2", "xy", "lat","long")] <- ""  # complete variables
-
-predA <- make.predictorMatrix(data_mask)
-predA["price_mask", ] <- 0
-predA["price_mask", c("X","Y","x2","y2","xy")] <- 1
-
-
-predB <- make.predictorMatrix(data_mask)
-predB["price_mask", ] <- 0
-predB["price_mask", c("lat","long")] <- 1
-
-
-
-impA <- mice(data_mask, m = 5, method = meth, predictorMatrix = predA, seed = 145)
-impB <- mice(data_mask, m = 5, method = meth, predictorMatrix = predB, seed = 276)
-
-
-rmse_mask <- function(imp_obj, mask) {
-  # long format to average imputations
-  completed <- complete(imp_obj, "long")  # .imp and .id columns
-  # average over imputations
-  avg_imp <- aggregate(price_mask ~ .id, data = completed, FUN = mean)
+simulate_rmse <- function(data, predictor_sets, n_sim = 10, mask_frac = 0.1, m = 5, seed = 123) {
   
-  # RMSE on masked indices
-  true_vals <- data_mask$price[mask]
-  pred_vals <- avg_imp$price_mask[mask]
+  set.seed(seed)
+  results <- list()
   
-  sqrt(mean((pred_vals - true_vals)^2))
+  for (pred_name in names(predictor_sets)) {
+    rmse_vec <- numeric(n_sim)
+    
+    for (i in 1:n_sim) {
+      # Mask a fraction of prices
+      mask_idx <- sample(which(!is.na(data$price)), size = floor(mask_frac * nrow(data)))
+      data$price_mask <- data$price
+      data$price_mask[mask_idx] <- NA
+      
+      # Method vector
+      meth <- rep("", ncol(data))
+      names(meth) <- colnames(data)
+      meth["price_mask"] <- "pmm"
+      
+      # Predictor matrix
+      pred <- predictor_sets[[pred_name]]
+      pred <- pred[colnames(data), colnames(data)]
+      
+      # Run mice
+      imp <- mice(data, m = m, method = meth, predictorMatrix = pred, seed = seed + i, printFlag = FALSE)
+      
+      # Compute RMSE using external function
+      rmse_vec[i] <- rmse_mask(imp, mask_idx)
+    }
+    
+    results[[pred_name]] <- rmse_vec
+  }
+  
+  return(results)
 }
 
-rmse_results <- data.frame(
-  Predictor_Set = c("UTM", "LatLong"),
-  RMSE = c(rmse_mask(impA, mask),
-           rmse_mask(impB, mask))
+
+sim_results <- simulate_rmse(data_mask, predictor_sets, n_sim = 10, mask_frac = 0.1)
+
+summary_rmse <- data.frame(
+  Predictor_Set = names(sim_results),
+  Mean_RMSE = sapply(sim_results, mean),
+  SD_RMSE = sapply(sim_results, sd),
+  Min_RMSE = sapply(sim_results, min),
+  Max_RMSE = sapply(sim_results, max)
 )
 
-rmse_results
-
+summary_rmse
 
 ```
