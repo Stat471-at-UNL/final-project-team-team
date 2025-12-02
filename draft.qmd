@@ -1,5 +1,5 @@
 ---
-title: "draft"
+title: "STAT 494 Final Project Draft"
 format: html
 editor: visual
 ---
