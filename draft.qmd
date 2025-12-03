@@ -142,6 +142,125 @@ filter_df %>%
 ```
 
 The `vis_miss()` plot shows that occurence of missing values in our data.
+### Histogram and Spinogram for each Variable of Interest
+
+#### `Bedrooms`
+
+```{r, warning = F}
+histogram <- 
+  filter_df %>% 
+  ggplot(aes(bedrooms, fill = is.na(price))) + 
+  geom_histogram(binwidth = 1)
+
+spinogram <- 
+  filter_df %>% 
+  ggplot(aes(bedrooms, fill = is.na(price))) + 
+  geom_histogram(binwidth = 1, position = "fill") + 
+  labs(
+    y = "proportion"
+  )
+
+histogram/spinogram
+```
+#### `Beds`
+
+```{r, warning = F}
+histogram <- 
+  filter_df %>% 
+  ggplot(aes(beds, fill = is.na(price))) + 
+  geom_histogram(binwidth = 1)
+
+spinogram <- 
+  filter_df %>% 
+  ggplot(aes(beds, fill = is.na(price))) + 
+  geom_histogram(binwidth = 1, position = "fill") + 
+  labs(
+    y = "proportion"
+  )
+
+histogram/spinogram
+```
+
+#### `Bathrooms`
+
+```{r, warning = F}
+
+histogram <- 
+  filter_df %>% 
+  ggplot(aes(bathrooms, fill = is.na(price))) + 
+  geom_histogram(binwidth = 1)
+
+spinogram <- 
+  filter_df %>% 
+  ggplot(aes(bathrooms, fill = is.na(price))) + 
+  geom_histogram(binwidth = 1, position = "fill") + 
+  labs(
+    y = "proportion"
+  )
+
+histogram/spinogram
+```
+
+#### `Accomodates`
+
+```{r, warning = F}
+
+histogram <- 
+  filter_df %>% 
+  ggplot(aes(accommodates, fill = is.na(price))) + 
+  geom_histogram(binwidth = 1)
+
+spinogram <- 
+  filter_df %>% 
+  ggplot(aes(accommodates, fill = is.na(price))) + 
+  geom_histogram(binwidth = 1, position = "fill") + 
+  labs(
+    y = "proportion"
+  )
+
+histogram/spinogram
+```
+
+#### Host Response Rate
+
+```{r, warning = F}
+
+histogram <- 
+  filter_df %>% 
+  ggplot(aes(host_response_rate, fill = is.na(price))) + 
+  geom_histogram(bins = 15)
+
+spinogram <- 
+  filter_df %>% 
+  ggplot(aes(host_response_rate, fill = is.na(price))) + 
+  geom_histogram(bins = 15, position = "fill") + 
+  labs(
+    y = "proportion"
+  )
+
+histogram/spinogram
+```
+
+#### Host Acceptance Rate
+
+```{r,warning = T}
+
+histogram <- 
+  filter_df %>% 
+  ggplot(aes(host_acceptance_rate, fill = is.na(price))) + 
+  geom_histogram(bins = 15)
+
+spinogram <- 
+  filter_df %>% 
+  ggplot(aes(host_acceptance_rate, fill = is.na(price))) + 
+  geom_histogram(bins = 15, position = "fill") + 
+  labs(
+    y = "proportion"
+  )
+
+histogram/spinogram
+```
+
 
 ### `mcar_test`
 
@@ -595,4 +714,3 @@ rmse_model <- aov(rmse~predictors,rmse_list)
 
 anova(rmse_model)
 ```
-
