@@ -132,7 +132,6 @@ filter_df$host_acceptance_rate <- as.numeric(sub("%", "", filter_df$host_accepta
 filter_df$bathrooms <- ifelse(is.na(filter_df$bathrooms), as.numeric(sub(" .*", "", filter_df$bathrooms_text)), filter_df$bathrooms)
 ```
 
-
 ### Info about data, `skim()`
 
 ```{r}
@@ -177,6 +176,7 @@ spinogram <-
 
 histogram/spinogram
 ```
+
 #### `Beds`
 
 ```{r, warning = F}
@@ -315,7 +315,6 @@ ggplot(filter_df, aes(x = neighbourhood_group_cleansed, y = price)) +
 ggplot(filter_df, aes(x = neighbourhood_group_cleansed, y = price)) +
   geom_point()
 ```
-
 
 The next step in the analysis will be to build a model with price as the response variable. The predictors will be values that are suspected to be indicators of price such as beds, lat and long, accommodates, bathrooms, etc. This model will then be run and coefficients values and significance will be documented. This will all be done without imputation.
 
