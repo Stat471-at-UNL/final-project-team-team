@@ -11,6 +11,7 @@ library(skimr)
 library(visdat)
 library(mice)
 library(rapportools) # added, couldn't render is.empty() w/out it
+library(patchwork) # needed for stacking graphs together nicely
 source("data_pull.R")
 ```
 
@@ -72,6 +73,8 @@ variables
 
 The `price` variable is our variable of interest since we found that several observations had missing price variables. Based on other variables such as `beds`, `bathrooms`, `property_type`, and `neighborhood`, we believe that we could accurately predict the missing prices for NYC Airbnbs. All of the variables that we deemed important are listed above along with their description.
 
+### Cleaning
+
 Some more small cleaning was done in order to visualize and find missing values. Some missing values were listing as `N/A` or left blank . This was fixed so that all missing values were listed as `NA` values.
 
 ```{r}
@@ -120,6 +123,16 @@ filter_df <-
   )
 ```
 
+```{r}
+# host response rate/acceptance rate cleaning
+# as well as some bathrooms/bathrooms_text cleaning
+
+filter_df$host_response_rate <- as.numeric(sub("%", "", filter_df$host_response_rate)) / 100
+filter_df$host_acceptance_rate <- as.numeric(sub("%", "", filter_df$host_acceptance_rate)) / 100
+filter_df$bathrooms <- ifelse(is.na(filter_df$bathrooms), as.numeric(sub(" .*", "", filter_df$bathrooms_text)), filter_df$bathrooms)
+```
+
+
 ### Info about data, `skim()`
 
 ```{r}
@@ -137,10 +150,131 @@ The next step in the analysis will be to analyze the missing pattern in our data
 ```{r}
 filter_df %>% 
   arrange(price) %>% 
-  vis_miss(., warn_large_data = F)
+  vis_miss(., warn_large_data = F) + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5))
+
 ```
 
-The `vis_miss()` plot shows that occurence of missing values in our data.
+The `vis_miss()` plot shows that occurrence of missing values in our data.
+
+### Histogram and Spinogram for each Variable of Interest
+
+#### `Bedrooms`
+
+```{r, warning = F}
+histogram <- 
+  filter_df %>% 
+  ggplot(aes(bedrooms, fill = is.na(price))) + 
+  geom_histogram(binwidth = 1)
+
+spinogram <- 
+  filter_df %>% 
+  ggplot(aes(bedrooms, fill = is.na(price))) + 
+  geom_histogram(binwidth = 1, position = "fill") + 
+  labs(
+    y = "proportion"
+  )
+
+histogram/spinogram
+```
+#### `Beds`
+
+```{r, warning = F}
+histogram <- 
+  filter_df %>% 
+  ggplot(aes(beds, fill = is.na(price))) + 
+  geom_histogram(binwidth = 1)
+
+spinogram <- 
+  filter_df %>% 
+  ggplot(aes(beds, fill = is.na(price))) + 
+  geom_histogram(binwidth = 1, position = "fill") + 
+  labs(
+    y = "proportion"
+  )
+
+histogram/spinogram
+```
+
+#### `Bathrooms`
+
+```{r, warning = F}
+
+histogram <- 
+  filter_df %>% 
+  ggplot(aes(bathrooms, fill = is.na(price))) + 
+  geom_histogram(binwidth = 1)
+
+spinogram <- 
+  filter_df %>% 
+  ggplot(aes(bathrooms, fill = is.na(price))) + 
+  geom_histogram(binwidth = 1, position = "fill") + 
+  labs(
+    y = "proportion"
+  )
+
+histogram/spinogram
+```
+
+#### `Accomodates`
+
+```{r, warning = F}
+
+histogram <- 
+  filter_df %>% 
+  ggplot(aes(accommodates, fill = is.na(price))) + 
+  geom_histogram(binwidth = 1)
+
+spinogram <- 
+  filter_df %>% 
+  ggplot(aes(accommodates, fill = is.na(price))) + 
+  geom_histogram(binwidth = 1, position = "fill") + 
+  labs(
+    y = "proportion"
+  )
+
+histogram/spinogram
+```
+
+#### Host Response Rate
+
+```{r, warning = F}
+
+histogram <- 
+  filter_df %>% 
+  ggplot(aes(host_response_rate, fill = is.na(price))) + 
+  geom_histogram(bins = 15)
+
+spinogram <- 
+  filter_df %>% 
+  ggplot(aes(host_response_rate, fill = is.na(price))) + 
+  geom_histogram(bins = 15, position = "fill") + 
+  labs(
+    y = "proportion"
+  )
+
+histogram/spinogram
+```
+
+#### Host Acceptance Rate
+
+```{r,warning = T}
+
+histogram <- 
+  filter_df %>% 
+  ggplot(aes(host_acceptance_rate, fill = is.na(price))) + 
+  geom_histogram(bins = 15)
+
+spinogram <- 
+  filter_df %>% 
+  ggplot(aes(host_acceptance_rate, fill = is.na(price))) + 
+  geom_histogram(bins = 15, position = "fill") + 
+  labs(
+    y = "proportion"
+  )
+
+histogram/spinogram
+```
 
 ### `mcar_test`
 
@@ -162,7 +296,13 @@ filter_df %>%
 
 The price variable was tested against beds along with latitude and longitude with little's MCAR test. The results show that the data is not missing completely at random which is shown by the significance in the previous tests. These tests results tell us that the price variable's missingness is dependent upon other variables within the data.
 
-```{r}
+```{r, eval = F, echo = F}
+# **I am going to move the cleaning in this chunk to a new chunk in the new `Cleaning` section I made, I will leave the ggplot here however. This current code chunk will be set to `eval = FALSE` and a new one will be made under it with just the ggplot**
+
+# If this is ok please just delete this chunk
+
+# If not please delete the new chunks made
+
 filter_df$host_response_rate <- as.numeric(sub("%", "", filter_df$host_response_rate)) / 100
 filter_df$host_acceptance_rate <- as.numeric(sub("%", "", filter_df$host_acceptance_rate)) / 100
 filter_df$bathrooms <- ifelse(is.na(filter_df$bathrooms), as.numeric(sub(" .*", "", filter_df$bathrooms_text)), filter_df$bathrooms)
@@ -170,6 +310,12 @@ filter_df$bathrooms <- ifelse(is.na(filter_df$bathrooms), as.numeric(sub(" .*", 
 ggplot(filter_df, aes(x = neighbourhood_group_cleansed, y = price)) +
   geom_point()
 ```
+
+```{r, warning = F}
+ggplot(filter_df, aes(x = neighbourhood_group_cleansed, y = price)) +
+  geom_point()
+```
+
 
 The next step in the analysis will be to build a model with price as the response variable. The predictors will be values that are suspected to be indicators of price such as beds, lat and long, accommodates, bathrooms, etc. This model will then be run and coefficients values and significance will be documented. This will all be done without imputation.
 
