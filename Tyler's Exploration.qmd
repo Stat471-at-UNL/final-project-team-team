@@ -59,7 +59,6 @@ model1 <- glm(price ~ latitude + longitude + bathrooms + bedrooms, family = Gamm
 
 
 summary(model1)
-
 exp(coef(model1))
 ```
 
