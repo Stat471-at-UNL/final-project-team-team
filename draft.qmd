@@ -1,4 +1,3 @@
-
 ---
 title: "draft"
 format: html
@@ -7,6 +6,7 @@ editor: visual
 
 ```{r setup, echo = F, message = F, warning = F, output = F}
 library(tidyverse)
+library(patchwork)
 library(naniar)
 library(skimr)
 library(visdat)
@@ -142,6 +142,7 @@ filter_df %>%
 ```
 
 The `vis_miss()` plot shows that occurence of missing values in our data.
+
 ### Histogram and Spinogram for each Variable of Interest
 
 #### `Bedrooms`
@@ -162,6 +163,7 @@ spinogram <-
 
 histogram/spinogram
 ```
+
 #### `Beds`
 
 ```{r, warning = F}
@@ -224,43 +226,42 @@ histogram/spinogram
 #### Host Response Rate
 
 ```{r, warning = F}
-
-histogram <- 
-  filter_df %>% 
-  ggplot(aes(host_response_rate, fill = is.na(price))) + 
-  geom_histogram(bins = 15)
-
-spinogram <- 
-  filter_df %>% 
-  ggplot(aes(host_response_rate, fill = is.na(price))) + 
-  geom_histogram(bins = 15, position = "fill") + 
-  labs(
-    y = "proportion"
-  )
-
-histogram/spinogram
+# 
+# histogram <- 
+#   filter_df %>% 
+#   ggplot(aes(host_response_rate, fill = is.na(price))) + 
+#   geom_histogram(bins = 15)
+# 
+# spinogram <- 
+#   filter_df %>% 
+#   ggplot(aes(host_response_rate, fill = is.na(price))) + 
+#   geom_histogram(bins = 15, position = "fill") + 
+#   labs(
+#     y = "proportion"
+#   )
+# 
+# histogram/spinogram
 ```
 
 #### Host Acceptance Rate
 
-```{r,warning = T}
+```{r,warning = F}
 
-histogram <- 
-  filter_df %>% 
-  ggplot(aes(host_acceptance_rate, fill = is.na(price))) + 
-  geom_histogram(bins = 15)
-
-spinogram <- 
-  filter_df %>% 
-  ggplot(aes(host_acceptance_rate, fill = is.na(price))) + 
-  geom_histogram(bins = 15, position = "fill") + 
-  labs(
-    y = "proportion"
-  )
-
-histogram/spinogram
+# histogram <- 
+#   filter_df %>% 
+#   ggplot(aes(host_acceptance_rate, fill = is.na(price))) + 
+#   geom_histogram(bins = 15)
+# 
+# spinogram <- 
+#   filter_df %>% 
+#   ggplot(aes(host_acceptance_rate, fill = is.na(price))) + 
+#   geom_histogram(bins = 15, position = "fill") + 
+#   labs(
+#     y = "proportion"
+#   )
+# 
+# histogram/spinogram
 ```
-
 
 ### `mcar_test`
 
@@ -539,8 +540,6 @@ exp(pooled$pooled$estimate)
 ```
 
 ```{r}
-densityplot(impA)
-densityplot(imp)
 
 
 
@@ -685,7 +684,7 @@ simulate_rmse <- function(data, predictor_sets, n_sim = 10, mask_frac = 0.1, m =
 }
 
 
-sim_results <- simulate_rmse(data_mask, predictor_sets, n_sim = 50, mask_frac = 0.1)
+sim_results <- simulate_rmse(data_mask, predictor_sets, n_sim = 10, mask_frac = 0.1)
 
 summary_rmse <- data.frame(
   Predictor_Set = names(sim_results),
@@ -695,7 +694,7 @@ summary_rmse <- data.frame(
   Max_RMSE = sapply(sim_results, max)
 )
 
-summary_rmse$SE <- summary_rmse$SD_RMSE/sqrt(50)
+summary_rmse$SE <- summary_rmse$SD_RMSE/sqrt(10)
 summary_rmse$CI_lower <- summary_rmse$Mean_RMSE - 1.96*(summary_rmse$SE)
 summary_rmse$CI_upper <- summary_rmse$Mean_RMSE + 1.96*(summary_rmse$SE)
 
