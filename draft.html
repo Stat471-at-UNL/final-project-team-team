@@ -606,10 +606,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>It is important to note that some columns, such as <code>host_response_rate</code> is listed as a character variable because their values are formatted as “50%”, “32%”, “xx%”…</p>
 <p>Further analysis should make sure the columns selected are formatted correctly.</p>
-<p>The next step in the analysis will be to analyze the missing pattern in our data especially for the price variable.</p>
-</section>
-<section id="vis_miss-visualization" class="level3">
-<h3 class="anchored" data-anchor-id="vis_miss-visualization"><code>vis_miss</code> visualization</h3>
+<p>The next step in the analysis will be to analyze the missing pattern in our data especially for the price variable. ### <code>vis_miss</code> visualization</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -699,6 +696,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>The price variable was tested against beds along with latitude and longitude with little’s MCAR test. The results show that the data is not missing completely at random which is shown by the significance in the previous tests. These tests results tell us that the price variable’s missingness is dependent upon other variables within the data.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="draft_files/figure-html/cleaning%20and%20dotplot%20chunk-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 <div class="cell">
 <div class="cell-output-display">
 <div>
