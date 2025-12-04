@@ -1,0 +1,363 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+%
+\documentclass[
+  letterpaper,
+  DIV=11,
+  numbers=noendperiod]{scrartcl}
+
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else  
+    % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+% Make \paragraph and \subparagraph free-standing
+\ifx\paragraph\undefined\else
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+
+\KOMAoption{captions}{tableheading}
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\AtBeginDocument{%
+\ifdefined\contentsname
+  \renewcommand*\contentsname{Table of contents}
+\else
+  \newcommand\contentsname{Table of contents}
+\fi
+\ifdefined\listfigurename
+  \renewcommand*\listfigurename{List of Figures}
+\else
+  \newcommand\listfigurename{List of Figures}
+\fi
+\ifdefined\listtablename
+  \renewcommand*\listtablename{List of Tables}
+\else
+  \newcommand\listtablename{List of Tables}
+\fi
+\ifdefined\figurename
+  \renewcommand*\figurename{Figure}
+\else
+  \newcommand\figurename{Figure}
+\fi
+\ifdefined\tablename
+  \renewcommand*\tablename{Table}
+\else
+  \newcommand\tablename{Table}
+\fi
+}
+\@ifpackageloaded{float}{}{\usepackage{float}}
+\floatstyle{ruled}
+\@ifundefined{c@chapter}{\newfloat{codelisting}{h}{lop}}{\newfloat{codelisting}{h}{lop}[chapter]}
+\floatname{codelisting}{Listing}
+\newcommand*\listoflistings{\listof{codelisting}{List of Listings}}
+\makeatother
+\makeatletter
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
+\makeatother
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\usepackage{bookmark}
+
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  pdftitle={index},
+  colorlinks=true,
+  linkcolor={blue},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
+
+\title{index}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+sample text
+
+\begin{verbatim}
+        id                           listing_url  scrape_id last_scraped
+1 40824219 https://www.airbnb.com/rooms/40824219 2.0251e+13   2025-10-02
+2 40833186 https://www.airbnb.com/rooms/40833186 2.0251e+13   2025-10-02
+3 40837137 https://www.airbnb.com/rooms/40837137 2.0251e+13   2025-10-02
+4 40838018 https://www.airbnb.com/rooms/40838018 2.0251e+13   2025-10-02
+5 40839416 https://www.airbnb.com/rooms/40839416 2.0251e+13   2025-10-02
+6 40843980 https://www.airbnb.com/rooms/40843980 2.0251e+13   2025-10-01
+           source                                             name
+1     city scrape       Room close to  Manhattan for FEMALE guests
+2 previous scrape      Soho LES East village private room downtown
+3 previous scrape         Sunset Park - Quiet and close to subway!
+4 previous scrape                 Cozy One Bedroom in Clinton Hill
+5     city scrape        🪴XL dojo 🌾 shared green yogi palace apt 🌿
+6     city scrape Cozy 2 Bedroom Spacious Apartment near Manhattan
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          description
+1                                                                                                                                                                                                                                                                                                          This cozy spacious room includes a twin size bed, desk and chair for work, night stand and a wardrobe. Shared Bathroom & kitchen. <br />3 min walking to subway station. <br />15 minutes to Times Square!
+2                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+3                                                                                                                                Cozy, lovely bedroom with a comfortable full size bed , modern desk and chair. <br />You will share the bathroom and kitchen with the other two roommates.<br />Right in the sunset park of Brooklyn. Only 2 Blocks from the R Trains 45th street station , 20 min to Wall Street and 30min to NYU washington square.<br />Very close to a small park.<br />Note: only accept female
+4                                                                                                                                                            This sunny one-bedroom apartment is located in the heart of Brooklyn. The neighborhood is filled with gorgeous brownstones and tree-lined streets and is surrounded by wonderful amenities like the post-office and 24-hour laundromat only a block away. Also enjoy bars, cafes, and incredible restaurants just steps away from this amazing location.
+5                                                                                                                        New York City living at its best. A massive, cozy, and green penthouse in the heart of the East Village. A spacious two floor-apartment, full of light, plants, and all you need to fully enjoy your stay. Prime location, private access to a shared-1,000 square ft rooftop. Within walking distance of the best bars, restaurants, landmarks and art galleries in the South of Manhattan!
+6 This 2 bed. furnished apt on the 2nd fl. in Ozone Park, Queens, provides guests with the experience of real New York. Located in a diverse and friendly neighborhood and is close to the A train Rockaway Blvd station, JFK Airport & bus lines. Many restaurants and shopping retailers close by. The apartment features wood floors, crown molding and recessed lighting. The kitchen is equipped with all you need to prepare meals to enjoy at home.  Multiple windows in rooms prove lots of natural lighting.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            neighborhood_overview
+1                                                                                                                                                                                                                                                                                                                                                                                                                                           Sunnyside is a safe residental area. <br />The apartment is one and half  block away from the 7 train ( 3min walk) and 15 minutes to Manhattan. <br />The neighborhood is a lovely, quiet area. Restaurants,  bars, local markets and nice shopping centers, banks, pharmacies are all easily accessible and within walking distance.
+2                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+3                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     the sunset park of Brooklyn
+4                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            Clinton Hill is one of the best neighborhoods in Brooklyn. This location has the perfect mix of neighborhood quiet and city life hustle and bustle. Nestled in between Fort Greene and Bed Stuy, Clinton Hill gives you easy access to the best restaurants and bars in the borough.
+5                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 Live like the Ramones > The East Village is still cooler than you heard it was!
+6 The borough of Queens offers plenty of outdoor recreation space and easy access to Manhattan. For peaceful scenery and outdoor recreation head to Forest Park (1.2 mi/1.9km away) where you’ll find hiking trails and bridle paths for horseback riding, plus a public golf course and carousel for the kids. Along Rockaway Boulevard you’ll find shopping like Marshall’s for discount designer clothes and more and Modell's Sporting Goods for sportswear. La Cabaña Peruana (9304 Liberty Avenue) serves up Peruvian cuisine, while Ozone Pizzeria (9615 Liberty Avenue) has classic NYC pizza and Italian dishes, and IHOP (9801 Liberty Ave) serves up their famous pancakes, all-day breakfast and diner fare. Try your luck at Resorts World Casino (.9mi/1.5km away).
+                                                                                                                                 picture_url
+1                               https://a0.muscache.com/pictures/hosting/Hosting-40824219/original/70ab046b-23cb-4c19-a553-a45a891bb3e9.jpeg
+2                                                                  https://a0.muscache.com/pictures/1f093bbc-936c-4a8d-a386-c1e7f9bffe15.jpg
+3                                                                  https://a0.muscache.com/pictures/01c4e91e-4012-4647-a264-c649794b2fc1.jpg
+4                                                                  https://a0.muscache.com/pictures/9322d54a-6eb7-41ef-afb2-d67ae6bfe6dd.jpg
+5 https://a0.muscache.com/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6NDA4Mzk0MTY%3D/original/2d03a7ee-3d4f-4c8a-b333-fa29696fef28.jpeg
+6                                                                  https://a0.muscache.com/pictures/c5ca4ce9-8cb5-4a26-a118-28709b2c7ba0.jpg
+    host_id                                    host_url host_name host_since
+1 317540555 https://www.airbnb.com/users/show/317540555     Sevil 2019-12-14
+2  68718914  https://www.airbnb.com/users/show/68718914  Patricio 2016-04-24
+3 317770098 https://www.airbnb.com/users/show/317770098      Xuan 2019-12-15
+4  17211451  https://www.airbnb.com/users/show/17211451    Jamila 2014-06-24
+5   4765305   https://www.airbnb.com/users/show/4765305    Haffro 2013-01-19
+6 295370107 https://www.airbnb.com/users/show/295370107 Dr. Tania 2019-09-16
+            host_location
+1                        
+2                        
+3 New York, United States
+4            New York, NY
+5            New York, NY
+6 New York, United States
+                                                                                                                                     host_about
+1                                                                                                                                              
+2                                                                                                                                              
+3                                                                                                                                              
+4                                                               Hello, I’m a global communications professional living and loving in Brooklyn. 
+5                                                                                                                                              
+6 Hi, I’m Dr. Tania Sheikh. I’m a physician at a local NYC hospital and I’m a mother of three kids. My husband is a former high school teacher.
+  host_response_time host_response_rate host_acceptance_rate host_is_superhost
+1 within a few hours               100%                  54%                 t
+2                N/A                N/A                  N/A                 f
+3                N/A                N/A                  N/A                 f
+4                N/A                N/A                  N/A                 f
+5       within a day                90%                  69%                 t
+6 within a few hours                75%                 100%                 t
+                                                                                          host_thumbnail_url
+1 https://a0.muscache.com/im/pictures/user/771f9d60-559e-43f8-90b6-acaf31f81875.jpg?aki_policy=profile_small
+2 https://a0.muscache.com/im/pictures/user/0b4f989e-4e0a-45ee-8a7f-6b3a8930e7ce.jpg?aki_policy=profile_small
+3 https://a0.muscache.com/im/pictures/user/2c4b164f-513b-4c06-8500-10c8fe079528.jpg?aki_policy=profile_small
+4     https://a0.muscache.com/im/users/17211451/profile_pic/1403641887/original.jpg?aki_policy=profile_small
+5 https://a0.muscache.com/im/pictures/user/9565915b-93d8-4c72-96e4-d2538a8ff72c.jpg?aki_policy=profile_small
+6 https://a0.muscache.com/im/pictures/user/5d78b12e-948e-4fc1-9663-e1d823dfef92.jpg?aki_policy=profile_small
+                                                                                               host_picture_url
+1 https://a0.muscache.com/im/pictures/user/771f9d60-559e-43f8-90b6-acaf31f81875.jpg?aki_policy=profile_x_medium
+2 https://a0.muscache.com/im/pictures/user/0b4f989e-4e0a-45ee-8a7f-6b3a8930e7ce.jpg?aki_policy=profile_x_medium
+3 https://a0.muscache.com/im/pictures/user/2c4b164f-513b-4c06-8500-10c8fe079528.jpg?aki_policy=profile_x_medium
+4     https://a0.muscache.com/im/users/17211451/profile_pic/1403641887/original.jpg?aki_policy=profile_x_medium
+5 https://a0.muscache.com/im/pictures/user/9565915b-93d8-4c72-96e4-d2538a8ff72c.jpg?aki_policy=profile_x_medium
+6 https://a0.muscache.com/im/pictures/user/5d78b12e-948e-4fc1-9663-e1d823dfef92.jpg?aki_policy=profile_x_medium
+  host_neighbourhood host_listings_count host_total_listings_count
+1          Sunnyside                   3                         3
+2                                      1                         1
+3        Sunset Park                   1                         1
+4       Clinton Hill                   1                         3
+5      Alphabet City                   8                        16
+6         Ozone Park                   2                         2
+  host_verifications host_has_profile_pic host_identity_verified
+1 ['email', 'phone']                    t                      t
+2          ['phone']                    t                      t
+3 ['email', 'phone']                    t                      t
+4 ['email', 'phone']                    t                      t
+5 ['email', 'phone']                    t                      t
+6 ['email', 'phone']                    t                      t
+            neighbourhood neighbourhood_cleansed neighbourhood_group_cleansed
+1 Neighborhood highlights              Sunnyside                       Queens
+2                                         Nolita                    Manhattan
+3 Neighborhood highlights            Sunset Park                     Brooklyn
+4 Neighborhood highlights           Clinton Hill                     Brooklyn
+5 Neighborhood highlights           East Village                    Manhattan
+6 Neighborhood highlights             Ozone Park                       Queens
+  latitude longitude                      property_type       room_type
+1 40.74698 -73.91763          Private room in townhouse    Private room
+2 40.72314 -73.99323 Private room in serviced apartment    Private room
+3 40.64607 -74.00552               Private room in home    Private room
+4 40.68370 -73.96115                 Entire rental unit Entire home/apt
+5 40.72147 -73.98270        Private room in rental unit    Private room
+6 40.68230 -73.84545                        Entire home Entire home/apt
+  accommodates bathrooms bathrooms_text bedrooms beds
+1            1         1  1 shared bath        1    1
+2            2        NA  1 shared bath        1   NA
+3            1        NA  1 shared bath       NA   NA
+4            1        NA         1 bath        1   NA
+5            1         2 2 shared baths        1    1
+6            6         1         1 bath        2    3
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         amenities
+1                                                                                    ["Extra pillows and blankets", "Dedicated workspace", "Laundromat nearby", "Clothing storage: wardrobe and dresser", "Iron", "Hot water kettle", "Drying rack for clothing", "Refrigerator", "Coffee maker", "Cleaning products", "Window AC unit", "Mosquito net", "Smoke alarm", "Luggage dropoff allowed", "Wifi", "Carbon monoxide alarm", "Oven", "Dining table", "Stove", "Heating", "Lock on bedroom door", "Hot water", "Hangers", "Free street parking", "Long term stays allowed", "Bed linens", "Dishes and silverware", "Garden view", "Kitchen"]
+2                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ["Hot water", "Air conditioning", "Wifi", "TV", "Dryer", "Washer", "Essentials", "Heating"]
+3                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ["Smoke alarm", "Kitchen", "Hair dryer", "Wifi", "Shampoo", "Private living room", "Heating", "Lock on bedroom door", "Private entrance"]
+4                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          ["Hot water", "Smoke alarm", "Air conditioning", "Wifi", "Carbon monoxide alarm", "TV", "Free parking on premises", "Essentials", "Heating", "Kitchen"]
+5 ["Dedicated workspace", "Microwave", "Elevator", "Dryer", "Iron", "Private living room", "Washer", "Essentials", "Hot water kettle", "Park view", "Self check-in", "Smoking allowed", "Hair dryer", "Outdoor dining area", "Central heating", "Refrigerator", "Coffee maker", "Free parking on premises", "Smoke alarm", "Breakfast", "Wifi", "Portable heater", "Shampoo", "Outdoor furniture", "Smart lock", "Fire extinguisher", "Shared gym in building", "Patio or balcony", "Hot water", "Hangers", "Air conditioning", "Exercise equipment", "City skyline view", "Radiant heating", "Dishes and silverware", "Kitchen", "First aid kit"]
+6                                                                                                                                                                                                                                                                                                                                                                                                                          ["Hangers", "Smoke alarm", "Exterior security cameras on property", "Hair dryer", "Air conditioning", "Wifi", "Carbon monoxide alarm", "Shampoo", "TV", "Iron", "Essentials", "Heating", "Kitchen", "Private entrance"]
+   price minimum_nights maximum_nights minimum_minimum_nights
+1 $66.00             30            365                     30
+2                    30           1125                     30
+3                    30            180                     30
+4                    90             90                     90
+5 $76.00             30            900                     30
+6 $97.00             30            365                     30
+  maximum_minimum_nights minimum_maximum_nights maximum_maximum_nights
+1                     30                    365                    365
+2                     30                   1125                   1125
+3                     30                    180                    180
+4                     90                   1125                   1125
+5                     30                    900                    900
+6                     30                   1125                   1125
+  minimum_nights_avg_ntm maximum_nights_avg_ntm calendar_updated
+1                     30                    365               NA
+2                     30                   1125               NA
+3                     30                    180               NA
+4                     90                   1125               NA
+5                     30                    900               NA
+6                     30                   1125               NA
+  has_availability availability_30 availability_60 availability_90
+1                t              16              46              76
+2                t               0               0               0
+3                                0               0               0
+4                t               0               0               0
+5                t              26              51              78
+6                t              29              59              89
+  availability_365 calendar_last_scraped number_of_reviews
+1               77            2025-10-02                16
+2                0            2025-10-02                 0
+3                0            2025-10-02                 1
+4                0            2025-10-02                 1
+5              168            2025-10-02                20
+6              364            2025-10-01                93
+  number_of_reviews_ltm number_of_reviews_l30d availability_eoy
+1                     2                      0               77
+2                     0                      0                0
+3                     0                      0                0
+4                     0                      0                0
+5                     0                      0               79
+6                     1                      0               91
+  number_of_reviews_ly estimated_occupancy_l365d estimated_revenue_l365d
+1                    0                       120                    7920
+2                    0                         0                      NA
+3                    0                         0                      NA
+4                    0                         0                      NA
+5                    1                         0                       0
+6                    0                        60                    5820
+  first_review last_review review_scores_rating review_scores_accuracy
+1   2019-12-25  2025-08-06                 4.81                   4.81
+2                                            NA                     NA
+3   2020-01-19  2020-01-19                 5.00                   5.00
+4   2020-03-01  2020-03-01                 5.00                   5.00
+5   2021-09-10  2024-09-01                 4.95                   4.80
+6   2020-07-06  2025-01-25                 4.14                   4.26
+  review_scores_cleanliness review_scores_checkin review_scores_communication
+1                      4.88                  4.81                        4.88
+2                        NA                    NA                          NA
+3                      4.00                  5.00                        5.00
+4                      5.00                  5.00                        5.00
+5                      4.85                  5.00                        5.00
+6                      4.09                  4.45                        4.06
+  review_scores_location review_scores_value license instant_bookable
+1                   4.94                4.69                        f
+2                     NA                  NA                        t
+3                   5.00                5.00                        f
+4                   5.00                5.00                        t
+5                   5.00                4.95                        f
+6                   4.46                4.00                        f
+  calculated_host_listings_count calculated_host_listings_count_entire_homes
+1                              3                                           0
+2                              1                                           0
+3                              1                                           0
+4                              1                                           1
+5                              8                                           0
+6                              2                                           2
+  calculated_host_listings_count_private_rooms
+1                                            3
+2                                            1
+3                                            1
+4                                            0
+5                                            8
+6                                            0
+  calculated_host_listings_count_shared_rooms reviews_per_month
+1                                           0              0.23
+2                                           0                NA
+3                                           0              0.01
+4                                           0              0.01
+5                                           0              0.40
+6                                           0              1.46
+\end{verbatim}
+
+
+
+\end{document}
