@@ -294,7 +294,7 @@ filter_df %>%
 
 The price variable was tested against beds along with latitude and longitude with little's MCAR test. The results show that the data is not missing completely at random which is shown by the significance in the previous tests. These tests results tell us that the price variable's missingness is dependent upon other variables within the data.
 
-```{r cleaning and dotplot chunk}
+```{r}
 # I think the 2 spinograms aren't working due to this code being after the spinograms are made
 # I am going to copy/paste the "cleaning" section of this code 
 # Feel free to delete all these comments if things work
