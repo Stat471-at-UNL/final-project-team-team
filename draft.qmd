@@ -128,8 +128,7 @@ It is important to note that some columns, such as `host_response_rate` is liste
 
 Further analysis should make sure the columns selected are formatted correctly.
 
-The next step in the analysis will be to analyze the missing pattern in our data especially for the price variable.
-### `vis_miss` visualization
+The next step in the analysis will be to analyze the missing pattern in our data especially for the price variable. \### `vis_miss` visualization
 
 ```{r, echo = F, message = F, warning = F}
 filter_df %>% 
@@ -279,6 +278,7 @@ filter_df %>%
 ```
 
 The price variable was tested against beds along with latitude and longitude with little's MCAR test. The results show that the data is not missing completely at random which is shown by the significance in the previous tests. These tests results tell us that the price variable's missingness is dependent upon other variables within the data.
+
 ```{r cleaning and dotplot chunk, echo = F, message = F, warning = F}
 # I think the 2 spinograms aren't working due to this code being after the spinograms are made
 # I am going to copy/paste the "cleaning" section of this code 
@@ -293,7 +293,6 @@ The price variable was tested against beds along with latitude and longitude wit
 ggplot(filter_df, aes(x = neighbourhood_group_cleansed, y = price)) +
   geom_point()
 ```
-
 
 ```{r, echo = F, message = F, warning = F}
 filter_df$host_response_rate <- as.numeric(sub("%", "", filter_df$host_response_rate)) / 100
@@ -388,7 +387,7 @@ Note that, `latitude`, `longitude`, and `accomodates` are the only variables of 
 
 Imputing missing values for the variables of interest using predictive multiple matching.
 
-```{r, output = F, message = F, warning = F}
+```{r, output = F, message = F, warning = F,include = F}
 # Run multiple imputation
 airbnb_imputation <- 
   filter_df %>% 
@@ -413,11 +412,11 @@ In a perfect world, the imputed values should follow closely the distribution of
 
 # Restructure the model with the imputed values
 
-```{r, echo = F, message = F, warning = F}
+```{r, echo = F, message = F, warning = F,include = F}
 completed_list <- complete(airbnb_imputation, "all") %>% map(as_tibble)
 ```
 
-```{r, echo = F, message = F, warning = F}
+```{r, echo = F, message = F, warning = F,include = F}
 models <- 
   map(completed_list, ~
         lm(log(price) ~ 
@@ -437,11 +436,10 @@ fit1 <- with(airbnb_imputation,lm(log(price) ~
 
 ```{r, echo = F, message = F, warning = F}
 # Pool results
-pooled <- pool(models)
-summary(pooled)
+pooled <- pool(fit1)
 ```
 
-```{r, echo = F, message = F, warning = F}
+```{r, echo = F, message = F, warning = F,include = F}
 # Pooled coefficients
 pooled_coefficients <- summary(pooled)[, c('term', 'estimate')]
 ```
@@ -473,7 +471,7 @@ Despite these differences, location indicators `latitude` and `longitude` and wh
 
 ### Using UTM in imputation
 
-```{r, echo = F, message = F, warning = F}
+```{r, echo = F, message = F, warning = F,include = F}
 library(sf)
 model_dat <- filter_df %>%
   select(price,latitude,longitude,bedrooms,beds, bathrooms,accommodates,host_is_superhost)
@@ -517,7 +515,10 @@ fit <- with(impA,lm(log(price) ~
              X*Y) )
 
 pooled <- pool(fit)
-kable(summary(pooled))
+
+```
+
+```{r}
 kable(exp(pooled$pooled$estimate))
 ```
 
@@ -545,7 +546,7 @@ kable(total_fit)
 
 ```
 
-```{r, echo = F, message = F, warning = F}
+```{r, echo = F, message = F, warning = F,include = F}
 updates$lat <- model_dat$latitude
 updates$long <- model_dat$longitude
 
@@ -609,12 +610,16 @@ rmse_results <- data.frame(
            rmse_mask(impC,mask))
 )
 
-kable(rmse_results)
+
 
 
 ```
 
-```{r, echo = F, message = F, warning = F}
+```{r}
+kable(rmse_results)
+```
+
+```{r, echo = F, message = F, warning = F,include = F}
 predictor_sets <- list(
   UTM = predA,
   LatLong = predB,
@@ -679,6 +684,10 @@ summary_rmse$CI_upper <- summary_rmse$Mean_RMSE + 1.96*(summary_rmse$SE)
 
 
 
+```
+
+```{r}
+
 kable(summary_rmse)
 
 
@@ -691,4 +700,6 @@ rmse_list <- data.frame(
 rmse_model <- aov(rmse~predictors,rmse_list)
 
 kable(anova(rmse_model))
+
+
 ```
