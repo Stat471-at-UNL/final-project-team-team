@@ -15,7 +15,11 @@ library(skimr)
 library(visdat)
 library(mice)
 library(rapportools) 
+<<<<<<< HEAD
 library(knitr)# added, couldn't render is.empty() w/out it
+=======
+library(knitr)
+>>>>>>> e9d381712a0dc642755604a228d1e139b9580667
 source("data_pull.R")
 ```
 
@@ -36,6 +40,7 @@ When coming across this dataset, we found several missing values in the price of
 # Data Documentation
 
 ```{r}
+<<<<<<< HEAD
 data_documentation <- 
   readr::read_csv(
     "Inside Airbnb Data Dictionary - listings.csv detail v4.3.csv",
@@ -91,5 +96,8 @@ filter_df %>%
   group_by(host_id) %>% 
   tally() %>% 
   arrange(desc(n))
+=======
+head(df)
+>>>>>>> e9d381712a0dc642755604a228d1e139b9580667
 ```
 
