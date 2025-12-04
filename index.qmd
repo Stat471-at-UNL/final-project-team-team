@@ -1,0 +1,23 @@
+---
+title: "index"
+format: pdf
+execute: 
+  echo: false
+  warning: false
+  message: false
+---
+
+sample text
+
+```{r}
+library(tidyverse)
+library(patchwork)
+library(naniar)
+source("data_pull.R")
+```
+
+```{r}
+df %>% 
+  filter(host_is_superhost =="t")
+```
+
