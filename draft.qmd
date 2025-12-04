@@ -6,6 +6,7 @@ editor: visual
 
 ```{r setup, echo = F, message = F, warning = F, output = F}
 library(tidyverse)
+library(patchwork)
 library(naniar)
 library(skimr)
 library(visdat)
@@ -72,6 +73,8 @@ variables
 
 The `price` variable is our variable of interest since we found that several observations had missing price variables. Based on other variables such as `beds`, `bathrooms`, `property_type`, and `neighborhood`, we believe that we could accurately predict the missing prices for NYC Airbnbs. All of the variables that we deemed important are listed above along with their description.
 
+### Cleaning 
+
 Some more small cleaning was done in order to visualize and find missing values. Some missing values were listing as `N/A` or left blank . This was fixed so that all missing values were listed as `NA` values.
 
 ```{r}
@@ -120,6 +123,14 @@ filter_df <-
   )
 ```
 
+```{r}
+# Cleaning section
+filter_df$host_response_rate <- as.numeric(sub("%", "", filter_df$host_response_rate)) / 100
+filter_df$host_acceptance_rate <- as.numeric(sub("%", "", filter_df$host_acceptance_rate)) / 100
+filter_df$bathrooms <- ifelse(is.na(filter_df$bathrooms), as.numeric(sub(" .*", "", filter_df$bathrooms_text)), filter_df$bathrooms)
+```
+
+
 ### Info about data, `skim()`
 
 ```{r}
@@ -137,10 +148,12 @@ The next step in the analysis will be to analyze the missing pattern in our data
 ```{r}
 filter_df %>% 
   arrange(price) %>% 
-  vis_miss(., warn_large_data = F)
+  vis_miss(., warn_large_data = F) + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5))
 ```
 
 The `vis_miss()` plot shows that occurence of missing values in our data.
+
 ### Histogram and Spinogram for each Variable of Interest
 
 #### `Bedrooms`
@@ -161,6 +174,7 @@ spinogram <-
 
 histogram/spinogram
 ```
+
 #### `Beds`
 
 ```{r, warning = F}
@@ -224,15 +238,15 @@ histogram/spinogram
 
 ```{r, warning = F}
 
-histogram <- 
-  filter_df %>% 
-  ggplot(aes(host_response_rate, fill = is.na(price))) + 
+histogram <-
+  filter_df %>%
+  ggplot(aes(host_response_rate, fill = is.na(price))) +
   geom_histogram(bins = 15)
 
-spinogram <- 
-  filter_df %>% 
-  ggplot(aes(host_response_rate, fill = is.na(price))) + 
-  geom_histogram(bins = 15, position = "fill") + 
+spinogram <-
+  filter_df %>%
+  ggplot(aes(host_response_rate, fill = is.na(price))) +
+  geom_histogram(bins = 15, position = "fill") +
   labs(
     y = "proportion"
   )
@@ -242,24 +256,23 @@ histogram/spinogram
 
 #### Host Acceptance Rate
 
-```{r,warning = T}
+```{r,warning = F}
 
-histogram <- 
-  filter_df %>% 
-  ggplot(aes(host_acceptance_rate, fill = is.na(price))) + 
+histogram <-
+  filter_df %>%
+  ggplot(aes(host_acceptance_rate, fill = is.na(price))) +
   geom_histogram(bins = 15)
 
-spinogram <- 
-  filter_df %>% 
-  ggplot(aes(host_acceptance_rate, fill = is.na(price))) + 
-  geom_histogram(bins = 15, position = "fill") + 
+spinogram <-
+  filter_df %>%
+  ggplot(aes(host_acceptance_rate, fill = is.na(price))) +
+  geom_histogram(bins = 15, position = "fill") +
   labs(
     y = "proportion"
   )
 
 histogram/spinogram
 ```
-
 
 ### `mcar_test`
 
@@ -281,11 +294,17 @@ filter_df %>%
 
 The price variable was tested against beds along with latitude and longitude with little's MCAR test. The results show that the data is not missing completely at random which is shown by the significance in the previous tests. These tests results tell us that the price variable's missingness is dependent upon other variables within the data.
 
-```{r}
-filter_df$host_response_rate <- as.numeric(sub("%", "", filter_df$host_response_rate)) / 100
-filter_df$host_acceptance_rate <- as.numeric(sub("%", "", filter_df$host_acceptance_rate)) / 100
-filter_df$bathrooms <- ifelse(is.na(filter_df$bathrooms), as.numeric(sub(" .*", "", filter_df$bathrooms_text)), filter_df$bathrooms)
+```{r cleaning and dotplot chunk}
+# I think the 2 spinograms aren't working due to this code being after the spinograms are made
+# I am going to copy/paste the "cleaning" section of this code 
+# Feel free to delete all these comments if things work
 
+# # Cleaning section
+# filter_df$host_response_rate <- as.numeric(sub("%", "", filter_df$host_response_rate)) / 100
+# filter_df$host_acceptance_rate <- as.numeric(sub("%", "", filter_df$host_acceptance_rate)) / 100
+# filter_df$bathrooms <- ifelse(is.na(filter_df$bathrooms), as.numeric(sub(" .*", "", filter_df$bathrooms_text)), filter_df$bathrooms)
+
+# Dotplot
 ggplot(filter_df, aes(x = neighbourhood_group_cleansed, y = price)) +
   geom_point()
 ```
@@ -538,8 +557,6 @@ exp(pooled$pooled$estimate)
 ```
 
 ```{r}
-densityplot(impA)
-densityplot(imp)
 
 
 
@@ -684,7 +701,7 @@ simulate_rmse <- function(data, predictor_sets, n_sim = 10, mask_frac = 0.1, m =
 }
 
 
-sim_results <- simulate_rmse(data_mask, predictor_sets, n_sim = 50, mask_frac = 0.1)
+sim_results <- simulate_rmse(data_mask, predictor_sets, n_sim = 10, mask_frac = 0.1)
 
 summary_rmse <- data.frame(
   Predictor_Set = names(sim_results),
@@ -694,7 +711,7 @@ summary_rmse <- data.frame(
   Max_RMSE = sapply(sim_results, max)
 )
 
-summary_rmse$SE <- summary_rmse$SD_RMSE/sqrt(50)
+summary_rmse$SE <- summary_rmse$SD_RMSE/sqrt(10)
 summary_rmse$CI_lower <- summary_rmse$Mean_RMSE - 1.96*(summary_rmse$SE)
 summary_rmse$CI_upper <- summary_rmse$Mean_RMSE + 1.96*(summary_rmse$SE)
 
@@ -713,3 +730,4 @@ rmse_model <- aov(rmse~predictors,rmse_list)
 
 anova(rmse_model)
 ```
+>>>>>>> 37a80d3a4c98e24b4e3916216bcdc93e604cc163
