@@ -15,11 +15,7 @@ library(skimr)
 library(visdat)
 library(mice)
 library(rapportools) 
-<<<<<<< HEAD
 library(knitr)# added, couldn't render is.empty() w/out it
-=======
-library(knitr)
->>>>>>> e9d381712a0dc642755604a228d1e139b9580667
 source("data_pull.R")
 ```
 
@@ -40,7 +36,6 @@ When coming across this dataset, we found several missing values in the price of
 # Data Documentation
 
 ```{r}
-<<<<<<< HEAD
 data_documentation <- 
   readr::read_csv(
     "Inside Airbnb Data Dictionary - listings.csv detail v4.3.csv",
@@ -53,8 +48,9 @@ data_documentation <-
 
 ```{r}
 filter_df <-
-  df %>% 
-  filter(host_identity_verified == "t", has_availability == "t")
+  df 
+# %>% 
+  # filter(host_identity_verified == "t", has_availability == "t")
 # %>% select(1,6,7,8,10,13,15,16,17,18,19,23,24,28,29,30:41)
 
 ## fixing missing values
@@ -89,15 +85,52 @@ filter_df <-
 filter_df$host_response_rate <- as.numeric(sub("%", "", filter_df$host_response_rate)) / 100
 filter_df$host_acceptance_rate <- as.numeric(sub("%", "", filter_df$host_acceptance_rate)) / 100
 filter_df$bathrooms <- ifelse(is.na(filter_df$bathrooms), as.numeric(sub(" .*", "", filter_df$bathrooms_text)), filter_df$bathrooms)
+
+## Formatting columns
+
+filter_df <- 
+  filter_df %>% 
+  mutate(
+    across(
+      c(
+        neighbourhood_group_cleansed,
+        neighbourhood_cleansed,
+        property_type, 
+        room_type,
+        host_id,
+        host_is_superhost,
+        host_response_time
+      ), 
+      as.factor
+    )
+  )
 ```
 
-```{r, output = T}
+# Dataset Description
+
+## `Price`
+
+**Summary Statistics** 
+
+```{r}
 filter_df %>% 
-  group_by(host_id) %>% 
+  select(price) %>% 
+  summary() %>% 
+  kable()
+```
+
+
+**Distribution of Price**
+
+```{r}
+ggplot(airbnb_data, aes(x = price)) + 
+  geom_histogram(bins = 1000)
+```
+```{r}
+filter_df %>% 
+  group_by(price) %>% 
   tally() %>% 
-  arrange(desc(n))
-=======
-head(df)
->>>>>>> e9d381712a0dc642755604a228d1e139b9580667
+  arrange(desc(price)) %>% 
+  head(10)
 ```
 
