@@ -69,10 +69,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="draft_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="draft_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="draft_files/libs/bootstrap/bootstrap-bb462d781dde1847d9e3ccf7736099dd.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
-<script src="draft_files/libs/kePrint-0.0.1/kePrint.js"></script>
-
-<link href="draft_files/libs/lightable-0.0.1/lightable.css" rel="stylesheet">
-
 
 
 </head>
@@ -111,15 +107,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="data-documentation" class="level2">
 <h2 class="anchored" data-anchor-id="data-documentation">2. Data Documentation</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>data_documentation <span class="ot">&lt;-</span> </span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  readr<span class="sc">::</span><span class="fu">read_csv</span>(</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Inside Airbnb Data Dictionary - listings.csv detail v4.3.csv"</span>,</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">skip =</span> <span class="dv">7</span>, <span class="co"># removed the first 7 rows</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">col_names =</span> T) <span class="sc">%&gt;%</span> </span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span><span class="sc">:</span>(<span class="dv">79-4</span>)) <span class="co"># removed the last 4 rows</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(data_documentation)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 5
   Field        Type     Calculated Description                         Reference
@@ -131,7 +118,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 5 source       text     &lt;NA&gt;       "One of \"neighbourhood search\" o… &lt;NA&gt;     
 6 name         text     &lt;NA&gt;       "Name of the listing"               &lt;NA&gt;     </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tail</span>(data_documentation)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 5
   Field                                   Type  Calculated Description Reference
@@ -163,212 +149,34 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>The data was downloaded from <a href="insideairbnb.com/get-the-data">Inside Airbnb</a>.</p>
 <p>This data is for New York City, New York, United States. The original data set has 36111 observations of 79 variables. Columns that were not relevant for analysis or provided important information were removed from the data in order for a cleaner data set to work with for further analysis.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>filter_df <span class="ot">&lt;-</span> </span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  df <span class="sc">%&gt;%</span> </span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="dv">1</span>,<span class="dv">6</span>,<span class="dv">7</span>,<span class="dv">8</span>,<span class="dv">10</span>,<span class="dv">13</span>,<span class="dv">15</span>,<span class="dv">16</span>,<span class="dv">17</span>,<span class="dv">18</span>,<span class="dv">19</span>,<span class="dv">23</span>,<span class="dv">24</span>,<span class="dv">28</span>,<span class="dv">29</span>,<span class="dv">30</span><span class="sc">:</span><span class="dv">41</span>)</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>variables <span class="ot">&lt;-</span> data_documentation[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">6</span>,<span class="dv">7</span>,<span class="dv">8</span>,<span class="dv">10</span>,<span class="dv">13</span>,<span class="dv">15</span>,<span class="dv">16</span>,<span class="dv">17</span>,<span class="dv">18</span>,<span class="dv">19</span>,<span class="dv">23</span>,<span class="dv">24</span>,<span class="dv">28</span>,<span class="dv">29</span>,<span class="dv">30</span><span class="sc">:</span><span class="dv">41</span>), <span class="sc">-</span><span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">5</span>)]</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(variables) <span class="sc">%&gt;%</span> kableExtra<span class="sc">::</span><span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="st">"striped"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    kableExtra<span class="sc">::</span><span class="fu">scroll_box</span>(<span class="at">width =</span> <span class="st">"100%"</span>, <span class="at">height =</span> <span class="st">"500px"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:500px; overflow-x: scroll; width:100%; ">
-<table class="table table-striped caption-top table-sm small" data-quarto-postprocess="true">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th" style="text-align: left; position: sticky; top: 0; background-color: #FFFFFF;">Field</th>
-<th data-quarto-table-cell-role="th" style="text-align: left; position: sticky; top: 0; background-color: #FFFFFF;">Type</th>
-<th data-quarto-table-cell-role="th" style="text-align: left; position: sticky; top: 0; background-color: #FFFFFF;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">id</td>
-<td style="text-align: left;">integer</td>
-<td style="text-align: left;">Airbnb's unique identifier for the listing</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">name</td>
-<td style="text-align: left;">text</td>
-<td style="text-align: left;">Name of the listing</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">description</td>
-<td style="text-align: left;">text</td>
-<td style="text-align: left;">Detailed description of the listing</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">neighborhood_overview</td>
-<td style="text-align: left;">text</td>
-<td style="text-align: left;">Host's description of the neighbourhood</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">host_id</td>
-<td style="text-align: left;">integer</td>
-<td style="text-align: left;">Airbnb's unique identifier for the host/user</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">host_since</td>
-<td style="text-align: left;">date</td>
-<td style="text-align: left;">The date the host/user was created. For hosts that are Airbnb guests this could be the date they registered as a guest.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">host_about</td>
-<td style="text-align: left;">text</td>
-<td style="text-align: left;">Description about the host</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">host_response_time</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">NA</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">host_response_rate</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">NA</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">host_acceptance_rate</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">That rate at which a host accepts booking requests.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">host_is_superhost</td>
-<td style="text-align: left;">boolean [t=true; f=false]</td>
-<td style="text-align: left;">NA</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">host_listings_count</td>
-<td style="text-align: left;">text</td>
-<td style="text-align: left;">The number of listings the host has (per Airbnb unknown calculations)</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">host_total_listings_count</td>
-<td style="text-align: left;">text</td>
-<td style="text-align: left;">The number of listings the host has (per Airbnb unknown calculations)</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">neighbourhood</td>
-<td style="text-align: left;">text</td>
-<td style="text-align: left;">NA</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">neighbourhood_cleansed</td>
-<td style="text-align: left;">text</td>
-<td style="text-align: left;">The neighbourhood as geocoded using the latitude and longitude against neighborhoods as defined by open or public digital shapefiles.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">neighbourhood_group_cleansed</td>
-<td style="text-align: left;">text</td>
-<td style="text-align: left;">The neighbourhood group as geocoded using the latitude and longitude against neighborhoods as defined by open or public digital shapefiles.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">latitude</td>
-<td style="text-align: left;">numeric</td>
-<td style="text-align: left;">Uses the World Geodetic System (WGS84) projection for latitude and longitude.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">longitude</td>
-<td style="text-align: left;">numeric</td>
-<td style="text-align: left;">Uses the World Geodetic System (WGS84) projection for latitude and longitude.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">property_type</td>
-<td style="text-align: left;">text</td>
-<td style="text-align: left;">Self selected property type. Hotels and Bed and Breakfasts are described as such by their hosts in this field</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">room_type</td>
-<td style="text-align: left;">text</td>
-<td style="text-align: left;">[Entire home/apt&amp;#124;Private room&amp;#124;Shared room&amp;#124;Hotel] All homes are grouped into the following three room types: Entire place Private room Shared room Entire place Entire places are best if you're seeking a home away from home. With an entire place, you'll have the whole space to yourself. This usually includes a bedroom, a bathroom, a kitchen, and a separate, dedicated entrance. Hosts should note in the description if they'll be on the property or not (ex: "Host occupies first floor of the home"), and provide further details on the listing. Private rooms Private rooms are great for when you prefer a little privacy, and still value a local connection. When you book a private room, you'll have your own private room for sleeping and may share some spaces with others. You might need to walk through indoor spaces that another host or guest may occupy to get to your room. Shared rooms Shared rooms are for when you don't mind sharing a space with others. When you book a shared room, you'll be sleeping in a space that is shared with others and share the entire space with other people. Shared rooms are popular among flexible travelers looking for new friends and budget-fr</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">accommodates</td>
-<td style="text-align: left;">integer</td>
-<td style="text-align: left;">The maximum capacity of the listing</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">bathrooms</td>
-<td style="text-align: left;">numeric</td>
-<td style="text-align: left;">The number of bathrooms in the listing</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">bathrooms_text</td>
-<td style="text-align: left;">string</td>
-<td style="text-align: left;">The number of bathrooms in the listing. On the Airbnb web-site, the bathrooms field has evolved from a number to a textual description. For older scrapes, bathrooms is used.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">bedrooms</td>
-<td style="text-align: left;">integer</td>
-<td style="text-align: left;">The number of bedrooms</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">beds</td>
-<td style="text-align: left;">integer</td>
-<td style="text-align: left;">The number of bed(s)</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">amenities</td>
-<td style="text-align: left;">json</td>
-<td style="text-align: left;">NA</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">price</td>
-<td style="text-align: left;">currency</td>
-<td style="text-align: left;">daily price in local currency. NOTE: the $ sign is a technical artifact of the export, please ignore it</td>
-</tr>
-</tbody>
-</table>
-</div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 27 × 3
+   Field                 Type    Description                                    
+   &lt;chr&gt;                 &lt;chr&gt;   &lt;chr&gt;                                          
+ 1 id                    integer Airbnb's unique identifier for the listing     
+ 2 name                  text    Name of the listing                            
+ 3 description           text    Detailed description of the listing            
+ 4 neighborhood_overview text    Host's description of the neighbourhood        
+ 5 host_id               integer Airbnb's unique identifier for the host/user   
+ 6 host_since            date    The date the host/user was created. For hosts …
+ 7 host_about            text    Description about the host                     
+ 8 host_response_time    &lt;NA&gt;    &lt;NA&gt;                                           
+ 9 host_response_rate    &lt;NA&gt;    &lt;NA&gt;                                           
+10 host_acceptance_rate  &lt;NA&gt;    That rate at which a host accepts booking requ…
+# ℹ 17 more rows</code></pre>
 </div>
 </div>
 <section id="data-description" class="level3">
 <h3 class="anchored" data-anchor-id="data-description">Data Description</h3>
 <p>The <code>price</code> variable is our variable of interest since we found that several observations had missing price variables. Based on other variables such as <code>beds</code>, <code>bathrooms</code>, <code>property_type</code>, and <code>neighborhood</code>, we believe that we could accurately predict the missing prices for NYC Airbnbs. All of the variables that we deemed important are listed above along with their description.</p>
 <p>Some more small cleaning was done in order to visualize and find missing values. Some missing values were listing as <code>N/A</code> or left blank . This was fixed so that all missing values were listed as <code>NA</code> values.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="do">## fixing missing values</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>filter_df[filter_df <span class="sc">==</span> <span class="st">"N/A"</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>filter_df[filter_df <span class="sc">==</span> <span class="st">""</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>filter_df[filter_df <span class="sc">==</span> <span class="st">"[]"</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>filter_df[filter_df <span class="sc">==</span> <span class="st">"-"</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
 <p>The <code>price</code> variable, which is our variable of interest, is also formatted as character. This needed to be changed so that <code>price</code> should be numeric. Since, values were listed as <code>$xxx.00</code> or <code>$xx,xxx.00</code>, all dollar signs and commas were removed in order for there to be no missing values added due to coercion before the format of price was changed.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="do">## changing price from chr to numeric</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>filter_df <span class="ot">&lt;-</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  filter_df <span class="sc">%&gt;%</span> </span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">price =</span> <span class="fu">str_remove_all</span>(price, <span class="st">"</span><span class="sc">\\</span><span class="st">$"</span>),</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">price =</span> <span class="fu">str_remove_all</span>(price, <span class="st">"</span><span class="sc">\\</span><span class="st">,"</span>),</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">price =</span> <span class="fu">as.numeric</span>(price), </span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">id =</span> <span class="fu">as.factor</span>(id)</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
 <p>We decided to consider all listings at or above the price of $10,000 per night an outlier. There were a considerable amount of listings above this number, going all the way to $50,000 per night. Many of the listings we examined manually had different, more realistic prices on the actual Airbnb website, indicating that either the listing was improper during the webscrape, or the webscrape itself had flaws. We chose $10,000 as the cutoff point as there were multiple listings at or below $9,999 per night that were verifiable. We removed all listings that were $10,000 per night or greater.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>filter_df <span class="ot">&lt;-</span> </span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  filter_df <span class="sc">%&gt;%</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(price <span class="sc">&lt;=</span> <span class="dv">10000</span> <span class="sc">|</span> <span class="fu">is.na</span>(price))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
 <p>One more step in cleaning was cleaning the <code>bathrooms</code> column. There was some missing values, however the <code>bathrooms_text</code> column provided the number of bathrooms the listing had, so the number of bathrooms was extracted from the <code>bathrooms_text</code> if needed.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>filter_df <span class="ot">&lt;-</span> </span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  filter_df <span class="sc">%&gt;%</span> </span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="do">## Cleaning the missing (non-missing) values in bathrooms from bathroom_text</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">bathrooms =</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">case_when</span>(</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>        <span class="fu">str_detect</span>(bathrooms_text, <span class="st">"H|half"</span>) <span class="sc">~</span> <span class="fl">0.5</span>,</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>        <span class="fu">is.na</span>(bathrooms) <span class="sc">~</span> <span class="fu">str_extract</span>(bathrooms_text, <span class="st">"</span><span class="sc">\\</span><span class="st">d+</span><span class="sc">\\</span><span class="st">.?</span><span class="sc">\\</span><span class="st">d*"</span>) <span class="sc">%&gt;%</span> <span class="fu">as.numeric</span>(),</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>        <span class="cn">TRUE</span> <span class="sc">~</span> bathrooms</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>      )</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
 </section>
 <section id="info-about-data-skim" class="level3">
 <h3 class="anchored" data-anchor-id="info-about-data-skim">Info about data, <code>skim()</code></h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">skim</span>(filter_df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <caption>Data summary</caption>
@@ -800,14 +608,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>It is important to note that some columns, such as <code>host_response_rate</code> is listed as a character variable because their values are formatted as “50%”, “32%”, “xx%”…</p>
 <p>Further analysis should make sure the columns selected are formatted correctly.</p>
-<p>The next step in the analysis will be to analyze the missing pattern in our data especially for the price variable.</p>
-</section>
-<section id="vis_miss-visualization" class="level3">
-<h3 class="anchored" data-anchor-id="vis_miss-visualization"><code>vis_miss</code> visualization</h3>
+<p>The next step in the analysis will be to analyze the missing pattern in our data especially for the price variable. ### <code>vis_miss</code> visualization</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>filter_df <span class="sc">%&gt;%</span> </span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(price) <span class="sc">%&gt;%</span> </span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">vis_miss</span>(., <span class="at">warn_large_data =</span> F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -818,14 +620,68 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>The <code>vis_miss()</code> plot shows that occurence of missing values in our data.</p>
 </section>
+<section id="histogram-and-spinogram-for-each-variable-of-interest" class="level3">
+<h3 class="anchored" data-anchor-id="histogram-and-spinogram-for-each-variable-of-interest">Histogram and Spinogram for each Variable of Interest</h3>
+<section id="bedrooms" class="level4">
+<h4 class="anchored" data-anchor-id="bedrooms"><code>Bedrooms</code></h4>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="draft_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="beds" class="level4">
+<h4 class="anchored" data-anchor-id="beds"><code>Beds</code></h4>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="draft_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="bathrooms" class="level4">
+<h4 class="anchored" data-anchor-id="bathrooms"><code>Bathrooms</code></h4>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="draft_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="accomodates" class="level4">
+<h4 class="anchored" data-anchor-id="accomodates"><code>Accomodates</code></h4>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="draft_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="host-response-rate" class="level4">
+<h4 class="anchored" data-anchor-id="host-response-rate">Host Response Rate</h4>
+</section>
+<section id="host-acceptance-rate" class="level4">
+<h4 class="anchored" data-anchor-id="host-acceptance-rate">Host Acceptance Rate</h4>
+</section>
+</section>
 <section id="mcar_test" class="level3">
 <h3 class="anchored" data-anchor-id="mcar_test"><code>mcar_test</code></h3>
 <p>Here are a few missing completely at random test. We believe that we can use the beds, bathrooms, and neighborhood location among other variables to impute the missing pricing data for these listings.</p>
 <p>These tests show that there are some missing patterns in our data.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>filter_df <span class="sc">%&gt;%</span> </span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(price, latitude, longitude) <span class="sc">%&gt;%</span> </span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mcar_test</span>(.)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 4
   statistic    df p.value missing.patterns
@@ -834,9 +690,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>filter_df <span class="sc">%&gt;%</span> </span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(price, beds) <span class="sc">%&gt;%</span> </span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mcar_test</span>(.)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 4
   statistic    df    p.value missing.patterns
@@ -846,23 +699,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>The price variable was tested against beds along with latitude and longitude with little’s MCAR test. The results show that the data is not missing completely at random which is shown by the significance in the previous tests. These tests results tell us that the price variable’s missingness is dependent upon other variables within the data.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>filter_df<span class="sc">$</span>host_response_rate <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">sub</span>(<span class="st">"%"</span>, <span class="st">""</span>, filter_df<span class="sc">$</span>host_response_rate)) <span class="sc">/</span> <span class="dv">100</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>filter_df<span class="sc">$</span>host_acceptance_rate <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">sub</span>(<span class="st">"%"</span>, <span class="st">""</span>, filter_df<span class="sc">$</span>host_acceptance_rate)) <span class="sc">/</span> <span class="dv">100</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>filter_df<span class="sc">$</span>bathrooms <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(filter_df<span class="sc">$</span>bathrooms), <span class="fu">as.numeric</span>(<span class="fu">sub</span>(<span class="st">" .*"</span>, <span class="st">""</span>, filter_df<span class="sc">$</span>bathrooms_text)), filter_df<span class="sc">$</span>bathrooms)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in ifelse(is.na(filter_df$bathrooms), as.numeric(sub(" .*", "", : NAs
-introduced by coercion</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(filter_df, <span class="fu">aes</span>(<span class="at">x =</span> neighbourhood_group_cleansed, <span class="at">y =</span> price)) <span class="sc">+</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: Removed 14783 rows containing missing values or values outside the scale range
-(`geom_point()`).</code></pre>
-</div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="draft_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="draft_files/figure-html/cleaning%20and%20dotplot%20chunk-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="draft_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -881,54 +730,11 @@ introduced by coercion</code></pre>
 </blockquote>
 <section id="matrix-plot" class="level2">
 <h2 class="anchored" data-anchor-id="matrix-plot">Matrix Plot</h2>
-<!-- # ```{r, warning = F, message = F} -->
-<!-- # library(GGally) -->
-<!-- # ggpairs( -->
-<!-- #   filter_df %>%  -->
-<!-- #     select( -->
-<!-- #       price,  -->
-<!-- #       bedrooms, beds, -->
-<!-- #       latitude, longitude, -->
-<!-- #       accommodates, bathrooms -->
-<!-- #       # host_is_superhost -->
-<!-- #     ), -->
-<!-- #   # columns = 17:25,  -->
-<!-- #   cardinality_threshold = 32 -->
-<!-- # ) -->
-<!-- # ``` -->
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(psych)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: package 'psych' was built under R version 4.5.2</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>
-Attaching package: 'psych'</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>The following objects are masked from 'package:ggplot2':
-
-    %+%, alpha</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>filter_df <span class="sc">%&gt;%</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>      price, </span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>      bedrooms, beds,</span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>      latitude, longitude,</span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>      accommodates, bathrooms,</span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>      host_is_superhost</span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs.panels</span>(.,</span>
-<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>             <span class="at">method =</span> <span class="st">"pearson"</span>, <span class="co"># this is the correlation method</span></span>
-<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>             <span class="at">hist.col =</span> <span class="st">"#00AFBB"</span>,</span>
-<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>             <span class="at">density =</span> <span class="cn">TRUE</span>, <span class="co"># this shows density plots</span></span>
-<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>             <span class="at">ellipses =</span> <span class="cn">TRUE</span>, <span class="co"># show correlation ellipses</span></span>
-<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>             <span class="at">lm =</span> <span class="cn">TRUE</span></span>
-<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="draft_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="draft_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -940,9 +746,6 @@ Attaching package: 'psych'</code></pre>
 <section id="model-before-imputation" class="level2">
 <h2 class="anchored" data-anchor-id="model-before-imputation">Model before Imputation</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> </span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  filter_df <span class="sc">%&gt;%</span> </span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lm</span>(<span class="fu">log</span>(price) <span class="sc">~</span> bedrooms <span class="sc">+</span> beds <span class="sc">+</span> latitude<span class="sc">*</span>longitude <span class="sc">+</span> accommodates <span class="sc">+</span> bathrooms <span class="sc">+</span> host_is_superhost<span class="dv">-1</span>, <span class="at">data =</span> .) ; <span class="fu">summary</span>(model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -972,19 +775,43 @@ Residual standard error: 0.625 on 20665 degrees of freedom
 Multiple R-squared:  0.9852,    Adjusted R-squared:  0.9852 
 F-statistic: 1.531e+05 on 9 and 20665 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                           GVIF Df GVIF^(1/(2*Df))
+bedrooms           5.006629e+00  1    2.237550e+00
+beds               6.748917e+00  1    2.597868e+00
+latitude           5.439541e+11  1    7.375325e+05
+longitude          5.432835e+11  1    7.370777e+05
+accommodates       6.513627e+00  1    2.552181e+00
+bathrooms          7.605294e+00  1    2.757770e+00
+host_is_superhost  5.488812e+11  2    8.607352e+02
+latitude:longitude 5.440892e+11  1    7.376240e+05</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                 GVIF Df GVIF^(1/(2*Df)) Interacts With
+bedrooms     1.738823  1        1.318644           --  
+beds         2.380748  1        1.542967           --  
+latitude     1.023351  3        1.003854      longitude
+longitude    1.023351  3        1.003854       latitude
+accommodates 2.137557  1        1.462038           --  
+bathrooms    1.331149  1        1.153754           --  
+                                                   Other Predictors
+bedrooms         beds, latitude, longitude, accommodates, bathrooms
+beds         bedrooms, latitude, longitude, accommodates, bathrooms
+latitude                    bedrooms, beds, accommodates, bathrooms
+longitude                   bedrooms, beds, accommodates, bathrooms
+accommodates         bedrooms, beds, latitude, longitude, bathrooms
+bathrooms         bedrooms, beds, latitude, longitude, accommodates</code></pre>
+</div>
 </div>
 </section>
 </section>
 <section id="frequency-table-and-plot" class="level1">
 <h1>Frequency Table and Plot</h1>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>filter_df <span class="sc">%&gt;%</span> </span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(host_is_superhost, latitude, longitude, accommodates, bathrooms, bedrooms, beds, price) <span class="sc">%&gt;%</span> </span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">md.pattern</span>(., <span class="at">plot =</span> T, <span class="at">rotate.names =</span> T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="draft_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="draft_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1035,13 +862,12 @@ F-statistic: 1.531e+05 on 9 and 20665 DF,  p-value: &lt; 2.2e-16</code></pre>
 <h1>Imputing Missing Values Using <code>mice</code></h1>
 <p>Imputing missing values for the variables of interest using predictive multiple matching.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run multiple imputation</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>airbnb_imputation <span class="ot">&lt;-</span> </span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  filter_df <span class="sc">%&gt;%</span> </span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(host_is_superhost, latitude, longitude, accommodates, bathrooms, bedrooms, beds, price) <span class="sc">%&gt;%</span>    <span class="fu">mice</span>(<span class="at">data =</span> ., <span class="at">m =</span> <span class="dv">5</span>, <span class="at">method =</span> <span class="st">"pmm"</span>, <span class="at">seed =</span> <span class="dv">20251125</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run multiple imputation</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>airbnb_imputation <span class="ot">&lt;-</span> </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  filter_df <span class="sc">%&gt;%</span> </span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(host_is_superhost, latitude, longitude, accommodates, bathrooms, bedrooms, beds, price) <span class="sc">%&gt;%</span>    <span class="fu">mice</span>(<span class="at">data =</span> ., <span class="at">m =</span> <span class="dv">5</span>, <span class="at">method =</span> <span class="st">"pmm"</span>, <span class="at">seed =</span> <span class="dv">20251125</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(airbnb_imputation)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Class: mids
 Number of multiple imputations:  5 
@@ -1075,11 +901,10 @@ Number of logged events:  1
 <section id="density-plot" class="level3">
 <h3 class="anchored" data-anchor-id="density-plot">Density Plot</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">densityplot</span>(airbnb_imputation)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="draft_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="draft_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1092,23 +917,6 @@ Number of logged events:  1
 <section id="restructure-the-model-with-the-imputed-values" class="level1">
 <h1>Restructure the model with the imputed values</h1>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>completed_list <span class="ot">&lt;-</span> <span class="fu">complete</span>(airbnb_imputation, <span class="st">"all"</span>) <span class="sc">%&gt;%</span> <span class="fu">map</span>(as_tibble)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>models <span class="ot">&lt;-</span> </span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(completed_list, <span class="sc">~</span></span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>        <span class="fu">lm</span>(<span class="fu">log</span>(price) <span class="sc">~</span> </span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>             bedrooms <span class="sc">+</span> bathrooms <span class="sc">+</span> beds <span class="sc">+</span> </span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>             accommodates <span class="sc">+</span> </span>
-<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>             latitude<span class="sc">*</span>longitude <span class="sc">+</span> </span>
-<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>             host_is_superhost<span class="dv">-1</span>, </span>
-<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>           <span class="at">data =</span> .x)</span>
-<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>        )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pool results</span></span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>pooled <span class="ot">&lt;-</span> <span class="fu">pool</span>(models)</span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(pooled)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                term      estimate    std.error   statistic        df
 1           bedrooms -7.349961e-02 5.732398e-03 -12.8217902  58.02233
@@ -1132,17 +940,12 @@ Number of logged events:  1
 9 2.881205e-83</code></pre>
 </div>
 </div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pooled coefficients</span></span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>pooled_coefficients <span class="ot">&lt;-</span> <span class="fu">summary</span>(pooled)[, <span class="fu">c</span>(<span class="st">'term'</span>, <span class="st">'estimate'</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
 </section>
 <section id="comparing-model-before-and-after-imputation" class="level1">
 <h1>Comparing model before and after imputation</h1>
 <section id="before-imp." class="level2">
 <h2 class="anchored" data-anchor-id="before-imp.">Before Imp.</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model)<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                        Estimate   Std. Error    t value     Pr(&gt;|t|)
 bedrooms           -8.163383e-02 5.770766e-03 -14.146100 3.209921e-45
@@ -1160,7 +963,6 @@ latitude:longitude -4.340249e+01 1.064563e+00 -40.770239 0.000000e+00</code></pr
 <section id="after-imp." class="level2">
 <h2 class="anchored" data-anchor-id="after-imp.">After Imp.</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(pooled)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                term      estimate    std.error   statistic        df
 1           bedrooms -7.349961e-02 5.732398e-03 -12.8217902  58.02233
@@ -1194,6 +996,452 @@ latitude:longitude -4.340249e+01 1.064563e+00 -40.770239 0.000000e+00</code></pr
 </ul>
 <p>This suggests that msising data in variables <code>bathrooms</code> and <code>beds</code> may have been introducing bias or instability in the original model.</p>
 <p>Despite these differences, location indicators <code>latitude</code> and <code>longitude</code> and whether the host is a classified as a superhost (<code>host_is_superhost</code>) effect the model greatly and stay very significant, indicating that imputation only helped improve these relationships by improving reliability for other variables with missing values.</p>
+<section id="using-utm-in-imputation" class="level3">
+<h3 class="anchored" data-anchor-id="using-utm-in-imputation">Using UTM in imputation</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Simple feature collection with 35893 features and 6 fields
+Geometry type: POINT
+Dimension:     XY
+Bounding box:  xmin: 563382.4 ymin: 4483573 xmax: 608778.6 ymax: 4529571
+Projected CRS: WGS 84 / UTM zone 18N
+First 10 features:
+   price bedrooms beds bathrooms accommodates host_is_superhost
+1     66        1    1         1            1                 t
+2     NA        1   NA         1            2                 f
+3     NA       NA   NA         1            1                 f
+4     NA        1   NA         1            1                 f
+5     76        1    1         2            1                 t
+6     97        2    3         1            6                 t
+7     NA       NA   NA         1            2                 f
+8     60        2    1         1            1                 t
+9    425        3    3         4            6                 f
+10   240        0    1         1            1                 f
+                   geometry
+1    POINT (591377 4511233)
+2  POINT (585024.9 4508511)
+3  POINT (584083.7 4499944)
+4  POINT (587785.9 4504165)
+5  POINT (585916.3 4508336)
+6  POINT (597565.2 4504131)
+7  POINT (591786.7 4505416)
+8  POINT (589273.8 4507453)
+9  POINT (589482.1 4503121)
+10 POINT (585631.1 4511895)</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 14783</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     price               X                 Y              bathrooms     
+ Min.   :   10.0   Min.   :-5.4882   Min.   :-4.07892   Min.   : 0.000  
+ 1st Qu.:   88.0   1st Qu.:-0.6607   1st Qu.:-0.70797   1st Qu.: 1.000  
+ Median :  152.0   Median :-0.1414   Median :-0.04645   Median : 1.000  
+ Mean   :  234.5   Mean   : 0.0000   Mean   : 0.00000   Mean   : 1.168  
+ 3rd Qu.:  272.0   3rd Qu.: 0.3502   3rd Qu.: 0.60001   3rd Qu.: 1.000  
+ Max.   :10000.0   Max.   : 4.2717   Max.   : 3.26809   Max.   :15.500  
+ NA's   :14783                                          NA's   :44      
+    bedrooms           beds         accommodates   
+ Min.   : 0.000   Min.   : 0.000   Min.   : 1.000  
+ 1st Qu.: 1.000   1st Qu.: 1.000   1st Qu.: 2.000  
+ Median : 1.000   Median : 1.000   Median : 2.000  
+ Mean   : 1.385   Mean   : 1.634   Mean   : 2.723  
+ 3rd Qu.: 2.000   3rd Qu.: 2.000   3rd Qu.: 4.000  
+ Max.   :16.000   Max.   :40.000   Max.   :16.000  
+ NA's   :5949     NA's   :14468                    </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] NA</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ iter imp variable
+  1   1  price  bathrooms  bedrooms  beds
+  1   2  price  bathrooms  bedrooms  beds
+  1   3  price  bathrooms  bedrooms  beds
+  1   4  price  bathrooms  bedrooms  beds
+  1   5  price  bathrooms  bedrooms  beds
+  2   1  price  bathrooms  bedrooms  beds
+  2   2  price  bathrooms  bedrooms  beds
+  2   3  price  bathrooms  bedrooms  beds
+  2   4  price  bathrooms  bedrooms  beds
+  2   5  price  bathrooms  bedrooms  beds
+  3   1  price  bathrooms  bedrooms  beds
+  3   2  price  bathrooms  bedrooms  beds
+  3   3  price  bathrooms  bedrooms  beds
+  3   4  price  bathrooms  bedrooms  beds
+  3   5  price  bathrooms  bedrooms  beds
+  4   1  price  bathrooms  bedrooms  beds
+  4   2  price  bathrooms  bedrooms  beds
+  4   3  price  bathrooms  bedrooms  beds
+  4   4  price  bathrooms  bedrooms  beds
+  4   5  price  bathrooms  bedrooms  beds
+  5   1  price  bathrooms  bedrooms  beds
+  5   2  price  bathrooms  bedrooms  beds
+  5   3  price  bathrooms  bedrooms  beds
+  5   4  price  bathrooms  bedrooms  beds
+  5   5  price  bathrooms  bedrooms  beds</code></pre>
+</div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 19%">
+<col style="width: 16%">
+<col style="width: 15%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">term</th>
+<th style="text-align: right;">estimate</th>
+<th style="text-align: right;">std.error</th>
+<th style="text-align: right;">statistic</th>
+<th style="text-align: right;">df</th>
+<th style="text-align: right;">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">4.4337415</td>
+<td style="text-align: right;">0.0102707</td>
+<td style="text-align: right;">431.690343</td>
+<td style="text-align: right;">84.276261</td>
+<td style="text-align: right;">0.0000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">bedrooms</td>
+<td style="text-align: right;">-0.0664399</td>
+<td style="text-align: right;">0.0064109</td>
+<td style="text-align: right;">-10.363582</td>
+<td style="text-align: right;">23.811081</td>
+<td style="text-align: right;">0.0000000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">bathrooms</td>
+<td style="text-align: right;">0.1292279</td>
+<td style="text-align: right;">0.0083531</td>
+<td style="text-align: right;">15.470649</td>
+<td style="text-align: right;">354.923050</td>
+<td style="text-align: right;">0.0000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">beds</td>
+<td style="text-align: right;">0.0137633</td>
+<td style="text-align: right;">0.0072911</td>
+<td style="text-align: right;">1.887691</td>
+<td style="text-align: right;">10.916969</td>
+<td style="text-align: right;">0.0859201</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">accommodates</td>
+<td style="text-align: right;">0.1977896</td>
+<td style="text-align: right;">0.0039064</td>
+<td style="text-align: right;">50.632007</td>
+<td style="text-align: right;">14.007389</td>
+<td style="text-align: right;">0.0000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">X</td>
+<td style="text-align: right;">-0.2750749</td>
+<td style="text-align: right;">0.0044886</td>
+<td style="text-align: right;">-61.282494</td>
+<td style="text-align: right;">40.484154</td>
+<td style="text-align: right;">0.0000000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Y</td>
+<td style="text-align: right;">0.0993012</td>
+<td style="text-align: right;">0.0068342</td>
+<td style="text-align: right;">14.530062</td>
+<td style="text-align: right;">7.307948</td>
+<td style="text-align: right;">0.0000012</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">X:Y</td>
+<td style="text-align: right;">-0.1112607</td>
+<td style="text-align: right;">0.0038699</td>
+<td style="text-align: right;">-28.750012</td>
+<td style="text-align: right;">23.889664</td>
+<td style="text-align: right;">0.0000000</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">x</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">84.2460342</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.9357191</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1.1379495</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1.0138584</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1.2187060</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.7595152</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1.1043989</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.8947055</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: right;">mean_AIC</th>
+<th style="text-align: right;">mean_BIC</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Total_Fit_latlong</td>
+<td style="text-align: right;">70683.87</td>
+<td style="text-align: right;">70760.27</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Total_Fit_utm</td>
+<td style="text-align: right;">70911.21</td>
+<td style="text-align: right;">70987.61</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ iter imp variable
+  1   1  price_mask
+  1   2  price_mask
+  1   3  price_mask
+  1   4  price_mask
+  1   5  price_mask
+  2   1  price_mask
+  2   2  price_mask
+  2   3  price_mask
+  2   4  price_mask
+  2   5  price_mask
+  3   1  price_mask
+  3   2  price_mask
+  3   3  price_mask
+  3   4  price_mask
+  3   5  price_mask
+  4   1  price_mask
+  4   2  price_mask
+  4   3  price_mask
+  4   4  price_mask
+  4   5  price_mask
+  5   1  price_mask
+  5   2  price_mask
+  5   3  price_mask
+  5   4  price_mask
+  5   5  price_mask</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ iter imp variable
+  1   1  price_mask
+  1   2  price_mask
+  1   3  price_mask
+  1   4  price_mask
+  1   5  price_mask
+  2   1  price_mask
+  2   2  price_mask
+  2   3  price_mask
+  2   4  price_mask
+  2   5  price_mask
+  3   1  price_mask
+  3   2  price_mask
+  3   3  price_mask
+  3   4  price_mask
+  3   5  price_mask
+  4   1  price_mask
+  4   2  price_mask
+  4   3  price_mask
+  4   4  price_mask
+  4   5  price_mask
+  5   1  price_mask
+  5   2  price_mask
+  5   3  price_mask
+  5   4  price_mask
+  5   5  price_mask</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ iter imp variable
+  1   1  price_mask
+  1   2  price_mask
+  1   3  price_mask
+  1   4  price_mask
+  1   5  price_mask
+  2   1  price_mask
+  2   2  price_mask
+  2   3  price_mask
+  2   4  price_mask
+  2   5  price_mask
+  3   1  price_mask
+  3   2  price_mask
+  3   3  price_mask
+  3   4  price_mask
+  3   5  price_mask
+  4   1  price_mask
+  4   2  price_mask
+  4   3  price_mask
+  4   4  price_mask
+  4   5  price_mask
+  5   1  price_mask
+  5   2  price_mask
+  5   3  price_mask
+  5   4  price_mask
+  5   5  price_mask</code></pre>
+</div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Predictor_Set</th>
+<th style="text-align: right;">RMSE</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">UTM</td>
+<td style="text-align: right;">309.6458</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">LatLong</td>
+<td style="text-align: right;">325.5020</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Combined</td>
+<td style="text-align: right;">309.6458</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 16%">
+<col style="width: 11%">
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: left;">Predictor_Set</th>
+<th style="text-align: right;">Mean_RMSE</th>
+<th style="text-align: right;">SD_RMSE</th>
+<th style="text-align: right;">Min_RMSE</th>
+<th style="text-align: right;">Max_RMSE</th>
+<th style="text-align: right;">SE</th>
+<th style="text-align: right;">CI_lower</th>
+<th style="text-align: right;">CI_upper</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">UTM</td>
+<td style="text-align: left;">UTM</td>
+<td style="text-align: right;">374.9342</td>
+<td style="text-align: right;">44.21232</td>
+<td style="text-align: right;">327.9770</td>
+<td style="text-align: right;">445.1195</td>
+<td style="text-align: right;">13.98116</td>
+<td style="text-align: right;">347.5311</td>
+<td style="text-align: right;">402.3373</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">LatLong</td>
+<td style="text-align: left;">LatLong</td>
+<td style="text-align: right;">381.1517</td>
+<td style="text-align: right;">48.37308</td>
+<td style="text-align: right;">321.7033</td>
+<td style="text-align: right;">473.1839</td>
+<td style="text-align: right;">15.29691</td>
+<td style="text-align: right;">351.1697</td>
+<td style="text-align: right;">411.1336</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Combined</td>
+<td style="text-align: left;">Combined</td>
+<td style="text-align: right;">374.5124</td>
+<td style="text-align: right;">44.71092</td>
+<td style="text-align: right;">325.3098</td>
+<td style="text-align: right;">445.1195</td>
+<td style="text-align: right;">14.13884</td>
+<td style="text-align: right;">346.8003</td>
+<td style="text-align: right;">402.2245</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: right;">Df</th>
+<th style="text-align: right;">Sum Sq</th>
+<th style="text-align: right;">Mean Sq</th>
+<th style="text-align: right;">F value</th>
+<th style="text-align: right;">Pr(&gt;F)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">predictors</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">276.3822</td>
+<td style="text-align: right;">138.1911</td>
+<td style="text-align: right;">0.0658706</td>
+<td style="text-align: right;">0.936402</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Residuals</td>
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">56643.7624</td>
+<td style="text-align: right;">2097.9171</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
 </section>
 </section>
 
