@@ -16,7 +16,13 @@ library(knitr)# added, couldn't render is.empty() w/out it
 source("data_pull.R")
 ```
 
-## 1. Motivation
+## Team Information
+
+Team name: Team Team
+
+Members: Grey Gergen, Tyler Davis, Jesus Rodriguez, Jack Macfadyen
+
+## Motivation
 
 There are many considerations that must be made when finding temporary housing, either for vacations or business trips. Airbnb is a popular website that allows individuals or businesses to list potential places for users to choose. These users can choose where they wish to stay based on location, accommodations, how many beds they need, and price. We sought to create a model that predicts the price of an Airbnb listing based on various variables.
 
@@ -24,7 +30,7 @@ Airbnb data has been scraped by a team of contributors and gathered on a website
 
 When coming across this dataset, we found several missing values in the price of different Airbnb listings. Of the `r nrow(df)` listings we found `r sum(rapportools::is.empty(df$price))` missing prices. We believe that we can use the latitude, longitude, beds, bathrooms, and neighborhood location among other variables to impute the missing pricing data for these listings.
 
-## 2. Data Documentation
+## Data Documentation
 
 ```{r, warning = F, message = F, echo = F}
 data_documentation <- 
@@ -33,11 +39,6 @@ data_documentation <-
     skip = 7, # removed the first 7 rows
     col_names = T) %>% 
   slice(1:(79-4)) # removed the last 4 rows
-```
-
-```{r, warning = F, message = F, echo = F}
-head(data_documentation)
-tail(data_documentation)
 ```
 
 From the given data documentation ([codebook](https://docs.google.com/spreadsheets/d/1iWCNJcSutYqpULSQHlNyGInUvHg2BoUGoNRIGa6Szc4/edit?gid=1322284596#gid=1322284596) and [website](https://insideairbnb.com/get-the-data/)), it is missing four variables that are present in the listing dataset from Inside Airbnb.
@@ -49,17 +50,11 @@ These four variables are:
 -   `estimtaed_occupancy_l365d`
 -   `estimtaed_revenue_l365d`
 
-## 3. Team Information
-
-Team name: Team Team
-
-Members: Grey Gergen, Tyler Davis, Jesus Rodriguez, Jack Macfadyen
-
-## 4. Plan of Action and Brief Look at Data (with some cleaning)
-
 The data was downloaded from [Inside Airbnb](insideairbnb.com/get-the-data).
 
-This data is for New York City, New York, United States. The original data set has 36111 observations of 79 variables. Columns that were not relevant for analysis or provided important information were removed from the data in order for a cleaner data set to work with for further analysis.
+This data is for New York City, New York, United States. The original data set has 36111 observations of 79 variables. Columns that were not relevant for analysis or did not provide important information were removed from the data in order for a cleaner data set to work with for further analysis.
+
+The following table displays only the columns we kept from the Data Dictionary from the website that scraped this data.
 
 ```{r, echo = F, message = F, warning = F}
 filter_df <- 
@@ -67,12 +62,15 @@ filter_df <-
   select(1,6,7,8,10,13,15,16,17,18,19,23,24,28,29,30:41)
 
 variables <- data_documentation[c(1,6,7,8,10,13,15,16,17,18,19,23,24,28,29,30:41), -c(3,5)]
-variables
+knitr::kable(variables) %>% kableExtra::kable_styling(bootstrap_options = "striped") %>% 
+    kableExtra::scroll_box(width = "100%", height = "500px")
 ```
 
-### Data Description
-
 The `price` variable is our variable of interest since we found that several observations had missing price variables. Based on other variables such as `beds`, `bathrooms`, `property_type`, and `neighborhood`, we believe that we could accurately predict the missing prices for NYC Airbnbs. All of the variables that we deemed important are listed above along with their description.
+
+## Plan of Action & Data Cleaning
+
+The `price` variable is also formatted as character. This needed to be changed so that `price` should be numeric. Since, values were listed as `$xxx.00` or `$xx,xxx.00`, all dollar signs and commas were removed in order for there to be no missing values added due to coercion before the format of price was changed.
 
 Some more small cleaning was done in order to visualize and find missing values. Some missing values were listing as `N/A` or left blank . This was fixed so that all missing values were listed as `NA` values.
 
@@ -83,8 +81,6 @@ filter_df[filter_df == ""] <- NA
 filter_df[filter_df == "[]"] <- NA
 filter_df[filter_df == "-"] <- NA
 ```
-
-The `price` variable, which is our variable of interest, is also formatted as character. This needed to be changed so that `price` should be numeric. Since, values were listed as `$xxx.00` or `$xx,xxx.00`, all dollar signs and commas were removed in order for there to be no missing values added due to coercion before the format of price was changed.
 
 ```{r, echo = F, message = F, warning = F}
 ## changing price from chr to numeric

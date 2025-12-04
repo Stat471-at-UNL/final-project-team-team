@@ -2,7 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
+<<<<<<< HEAD
 <meta name="generator" content="quarto-1.4.548">
+=======
+<<<<<<< HEAD
+<meta name="generator" content="quarto-1.7.29">
+=======
+<meta name="generator" content="quarto-1.7.33">
+>>>>>>> de015d0508975436347fd698950aa23bf7e0bda1
+>>>>>>> f4792ff5d67f10081c0b9e790676f3b22e77241a
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -63,7 +71,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="draft_files/libs/quarto-html/tippy.umd.min.js"></script>
 <script src="draft_files/libs/quarto-html/anchor.min.js"></script>
 <link href="draft_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<<<<<<< HEAD
 <link href="draft_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+=======
+<<<<<<< HEAD
+<link href="draft_files/libs/quarto-html/quarto-syntax-highlighting-0815c480559380816a4d1ea211a47e91.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+=======
+<link href="draft_files/libs/quarto-html/quarto-syntax-highlighting-ea385d0e468b0dd5ea5bf0780b1290d9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+>>>>>>> de015d0508975436347fd698950aa23bf7e0bda1
+>>>>>>> f4792ff5d67f10081c0b9e790676f3b22e77241a
 <script src="draft_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="draft_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="draft_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
@@ -965,9 +981,183 @@ latitude:longitude -4.340249e+01 1.064563e+00 -40.770239 0.000000e+00</code></pr
 <section id="using-utm-in-imputation" class="level3">
 <h3 class="anchored" data-anchor-id="using-utm-in-imputation">Using UTM in imputation</h3>
 <div class="cell">
+<<<<<<< HEAD
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">exp</span>(pooled<span class="sc">$</span>pooled<span class="sc">$</span>estimate))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+=======
+<div class="cell-output cell-output-stdout">
+<pre><code>Simple feature collection with 35893 features and 6 fields
+Geometry type: POINT
+Dimension:     XY
+Bounding box:  xmin: 563382.4 ymin: 4483573 xmax: 608778.6 ymax: 4529571
+Projected CRS: WGS 84 / UTM zone 18N
+First 10 features:
+   price bedrooms beds bathrooms accommodates host_is_superhost
+1     66        1    1         1            1                 t
+2     NA        1   NA         1            2                 f
+3     NA       NA   NA         1            1                 f
+4     NA        1   NA         1            1                 f
+5     76        1    1         2            1                 t
+6     97        2    3         1            6                 t
+7     NA       NA   NA         1            2                 f
+8     60        2    1         1            1                 t
+9    425        3    3         4            6                 f
+10   240        0    1         1            1                 f
+                   geometry
+1    POINT (591377 4511233)
+2  POINT (585024.9 4508511)
+3  POINT (584083.7 4499944)
+4  POINT (587785.9 4504165)
+5  POINT (585916.3 4508336)
+6  POINT (597565.2 4504131)
+7  POINT (591786.7 4505416)
+8  POINT (589273.8 4507453)
+9  POINT (589482.1 4503121)
+10 POINT (585631.1 4511895)</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 14783</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     price               X                 Y              bathrooms     
+ Min.   :   10.0   Min.   :-5.4882   Min.   :-4.07892   Min.   : 0.000  
+ 1st Qu.:   88.0   1st Qu.:-0.6607   1st Qu.:-0.70797   1st Qu.: 1.000  
+ Median :  152.0   Median :-0.1414   Median :-0.04645   Median : 1.000  
+ Mean   :  234.5   Mean   : 0.0000   Mean   : 0.00000   Mean   : 1.168  
+ 3rd Qu.:  272.0   3rd Qu.: 0.3502   3rd Qu.: 0.60001   3rd Qu.: 1.000  
+ Max.   :10000.0   Max.   : 4.2717   Max.   : 3.26809   Max.   :15.500  
+ NA's   :14783                                          NA's   :44      
+    bedrooms           beds         accommodates   
+ Min.   : 0.000   Min.   : 0.000   Min.   : 1.000  
+ 1st Qu.: 1.000   1st Qu.: 1.000   1st Qu.: 2.000  
+ Median : 1.000   Median : 1.000   Median : 2.000  
+ Mean   : 1.385   Mean   : 1.634   Mean   : 2.723  
+ 3rd Qu.: 2.000   3rd Qu.: 2.000   3rd Qu.: 4.000  
+ Max.   :16.000   Max.   :40.000   Max.   :16.000  
+ NA's   :5949     NA's   :14468                    </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] NA</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ iter imp variable
+  1   1  price  bathrooms  bedrooms  beds
+  1   2  price  bathrooms  bedrooms  beds
+  1   3  price  bathrooms  bedrooms  beds
+  1   4  price  bathrooms  bedrooms  beds
+  1   5  price  bathrooms  bedrooms  beds
+  2   1  price  bathrooms  bedrooms  beds
+  2   2  price  bathrooms  bedrooms  beds
+  2   3  price  bathrooms  bedrooms  beds
+  2   4  price  bathrooms  bedrooms  beds
+  2   5  price  bathrooms  bedrooms  beds
+  3   1  price  bathrooms  bedrooms  beds
+  3   2  price  bathrooms  bedrooms  beds
+  3   3  price  bathrooms  bedrooms  beds
+  3   4  price  bathrooms  bedrooms  beds
+  3   5  price  bathrooms  bedrooms  beds
+  4   1  price  bathrooms  bedrooms  beds
+  4   2  price  bathrooms  bedrooms  beds
+  4   3  price  bathrooms  bedrooms  beds
+  4   4  price  bathrooms  bedrooms  beds
+  4   5  price  bathrooms  bedrooms  beds
+  5   1  price  bathrooms  bedrooms  beds
+  5   2  price  bathrooms  bedrooms  beds
+  5   3  price  bathrooms  bedrooms  beds
+  5   4  price  bathrooms  bedrooms  beds
+  5   5  price  bathrooms  bedrooms  beds</code></pre>
+</div>
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 19%">
+<col style="width: 16%">
+<col style="width: 15%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">term</th>
+<th style="text-align: right;">estimate</th>
+<th style="text-align: right;">std.error</th>
+<th style="text-align: right;">statistic</th>
+<th style="text-align: right;">df</th>
+<th style="text-align: right;">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">4.4337415</td>
+<td style="text-align: right;">0.0102707</td>
+<td style="text-align: right;">431.690343</td>
+<td style="text-align: right;">84.276261</td>
+<td style="text-align: right;">0.0000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">bedrooms</td>
+<td style="text-align: right;">-0.0664399</td>
+<td style="text-align: right;">0.0064109</td>
+<td style="text-align: right;">-10.363582</td>
+<td style="text-align: right;">23.811081</td>
+<td style="text-align: right;">0.0000000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">bathrooms</td>
+<td style="text-align: right;">0.1292279</td>
+<td style="text-align: right;">0.0083531</td>
+<td style="text-align: right;">15.470649</td>
+<td style="text-align: right;">354.923050</td>
+<td style="text-align: right;">0.0000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">beds</td>
+<td style="text-align: right;">0.0137633</td>
+<td style="text-align: right;">0.0072911</td>
+<td style="text-align: right;">1.887691</td>
+<td style="text-align: right;">10.916969</td>
+<td style="text-align: right;">0.0859201</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">accommodates</td>
+<td style="text-align: right;">0.1977896</td>
+<td style="text-align: right;">0.0039064</td>
+<td style="text-align: right;">50.632007</td>
+<td style="text-align: right;">14.007389</td>
+<td style="text-align: right;">0.0000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">X</td>
+<td style="text-align: right;">-0.2750749</td>
+<td style="text-align: right;">0.0044886</td>
+<td style="text-align: right;">-61.282494</td>
+<td style="text-align: right;">40.484154</td>
+<td style="text-align: right;">0.0000000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Y</td>
+<td style="text-align: right;">0.0993012</td>
+<td style="text-align: right;">0.0068342</td>
+<td style="text-align: right;">14.530062</td>
+<td style="text-align: right;">7.307948</td>
+<td style="text-align: right;">0.0000012</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">X:Y</td>
+<td style="text-align: right;">-0.1112607</td>
+<td style="text-align: right;">0.0038699</td>
+<td style="text-align: right;">-28.750012</td>
+<td style="text-align: right;">23.889664</td>
+<td style="text-align: right;">0.0000000</td>
+</tr>
+</tbody>
+</table>
+</div>
+>>>>>>> f4792ff5d67f10081c0b9e790676f3b22e77241a
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: right;">x</th>
@@ -1004,7 +1194,7 @@ latitude:longitude -4.340249e+01 1.064563e+00 -40.770239 0.000000e+00</code></pr
 </div>
 <div class="cell">
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: left;"></th>
@@ -1030,7 +1220,7 @@ latitude:longitude -4.340249e+01 1.064563e+00 -40.770239 0.000000e+00</code></pr
 <div class="cell">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(rmse_results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: left;">Predictor_Set</th>
@@ -1057,7 +1247,7 @@ latitude:longitude -4.340249e+01 1.064563e+00 -40.770239 0.000000e+00</code></pr
 <div class="cell">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(summary_rmse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <colgroup>
 <col style="width: 10%">
 <col style="width: 16%">
@@ -1129,7 +1319,7 @@ latitude:longitude -4.340249e+01 1.064563e+00 -40.770239 0.000000e+00</code></pr
 <span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">anova</span>(rmse_model))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: left;"></th>
