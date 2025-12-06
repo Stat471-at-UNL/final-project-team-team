@@ -1,6 +1,8 @@
 ---
 title: "index"
-format: pdf
+format: 
+  pdf:
+    latex-engine: xelatex
 execute: 
   echo: false
   warning: false
