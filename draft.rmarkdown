@@ -1,0 +1,754 @@
+---
+title: "draft"
+format: html
+editor: visual
+---
+
+```{r setup, echo = F, message = F, warning = F, output = F}
+library(tidyverse)
+library(patchwork)
+library(naniar)
+library(skimr)
+library(visdat)
+library(mice)
+library(rapportools) 
+library(knitr)# added, couldn't render is.empty() w/out it
+source("data_pull.R")
+```
+
+
+## Team Information
+
+Team name: Team Team
+
+Members: Grey Gergen, Tyler Davis, Jesus Rodriguez, Jack Macfadyen
+
+## Motivation
+
+There are many considerations that must be made when finding temporary housing, either for vacations or business trips. Airbnb is a popular website that allows individuals or businesses to list potential places for users to choose. These users can choose where they wish to stay based on location, accommodations, how many beds they need, and price. We sought to create a model that predicts the price of an Airbnb listing based on various variables.
+
+Airbnb data has been scraped by a team of contributors and gathered on a website [here](https://insideairbnb.com/get-the-data/). Their motivation is to show transparency in how spaces are being rented to tourists in their communities.
+
+When coming across this dataset, we found several missing values in the price of different Airbnb listings. Of the `r nrow(df)` listings we found `r sum(rapportools::is.empty(df$price))` missing prices. We believe that we can use the latitude, longitude, beds, bathrooms, and neighborhood location among other variables to impute the missing pricing data for these listings.
+
+## Data Documentation
+
+
+```{r, warning = F, message = F, echo = F}
+data_documentation <- 
+  readr::read_csv(
+    "Inside Airbnb Data Dictionary - listings.csv detail v4.3.csv",
+    skip = 7, # removed the first 7 rows
+    col_names = T) %>% 
+  slice(1:(79-4)) # removed the last 4 rows
+```
+
+
+From the given data documentation ([codebook](https://docs.google.com/spreadsheets/d/1iWCNJcSutYqpULSQHlNyGInUvHg2BoUGoNRIGa6Szc4/edit?gid=1322284596#gid=1322284596) and [website](https://insideairbnb.com/get-the-data/)), it is missing four variables that are present in the listing dataset from Inside Airbnb.
+
+These four variables are:
+
+-   `availability_eoy`
+-   `number_of_reviews_ly`
+-   `estimtaed_occupancy_l365d`
+-   `estimtaed_revenue_l365d`
+
+The data was downloaded from [Inside Airbnb](insideairbnb.com/get-the-data).
+
+This data is for New York City, New York, United States. The original data set has 36111 observations of 79 variables. Columns that were not relevant for analysis or did not provide important information were removed from the data in order for a cleaner data set to work with for further analysis.
+
+The following table displays only the columns we kept from the Data Dictionary from the website that scraped this data.
+
+
+```{r, echo = F, message = F, warning = F}
+filter_df <- 
+  df %>% 
+  select(1,6,7,8,10,13,15,16,17,18,19,23,24,28,29,30:41)
+
+variables <- data_documentation[c(1,6,7,8,10,13,15,16,17,18,19,23,24,28,29,30:41), -c(3,5)]
+knitr::kable(variables) %>% kableExtra::kable_styling(bootstrap_options = "striped") %>% 
+    kableExtra::scroll_box(width = "100%", height = "500px")
+```
+
+
+The `price` variable is our variable of interest since we found that several observations had missing price variables. Based on other variables such as `beds`, `bathrooms`, `property_type`, and `neighborhood`, we believe that we could accurately predict the missing prices for NYC Airbnbs. All of the variables that we deemed important are listed above along with their description.
+
+## Plan of Action & Data Cleaning
+
+The `price` variable is also formatted as character. This needed to be changed so that `price` should be numeric. Since, values were listed as `$xxx.00` or `$xx,xxx.00`, all dollar signs and commas were removed in order for there to be no missing values added due to coercion before the format of price was changed.
+
+Some more small cleaning was done in order to visualize and find missing values. Some missing values were listing as `N/A` or left blank . This was fixed so that all missing values were listed as `NA` values.
+
+
+```{r, echo = F, message = F, warning = F}
+## fixing missing values
+filter_df[filter_df == "N/A"] <- NA
+filter_df[filter_df == ""] <- NA
+filter_df[filter_df == "[]"] <- NA
+filter_df[filter_df == "-"] <- NA
+```
+
+```{r, echo = F, message = F, warning = F}
+## changing price from chr to numeric
+filter_df <-
+  filter_df %>% 
+  mutate(
+    price = str_remove_all(price, "\\$"),
+    price = str_remove_all(price, "\\,"),
+    price = as.numeric(price), 
+    id = as.factor(id)
+  )
+```
+
+
+We decided to consider all listings at or above the price of \$10,000 per night an outlier. There were a considerable amount of listings above this number, going all the way to \$50,000 per night. Many of the listings we examined manually had different, more realistic prices on the actual Airbnb website, indicating that either the listing was improper during the webscrape, or the webscrape itself had flaws. We chose \$10,000 as the cutoff point as there were multiple listings at or below \$9,999 per night that were verifiable. We removed all listings that were \$10,000 per night or greater.
+
+
+```{r, echo = F, message = F, warning = F}
+filter_df <- 
+  filter_df %>%
+  filter(price <= 10000 | is.na(price))
+```
+
+
+One more step in cleaning was cleaning the `bathrooms` column. There was some missing values, however the `bathrooms_text` column provided the number of bathrooms the listing had, so the number of bathrooms was extracted from the `bathrooms_text` if needed.
+
+
+```{r, echo = F, message = F, warning = F}
+filter_df <- 
+  filter_df %>% 
+  ## Cleaning the missing (non-missing) values in bathrooms from bathroom_text
+  mutate(
+    bathrooms =
+      case_when(
+        str_detect(bathrooms_text, "H|half") ~ 0.5,
+        is.na(bathrooms) ~ str_extract(bathrooms_text, "\\d+\\.?\\d*") %>% as.numeric(),
+        TRUE ~ bathrooms
+      )
+  )
+```
+
+
+### Info about data, `skim()`
+
+
+```{r, echo = F, message = F, warning = F}
+skim(filter_df)
+```
+
+
+It is important to note that some columns, such as `host_response_rate` is listed as a character variable because their values are formatted as "50%", "32%", "xx%"...
+
+Further analysis should make sure the columns selected are formatted correctly.
+
+The next step in the analysis will be to analyze the missing pattern in our data especially for the price variable. \### `vis_miss` visualization
+
+
+```{r, echo = F, message = F, warning = F}
+filter_df %>% 
+  arrange(price) %>% 
+  vis_miss(., warn_large_data = F) + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5))
+```
+
+
+The `vis_miss()` plot shows that occurence of missing values in our data.
+
+### Histogram and Spinogram for each Variable of Interest
+
+#### `Bedrooms`
+
+
+```{r, warning = F, echo = F, message = F}
+histogram <- 
+  filter_df %>% 
+  ggplot(aes(bedrooms, fill = is.na(price))) + 
+  geom_histogram(binwidth = 1)
+
+spinogram <- 
+  filter_df %>% 
+  ggplot(aes(bedrooms, fill = is.na(price))) + 
+  geom_histogram(binwidth = 1, position = "fill") + 
+  labs(
+    y = "proportion"
+  )
+
+histogram/spinogram
+```
+
+
+#### `Beds`
+
+
+```{r, warning = F, echo = F, message = F}
+histogram <- 
+  filter_df %>% 
+  ggplot(aes(beds, fill = is.na(price))) + 
+  geom_histogram(binwidth = 1)
+
+spinogram <- 
+  filter_df %>% 
+  ggplot(aes(beds, fill = is.na(price))) + 
+  geom_histogram(binwidth = 1, position = "fill") + 
+  labs(
+    y = "proportion"
+  )
+
+histogram/spinogram
+```
+
+
+#### `Bathrooms`
+
+
+```{r, warning = F, echo = F, message = F}
+
+histogram <- 
+  filter_df %>% 
+  ggplot(aes(bathrooms, fill = is.na(price))) + 
+  geom_histogram(binwidth = 1)
+
+spinogram <- 
+  filter_df %>% 
+  ggplot(aes(bathrooms, fill = is.na(price))) + 
+  geom_histogram(binwidth = 1, position = "fill") + 
+  labs(
+    y = "proportion"
+  )
+
+histogram/spinogram
+```
+
+
+#### `Accomodates`
+
+
+```{r, warning = F, echo = F, message = F}
+
+histogram <- 
+  filter_df %>% 
+  ggplot(aes(accommodates, fill = is.na(price))) + 
+  geom_histogram(binwidth = 1)
+
+spinogram <- 
+  filter_df %>% 
+  ggplot(aes(accommodates, fill = is.na(price))) + 
+  geom_histogram(binwidth = 1, position = "fill") + 
+  labs(
+    y = "proportion"
+  )
+
+histogram/spinogram
+```
+
+
+#### Host Response Rate
+
+
+```{r, warning = F, echo = F, message = F, eval = F}
+
+histogram <-
+  filter_df %>%
+  ggplot(aes(host_response_rate, fill = is.na(price))) +
+  geom_histogram(bins = 15)
+
+spinogram <-
+  filter_df %>%
+  ggplot(aes(host_response_rate, fill = is.na(price))) +
+  geom_histogram(bins = 15, position = "fill") +
+  labs(
+    y = "proportion"
+  )
+
+histogram/spinogram
+```
+
+
+#### Host Acceptance Rate
+
+
+```{r,warning = F, echo = F, message = F, eval = F}
+
+histogram <-
+  filter_df %>%
+  ggplot(aes(host_acceptance_rate, fill = is.na(price))) +
+  geom_histogram(bins = 15)
+
+spinogram <-
+  filter_df %>%
+  ggplot(aes(host_acceptance_rate, fill = is.na(price))) +
+  geom_histogram(bins = 15, position = "fill") +
+  labs(
+    y = "proportion"
+  )
+
+histogram/spinogram
+```
+
+
+### `mcar_test`
+
+Here are a few missing completely at random test. We believe that we can use the beds, bathrooms, and neighborhood location among other variables to impute the missing pricing data for these listings.
+
+These tests show that there are some missing patterns in our data.
+
+
+```{r, echo = F, message = F, warning = F}
+filter_df %>% 
+  select(price, latitude, longitude) %>% 
+  mcar_test(.)
+```
+
+```{r, echo = F, message = F, warning = F}
+filter_df %>% 
+  select(price, beds) %>% 
+  mcar_test(.)
+```
+
+
+The price variable was tested against beds along with latitude and longitude with little's MCAR test. The results show that the data is not missing completely at random which is shown by the significance in the previous tests. These tests results tell us that the price variable's missingness is dependent upon other variables within the data.
+
+
+```{r cleaning and dotplot chunk, echo = F, message = F, warning = F}
+# I think the 2 spinograms aren't working due to this code being after the spinograms are made
+# I am going to copy/paste the "cleaning" section of this code 
+# Feel free to delete all these comments if things work
+
+# # Cleaning section
+# filter_df$host_response_rate <- as.numeric(sub("%", "", filter_df$host_response_rate)) / 100
+# filter_df$host_acceptance_rate <- as.numeric(sub("%", "", filter_df$host_acceptance_rate)) / 100
+# filter_df$bathrooms <- ifelse(is.na(filter_df$bathrooms), as.numeric(sub(" .*", "", filter_df$bathrooms_text)), filter_df$bathrooms)
+
+# Dotplot
+ggplot(filter_df, aes(x = neighbourhood_group_cleansed, y = price)) +
+  geom_point()
+```
+
+```{r, echo = F, message = F, warning = F}
+filter_df$host_response_rate <- as.numeric(sub("%", "", filter_df$host_response_rate)) / 100
+filter_df$host_acceptance_rate <- as.numeric(sub("%", "", filter_df$host_acceptance_rate)) / 100
+filter_df$bathrooms <- ifelse(is.na(filter_df$bathrooms), as.numeric(sub(" .*", "", filter_df$bathrooms_text)), filter_df$bathrooms)
+
+ggplot(filter_df, aes(x = neighbourhood_group_cleansed, y = price)) +
+  geom_point()
+```
+
+
+The next step in the analysis will be to build a model with price as the response variable. The predictors will be values that are suspected to be indicators of price such as beds, lat and long, accommodates, bathrooms, etc. This model will then be run and coefficients values and significance will be documented. This will all be done without imputation.
+
+The price data will then be imputed by the predictors used in the model in the current form they are in. The mice package will be used to complete the imputation and it will be done multiple times. The multiple imputations will then be pooled and a model for price will then be created and ran. The predictors will be the same. We will then document the coefficients and significance values from the model summary.
+
+The price data will then be imputed by the predictors with a transformation done to the latitude and longitude. The transformation will change the latitude and longitude from degrees to Universal Transverse Mercator (UTM). This transformations will hopefully give our regression model a better sense of overall distance between units in NYC. The UTM is a flat coordinate system that is measured in meters and allows the regression model to better pick up distances. This imputation will be run and then the same model will be run to predict price. The coefficients and significance of the model will then be documented.
+
+The next step is the comparison between the three models run and their coefficients. We can then compare the coefficients by looking at the pooled estimates and the standard errors across all three models. We can do this with an understanding of Rubin's Rules and how they apply to pooled models. These results will allow us to gain insight into the models and how the two imputed models differ and if they differ from the unimputed model.
+
+This alone may not allow us to make a strong conclusion on which imputation predictors are better for our price variable. This will then lead us to do a comparison test by testing the correlation between the imputed and true values of our price variable between our two methods. This can be done by masking values that we already have in our price variable, then imputing these values using both methods. We will then calculate the correlation between the true and imputed values testing which predictor set is better, degrees or UTM. This will show any major differences between the two methods and give us a sense for price which method is better. This alone will not tell us if using UTM vs degrees is better in all cases but it could open the door for further discussion and digging into the topic.
+
+# Modeling
+
+> The next step in the analysis will be to build a model with price as the response variable. The predictors will be values that are suspected to be indicators of price such as beds, lat and long, accommodates, bathrooms, etc. This model will then be run and coefficients values and significance will be documented. This will all be done without imputation.
+
+## Matrix Plot
+
+
+```{r, echo = F, message = F, warning = F}
+library(psych)
+filter_df %>%
+  select(
+      price, 
+      bedrooms, beds,
+      latitude, longitude,
+      accommodates, bathrooms,
+      host_is_superhost
+    ) %>%
+pairs.panels(.,
+             method = "pearson", # this is the correlation method
+             hist.col = "#00AFBB",
+             density = TRUE, # this shows density plots
+             ellipses = TRUE, # show correlation ellipses
+             lm = TRUE
+)
+```
+
+
+The matrix plot shows that price isn't really correlated substantially with any other variable.
+
+Perhaps a log transformation would help better model the effect of the variables of interest with price.
+
+Is it also worthy to note that bedrooms, bathrooms, and beds seem to be correlated, so maybe in further analysis, multicollinearity should be checked.
+
+## Model before Imputation
+
+
+```{r, echo = F, message = F, warning = F}
+model <- 
+  filter_df %>% 
+  lm(log(price) ~ bedrooms + beds + latitude*longitude + accommodates + bathrooms + host_is_superhost-1, data = .) ; summary(model)
+
+
+library(car)
+vif(model)
+
+
+
+
+model1 <- 
+  filter_df %>% 
+  lm(log(price) ~ bedrooms + beds + latitude*longitude + accommodates + bathrooms, data = .)
+
+vif(model1,type = "predictor")
+```
+
+
+# Frequency Table and Plot
+
+
+```{r, echo = F, message = F, warning = F}
+filter_df %>% 
+  select(host_is_superhost, latitude, longitude, accommodates, bathrooms, bedrooms, beds, price) %>% 
+  md.pattern(., plot = T, rotate.names = T)
+```
+
+
+We know there are 14783 missing values in `price`.
+
+There are 355 occurences when `price` is the only missing value.
+
+It looks like `price` is missing the most when `beds` is also missing.
+
+The second most time `price` is missing is when `beds` AND `bedrooms` are missing.
+
+Note that, `latitude`, `longitude`, and `accomodates` are the only variables of interest that do not have any missing values.
+
+# Imputing Missing Values Using `mice`
+
+Imputing missing values for the variables of interest using predictive multiple matching.
+
+
+```{r, output = F, message = F, warning = F,include = F}
+# Run multiple imputation
+airbnb_imputation <- 
+  filter_df %>% 
+  select(host_is_superhost, latitude, longitude, accommodates, bathrooms, bedrooms, beds, price) %>%    mice(data = ., m = 5, method = "pmm", seed = 20251125)
+```
+
+```{r, echo = F, message = F, warning = F}
+summary(airbnb_imputation)
+```
+
+
+## `mice` diagnostics
+
+### Density Plot
+
+
+```{r, warning = F, echo = F, message = F}
+densityplot(airbnb_imputation)
+```
+
+
+In these density plots, the blue are the actual observed values and the magenta are the imputed values. These plots show us how close the imputed values are distributed compared to the observed values for the variables: `host_is_superhost`, `bathrooms`, `bedrooms`, `beds`, and `price`.
+
+In a perfect world, the imputed values should follow closely the distribution of the observed values. Here, `bathrooms` seems to be the biggest outlier.
+
+# Restructure the model with the imputed values
+
+
+```{r, echo = F, message = F, warning = F,include = F}
+completed_list <- complete(airbnb_imputation, "all") %>% map(as_tibble)
+```
+
+```{r, echo = F, message = F, warning = F,include = F}
+models <- 
+  map(completed_list, ~
+        lm(log(price) ~ 
+             bedrooms + bathrooms + beds + 
+             accommodates + 
+             latitude*longitude + 
+             host_is_superhost-1, 
+           data = .x)
+        )
+
+
+fit1 <- with(airbnb_imputation,lm(log(price) ~ 
+             bedrooms + bathrooms + beds + 
+             accommodates + 
+             latitude*longitude))
+```
+
+```{r, echo = F, message = F, warning = F}
+# Pool results
+pooled <- pool(fit1)
+```
+
+```{r, echo = F, message = F, warning = F,include = F}
+# Pooled coefficients
+pooled_coefficients <- summary(pooled)[, c('term', 'estimate')]
+```
+
+
+# Comparing model before and after imputation
+
+## Before Imp.
+
+
+```{r, echo = F, message = F, warning = F}
+summary(model)$coef
+```
+
+
+## After Imp.
+
+
+```{r, echo = F, message = F, warning = F}
+summary(pooled)
+```
+
+
+## Interpretation
+
+It looks like after imputation, there are a few changes to our results.
+
+-   The `beds` predictor variable becomes smaller and is found to be no longer significant in the model, while the `bathrooms` predictor variable increases and stays significant
+-   Effects of other varibales change slightly, but not enough for any significant difference
+
+This suggests that msising data in variables `bathrooms` and `beds` may have been introducing bias or instability in the original model.
+
+Despite these differences, location indicators `latitude` and `longitude` and whether the host is a classified as a superhost (`host_is_superhost`) effect the model greatly and stay very significant, indicating that imputation only helped improve these relationships by improving reliability for other variables with missing values.
+
+### Using UTM in imputation
+
+
+```{r, echo = F, message = F, warning = F,include = F}
+library(sf)
+model_dat <- filter_df %>%
+  select(price,latitude,longitude,bedrooms,beds, bathrooms,accommodates,host_is_superhost)
+
+
+
+
+points <- st_as_sf(model_dat, coords = c("longitude", "latitude"), crs = 4326)
+
+
+points_utm <- st_transform(points, crs = 32618)
+
+points_utm
+coords <- st_coordinates(points_utm)  # gives X = easting, Y = northing
+
+# Combine with price (variable to impute)
+updates <- data.frame(
+  price = model_dat$price,
+  X = scale(coords[,1]),
+  Y = scale(coords[,2]),
+  bathrooms = model_dat$bathrooms,
+  bedrooms = model_dat$bedrooms,
+  beds = model_dat$beds,
+  accommodates = model_dat$accommodates
+)
+
+sum(is.na(updates$price))
+summary(updates)
+cor(updates$price, updates$Y)
+
+cor_matrix <- cor(updates, use = "pairwise.complete.obs", method = "pearson")
+
+
+
+
+impA <- mice(updates, m = 5, method = "pmm", seed = 123)
+
+fit <- with(impA,lm(log(price) ~ 
+             bedrooms + bathrooms + beds + 
+             accommodates + 
+             X*Y) )
+
+pooled <- pool(fit)
+
+```
+
+```{r}
+kable(exp(pooled$pooled$estimate))
+```
+
+```{r, echo = F, message = F, warning = F}
+
+
+
+get_avg_fit <- function(model) {
+  models <- model$analyses  
+  
+  aic_vals      <- sapply(models, AIC)
+  bic_vals <- sapply(models, BIC)
+
+  data.frame(
+    mean_AIC      = mean(aic_vals),
+    mean_BIC = mean(bic_vals)
+  )
+}
+
+
+total_fit <- rbind(
+Total_Fit_latlong =  get_avg_fit(fit1),
+Total_Fit_utm = get_avg_fit(fit))
+kable(total_fit)
+
+```
+
+```{r, echo = F, message = F, warning = F,include = F}
+updates$lat <- model_dat$latitude
+updates$long <- model_dat$longitude
+
+
+data_mask <- updates
+data_mask$y2 <- data_mask$Y^2
+data_mask$x2 <- data_mask$X^2
+data_mask$xy <- data_mask$X*data_mask$Y
+data_mask$latlong <- data_mask$lat*data_mask$long
+
+mask <- sample(which(!is.na(data_mask$price)), size = floor(0.1 * nrow(data_mask)))
+data_mask$price_mask <- data_mask$price
+data_mask$price_mask[mask] <- NA
+
+
+# Only impute price
+meth <- make.method(data_mask)
+meth[] <- "" 
+meth["price_mask"] <- "pmm"
+
+
+predA <- make.predictorMatrix(data_mask)
+predA[, ] <- 0
+predA["price_mask", c("X","Y","xy")] <- 1
+
+
+predB <- make.predictorMatrix(data_mask)
+predB[, ] <- 0
+predB["price_mask", c("lat","long","latlong")] <- 1
+
+
+predC <- make.predictorMatrix(data_mask)
+predC[, ] <- 0
+predC["price_mask", c("X","Y","lat","long","xy","latlong")] <- 1
+
+
+
+impA <- mice(data_mask, m = 5, method = meth, predictorMatrix = predA, seed = 145)
+impB <- mice(data_mask, m = 5, method = meth, predictorMatrix = predB, seed = 145)
+impC <- mice(data_mask, m = 5, method = meth, predictorMatrix = predC, seed = 145)
+
+
+rmse_mask <- function(imp_obj, mask) {
+  # long format to average imputations
+  completed <- complete(imp_obj, "long")  # .imp and .id columns
+  # average over imputations
+  avg_imp <- aggregate(price_mask ~ .id, data = completed, FUN = mean)
+   avg_imp <- avg_imp[order(avg_imp$.id), ]
+  
+  # RMSE on masked indices
+  true_vals <- data_mask$price[mask]
+  pred_vals <- avg_imp$price_mask[mask]
+  
+  sqrt(mean((pred_vals - true_vals)^2))
+}
+
+rmse_results <- data.frame(
+  Predictor_Set = c("UTM", "LatLong","Combined"),
+  RMSE = c(rmse_mask(impA, mask),
+           rmse_mask(impB, mask),
+           rmse_mask(impC,mask))
+)
+
+
+
+
+```
+
+```{r}
+kable(rmse_results)
+```
+
+```{r, echo = F, message = F, warning = F,include = F}
+predictor_sets <- list(
+  UTM = predA,
+  LatLong = predB,
+  Combined = predC
+)
+
+
+
+
+library(mice)
+
+simulate_rmse <- function(data, predictor_sets, n_sim = 10, mask_frac = 0.1, m = 5, seed = 5686432) {
+  
+  set.seed(seed)
+  results <- list()
+  
+  for (pred_name in names(predictor_sets)) {
+    rmse_vec <- numeric(n_sim)
+    
+    for (i in 1:n_sim) {
+      # Mask a fraction of prices
+      mask_idx <- sample(which(!is.na(data$price)), size = floor(mask_frac * nrow(data)))
+      data$price_mask <- data$price
+      data$price_mask[mask_idx] <- NA
+      
+      # Method vector
+      meth <- rep("", ncol(data))
+      names(meth) <- colnames(data)
+      meth["price_mask"] <- "pmm"
+      
+      # Predictor matrix
+      pred <- predictor_sets[[pred_name]]
+      pred <- pred[colnames(data), colnames(data)]
+      
+      # Run mice
+      imp <- mice(data, m = m, method = meth, predictorMatrix = pred, seed = seed + i, printFlag = FALSE)
+      
+      # Compute RMSE using external function
+      rmse_vec[i] <- rmse_mask(imp, mask_idx)
+    }
+    
+    results[[pred_name]] <- rmse_vec
+  }
+  
+  return(results)
+}
+
+
+sim_results <- simulate_rmse(data_mask, predictor_sets, n_sim = 10, mask_frac = 0.1)
+
+summary_rmse <- data.frame(
+  Predictor_Set = names(sim_results),
+  Mean_RMSE = sapply(sim_results, mean),
+  SD_RMSE = sapply(sim_results, sd),
+  Min_RMSE = sapply(sim_results, min),
+  Max_RMSE = sapply(sim_results, max)
+)
+
+summary_rmse$SE <- summary_rmse$SD_RMSE/sqrt(10)
+summary_rmse$CI_lower <- summary_rmse$Mean_RMSE - 1.96*(summary_rmse$SE)
+summary_rmse$CI_upper <- summary_rmse$Mean_RMSE + 1.96*(summary_rmse$SE)
+
+
+
+```
+
+```{r}
+
+kable(summary_rmse)
+
+
+rmse_list <- data.frame(
+  rmse = unlist(sim_results),
+  predictors = rep(names(sim_results), times = sapply(sim_results,length))
+)
+
+
+rmse_model <- aov(rmse~predictors,rmse_list)
+
+kable(anova(rmse_model))
+
+
+```
+
