@@ -9,9 +9,7 @@ execute:
   message: false
 ---
 
-sample text
-
-```{r}
+```{r setup}
 library(tidyverse)
 library(patchwork)
 library(naniar)
@@ -19,11 +17,122 @@ library(skimr)
 library(visdat)
 library(mice)
 library(rapportools) 
-library(knitr)
+library(knitr)# added, couldn't render is.empty() w/out it
 source("data_pull.R")
 ```
 
+# Team Information
+
+Team name: Team Team
+
+Members: Grey Gergen, Tyler Davis, Jesus Rodriguez, Jack Macfadyen
+
+# Motivation
+
+There are many considerations that must be made when finding temporary housing, either for vacations or business trips. Airbnb is a popular website that allows individuals or businesses to list potential places for users to choose. These users can choose where they wish to stay based on location, accommodations, how many beds they need, and price. We sought to create a model that predicts the price of an Airbnb listing based on various variables.
+
+Airbnb data has been scraped by a team of contributors and gathered on a website [here](https://insideairbnb.com/get-the-data/). Their motivation is to show transparency in how spaces are being rented to tourists in their communities.
+
+When coming across this dataset, we found several missing values in the price of different Airbnb listings. Of the `r nrow(df)` listings we found `r sum(rapportools::is.empty(df$price))` missing prices. We believe that we can use the latitude, longitude, beds, bathrooms, and neighborhood location among other variables to impute the missing pricing data for these listings.
+
+# Data Documentation
+
 ```{r}
-head(df)
+data_documentation <- 
+  readr::read_csv(
+    "Inside Airbnb Data Dictionary - listings.csv detail v4.3.csv",
+    skip = 7, # removed the first 7 rows
+    col_names = T) %>% 
+  slice(1:(79-4)) # removed the last 4 rows
+```
+
+# Data Cleaning
+
+```{r}
+filter_df <-
+  df 
+# %>% 
+  # filter(host_identity_verified == "t", has_availability == "t")
+# %>% select(1,6,7,8,10,13,15,16,17,18,19,23,24,28,29,30:41)
+
+## fixing missing values
+filter_df[filter_df == "N/A"] <- NA
+filter_df[filter_df == ""] <- NA
+filter_df[filter_df == "[]"] <- NA
+filter_df[filter_df == "-"] <- NA
+
+## changing price from chr to numeric
+filter_df <-
+  filter_df %>% 
+  mutate(
+    price = str_remove_all(price, "\\$"),
+    price = str_remove_all(price, "\\,"),
+    price = as.numeric(price), 
+    id = as.factor(id)
+  ) %>% 
+  filter(price <= 10000 | is.na(price)) %>% 
+## Cleaning the missing (non-missing) values in bathrooms from bathroom_text
+  mutate(
+    bathrooms =
+      case_when(
+        str_detect(bathrooms_text, "H|half") ~ 0.5,
+        is.na(bathrooms) ~ str_extract(bathrooms_text, "\\d+\\.?\\d*") %>% as.numeric(),
+        TRUE ~ bathrooms
+      )
+  )
+
+# host response rate/acceptance rate cleaning
+# as well as some bathrooms/bathrooms_text cleaning
+
+filter_df$host_response_rate <- as.numeric(sub("%", "", filter_df$host_response_rate)) / 100
+filter_df$host_acceptance_rate <- as.numeric(sub("%", "", filter_df$host_acceptance_rate)) / 100
+filter_df$bathrooms <- ifelse(is.na(filter_df$bathrooms), as.numeric(sub(" .*", "", filter_df$bathrooms_text)), filter_df$bathrooms)
+
+## Formatting columns
+
+filter_df <- 
+  filter_df %>% 
+  mutate(
+    across(
+      c(
+        neighbourhood_group_cleansed,
+        neighbourhood_cleansed,
+        property_type, 
+        room_type,
+        host_id,
+        host_is_superhost,
+        host_response_time
+      ), 
+      as.factor
+    )
+  )
+```
+
+# Dataset Description
+
+## `Price`
+
+**Summary Statistics** 
+
+```{r}
+filter_df %>% 
+  select(price) %>% 
+  summary() %>% 
+  kable()
+```
+
+
+**Distribution of Price**
+
+```{r}
+ggplot(airbnb_data, aes(x = price)) + 
+  geom_histogram(bins = 1000)
+```
+```{r}
+filter_df %>% 
+  group_by(price) %>% 
+  tally() %>% 
+  arrange(desc(price)) %>% 
+  head(10)
 ```
 
