@@ -112,7 +112,7 @@ filter_df <-
 
 ## `Price`
 
-**Summary Statistics** 
+**Summary Statistics**
 
 ```{r}
 filter_df %>% 
@@ -121,18 +121,18 @@ filter_df %>%
   kable()
 ```
 
-
 **Distribution of Price**
 
 ```{r}
-ggplot(airbnb_data, aes(x = price)) + 
+ggplot(filter_df, aes(x = price)) + 
   geom_histogram(bins = 1000)
 ```
+
 ```{r}
 filter_df %>% 
   group_by(price) %>% 
   tally() %>% 
   arrange(desc(price)) %>% 
-  head(10)
+  head(10) %>%
+  kable()
 ```
-
