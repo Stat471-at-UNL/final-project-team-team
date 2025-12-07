@@ -1,13 +1,13 @@
 ---
 title: "index"
-format: 
-  pdf:
-    latex-engine: xelatex
-execute: 
-  echo: false
-  warning: false
-  message: false
+format: pdf
+execute:
+  echo: false     
+  warning: false 
+  message: false 
+editor: visual
 ---
+
 
 ```{r setup}
 library(tidyverse)
@@ -125,7 +125,7 @@ filter_df %>%
 
 ```{r}
 ggplot(filter_df, aes(x = price)) + 
-  geom_histogram(bins = 1000)
+  geom_histogram(bins = 100)
 ```
 
 ```{r}
@@ -136,3 +136,58 @@ filter_df %>%
   head(10) %>%
   kable()
 ```
+
+I am skipping ahead to write about the model construction and imputation methods
+
+# Model Construction
+
+The next step in the analysis will be to build a model with price as the response variable. The predictors will be values that are suspected to be indicators of price such as beds, lat and long, accommodates, bathrooms, etc. This model will then be run and coefficients values and significance will be documented. This will all be done without imputation.
+
+## Matrix Plot to Assess Variable Correlation
+
+```{r, echo = F, message = F, warning = F, include = F}
+library(psych)
+filter_df %>%
+  select(
+      price, 
+      bedrooms, beds,
+      latitude, longitude,
+      accommodates, bathrooms,
+      host_is_superhost
+    ) %>%
+pairs.panels(.,
+             method = "pearson", # this is the correlation method
+             hist.col = "#00AFBB",
+             density = TRUE, # this shows density plots
+             ellipses = TRUE, # show correlation ellipses
+             lm = TRUE
+)
+```
+
+Matrix plot needs to be described
+
+## Model Building
+
+```{r,include = F}
+model <- 
+  filter_df %>% 
+  lm(log(price) ~ bedrooms + beds + latitude*longitude + accommodates + bathrooms + host_is_superhost-1, data = .) ; summary(model)
+
+
+```
+
+```{r,include = F}
+
+library(car)
+vif(model)
+
+```
+
+```{r}
+
+model1 <- 
+  filter_df %>% 
+  lm(log(price) ~ bedrooms + beds + latitude*longitude + accommodates + bathrooms, data = .)
+```
+
+$$ \log(\text{Price}) = \beta_0 + \beta_1 \cdot \text{bedrooms} + \beta_2 \cdot \text{beds} $$
