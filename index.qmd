@@ -118,7 +118,7 @@ The `price` variable describes the daily price for a listing in its local curren
 
 ```{r}
 #| label: price_summary_statistics
-#| tbl-cap: "Summary Statistics of Price"
+#| tbl-cap: "Summary Statistics of `Price`"
 filter_df %>% 
   select(price) %>% 
   summary() %>% 
@@ -170,347 +170,356 @@ A histogram of `price` shows that the distribution is very right-skewed, as most
 
 The `beds` variable describes the amount of beds an apartment/house/etc... will have for guests. This differs from `bedrooms` as there could be more than one bed in a bedroom. 
 
-**Summary Statistics**
+### Summary Statistics
 
+```{r}
+#| label: besd_summary_statistics
+#| tbl-cap: "Summary Statistics of `Beds`"
+filter_df %>% 
+  select(beds) %>% 
+  summary() %>% 
+  kable()
+```
 
 
-<!-- # Model Construction -->
 
-<!-- The next step in the analysis will be to build a model with price as the response variable. The predictors will be values that are suspected to be indicators of price such as beds, lat and long, accommodates, bathrooms, etc. This model will then be run and coefficients values and significance will be documented. This will all be done without imputation. -->
+# Model Construction
 
-<!-- ## Matrix Plot to Assess Variable Correlation -->
+The next step in the analysis will be to build a model with price as the response variable. The predictors will be values that are suspected to be indicators of price such as beds, lat and long, accommodates, bathrooms, etc. This model will then be run and coefficients values and significance will be documented. This will all be done without imputation.
 
-<!-- ```{r, echo = F, message = F, warning = F, include = F} -->
-<!-- library(psych) -->
-<!-- filter_df %>% -->
-<!--   select( -->
-<!--       price,  -->
-<!--       bedrooms, beds, -->
-<!--       latitude, longitude, -->
-<!--       accommodates, bathrooms, -->
-<!--       host_is_superhost -->
-<!--     ) %>% -->
-<!-- pairs.panels(., -->
-<!--              method = "pearson", # this is the correlation method -->
-<!--              hist.col = "#00AFBB", -->
-<!--              density = TRUE, # this shows density plots -->
-<!--              ellipses = TRUE, # show correlation ellipses -->
-<!--              lm = TRUE -->
-<!-- ) -->
-<!-- ``` -->
+## Matrix Plot to Assess Variable Correlation
 
+```{r, echo = F, message = F, warning = F, include = F}
+library(psych)
+filter_df %>%
+  select(
+      price,
+      bedrooms, beds,
+      latitude, longitude,
+      accommodates, bathrooms,
+      host_is_superhost
+    ) %>%
+pairs.panels(.,
+             method = "pearson", # this is the correlation method
+             hist.col = "#00AFBB",
+             density = TRUE, # this shows density plots
+             ellipses = TRUE, # show correlation ellipses
+             lm = TRUE
+)
+```
 
-<!-- ## Model Building -->
 
-<!-- The airbnb model that will be used for this study will be attempting to predict the price variable. The predictors are beds, bathrooms, latitude, longitude, accommodates, and bedrooms. The final model was developed from a variety of model building techniques, along with understanding our predictors of interest. This model will create a basis for comparing imputation methods with different coordinate points.  -->
+## Model Building
 
-<!-- ```{r,include = F} -->
-<!-- model <-  -->
-<!--   filter_df %>%  -->
-<!--   lm(log(price) ~ bedrooms + beds + latitude*longitude + accommodates + bathrooms + host_is_superhost-1, data = .) ; summary(model) -->
+The airbnb model that will be used for this study will be attempting to predict the price variable. The predictors are beds, bathrooms, latitude, longitude, accommodates, and bedrooms. The final model was developed from a variety of model building techniques, along with understanding our predictors of interest. This model will create a basis for comparing imputation methods with different coordinate points.
 
+```{r,include = F}
+model <-
+  filter_df %>%
+  lm(log(price) ~ bedrooms + beds + latitude*longitude + accommodates + bathrooms + host_is_superhost-1, data = .) ; summary(model)
 
-<!-- ``` -->
 
-<!-- ```{r,include = F} -->
+```
 
-<!-- library(car) -->
-<!-- vif(model) -->
+```{r,include = F}
 
-<!-- ``` -->
+library(car)
+vif(model)
 
-<!-- ```{r} -->
+```
 
-<!-- model1 <-  -->
-<!--   filter_df %>%  -->
-<!--   lm(log(price) ~ bedrooms + beds + latitude*longitude + accommodates + bathrooms, data = .) -->
-<!-- ``` -->
+```{r}
 
-<!-- $$ \log(\text{Price}) = \beta_0 + \beta_1 \cdot \text{bedrooms} + \beta_2 \cdot \text{beds} + \beta_3 \cdot \text{latitude} + \beta_4 \cdot \text{longitude} + \beta_5 \cdot \text{latitude*longitude} + \beta_6 \cdot \text{accomodates} + \beta_7 \cdot \text{bedrooms}$$ -->
+model1 <-
+  filter_df %>%
+  lm(log(price) ~ bedrooms + beds + latitude*longitude + accommodates + bathrooms, data = .)
+```
 
-<!-- ### Coefficeint Estimates for Airbnb Model -->
+$$ \log(\text{Price}) = \beta_0 + \beta_1 \cdot \text{bedrooms} + \beta_2 \cdot \text{beds} + \beta_3 \cdot \text{latitude} + \beta_4 \cdot \text{longitude} + \beta_5 \cdot \text{latitude*longitude} + \beta_6 \cdot \text{accomodates} + \beta_7 \cdot \text{bedrooms}$$
 
-<!-- ```{r} -->
-<!-- kable(summary(model1)$coefficients) -->
-<!-- ``` -->
-<!-- The coefficient estimate table above shows that all variables are significant predictors of price. This will then allow us to test the differences in imputation when using geographic coordinates versus Universal Transverse Mercator (UTM). -->
+### Coefficeint Estimates for Airbnb Model
 
-<!-- The overall goal of this study is to test the imputive quality of different distance based metrics on the price variable from the airbnb dataset. This analysis will then provide information regrading the potential use of UTM more consistently over geographic coordinates. -->
+```{r}
+kable(summary(model1)$coefficients)
+```
+The coefficient estimate table above shows that all variables are significant predictors of price. This will then allow us to test the differences in imputation when using geographic coordinates versus Universal Transverse Mercator (UTM).
 
-<!-- Geographic coordinates are based on a spherical Earth model and uses degrees to measure distance. This can create issues with interpretation as degrees are not uniform in distance and can add necessary complications to a model. Geographic coordinates are usually measured in latitude and longitude. UTM is a projected coordinate system which is based on 60 zones across the Earth. These coordinates are more easily interpreted on a linear scale. UTM is usually measure on a x and y scale. The hypothesis on this study is that if UTM is in the predictor set the imputation will have more accuracy than if geographic coordinates are in the predictor set. The first step is to analyze the missing value patterns of our price variable. -->
+The overall goal of this study is to test the imputive quality of different distance based metrics on the price variable from the airbnb dataset. This analysis will then provide information regrading the potential use of UTM more consistently over geographic coordinates.
 
-<!-- ## Missing Values of Price -->
+Geographic coordinates are based on a spherical Earth model and uses degrees to measure distance. This can create issues with interpretation as degrees are not uniform in distance and can add necessary complications to a model. Geographic coordinates are usually measured in latitude and longitude. UTM is a projected coordinate system which is based on 60 zones across the Earth. These coordinates are more easily interpreted on a linear scale. UTM is usually measure on a x and y scale. The hypothesis on this study is that if UTM is in the predictor set the imputation will have more accuracy than if geographic coordinates are in the predictor set. The first step is to analyze the missing value patterns of our price variable.
 
-<!-- ```{r, echo = F, message = F, warning = F} -->
-<!-- filter_df %>%  -->
-<!--   select(host_is_superhost, latitude, longitude, accommodates, bathrooms, bedrooms, beds, price) %>%  -->
-<!--   md.pattern(., plot = T, rotate.names = T) -->
-<!-- ``` -->
+## Missing Values of Price
 
-<!-- We know there are 14783 missing values in `price`. There are 355 occurrences when `price` is the only missing value. It looks like `price` is missing the most when `beds` is also missing. The second most time `price` is missing is when `beds` AND `bedrooms` are missing. Note that, `latitude`, `longitude`, and `accomodates` are the only variables of interest that do not have any missing values.  -->
+```{r, echo = F, message = F, warning = F}
+filter_df %>%
+  select(host_is_superhost, latitude, longitude, accommodates, bathrooms, bedrooms, beds, price) %>%
+  md.pattern(., plot = T, rotate.names = T)
+```
 
-<!-- ## Imputing Missing Values with Geographic Coordinates -->
+We know there are 14783 missing values in `price`. There are 355 occurrences when `price` is the only missing value. It looks like `price` is missing the most when `beds` is also missing. The second most time `price` is missing is when `beds` AND `bedrooms` are missing. Note that, `latitude`, `longitude`, and `accomodates` are the only variables of interest that do not have any missing values.
 
-<!-- The imputation process throughout this study will be using the mice package in R. The mice package contains a variety of methods for imputation for this analysis predictive mean matching (pmm) will be used. The price variable and the entire predictor set are all quantitative variables for which pmm is the recommended method of imputation.  -->
+## Imputing Missing Values with Geographic Coordinates
 
-<!-- ```{r, output = F, message = F, warning = F,include = F} -->
-<!-- # Run multiple imputation -->
-<!-- airbnb_imputation <-  -->
-<!--   filter_df %>%  -->
-<!--   mutate(latitude = scale(latitude)[,1], longitude = scale(longitude)[,1]) %>% -->
-<!--   select(latitude, longitude, accommodates, bathrooms, bedrooms, beds, price) %>% -->
-<!--   mice(data = ., m = 5, method = "pmm", seed = 20251125) -->
-<!-- ``` -->
+The imputation process throughout this study will be using the mice package in R. The mice package contains a variety of methods for imputation for this analysis predictive mean matching (pmm) will be used. The price variable and the entire predictor set are all quantitative variables for which pmm is the recommended method of imputation.
 
-<!-- ```{r, echo = F, message = F, warning = F,include = F} -->
-<!-- completed_list <- complete(airbnb_imputation, "all") %>% map(as_tibble) -->
+```{r, output = F, message = F, warning = F,include = F}
+# Run multiple imputation
+airbnb_imputation <-
+  filter_df %>%
+  mutate(latitude = scale(latitude)[,1], longitude = scale(longitude)[,1]) %>%
+  select(latitude, longitude, accommodates, bathrooms, bedrooms, beds, price) %>%
+  mice(data = ., m = 5, method = "pmm", seed = 20251125)
+```
 
+```{r, echo = F, message = F, warning = F,include = F}
+completed_list <- complete(airbnb_imputation, "all") %>% map(as_tibble)
 
-<!-- fit1 <- with(airbnb_imputation,lm(log(price) ~  -->
-<!--              bedrooms + bathrooms + beds +  -->
-<!--              accommodates +  -->
-<!--              latitude*longitude)) -->
 
-<!-- pooled <- pool(fit1) -->
-<!-- pooled_coefficients <- summary(pooled)[, c('term', 'estimate')] -->
-<!-- kable(summary(pooled)) -->
-<!-- ``` -->
-<!-- The table above shows the estimates for the airbnb model with the price variable imputed. The coefficient estimates for the model are slightly different from the original model showing that imputation does have an impact in this data set and model. The next step of the analysis to replace geographic coordinates (latitude and longitude) with UTM based distance measurements.  -->
+fit1 <- with(airbnb_imputation,lm(log(price) ~
+             bedrooms + bathrooms + beds +
+             accommodates +
+             latitude*longitude))
 
-<!-- ## Imputing Missing Values with Universal Transverse Mercator -->
+pooled <- pool(fit1)
+pooled_coefficients <- summary(pooled)[, c('term', 'estimate')]
+kable(summary(pooled))
+```
+The table above shows the estimates for the airbnb model with the price variable imputed. The coefficient estimates for the model are slightly different from the original model showing that imputation does have an impact in this data set and model. The next step of the analysis to replace geographic coordinates (latitude and longitude) with UTM based distance measurements.
 
-<!-- ```{r, echo = F, message = F, warning = F,include = F} -->
-<!-- library(sf) -->
-<!-- model_dat <- filter_df %>% -->
-<!--   select(price,latitude,longitude,bedrooms,beds, bathrooms,accommodates) -->
+## Imputing Missing Values with Universal Transverse Mercator
 
+```{r, echo = F, message = F, warning = F,include = F}
+library(sf)
+model_dat <- filter_df %>%
+  select(price,latitude,longitude,bedrooms,beds, bathrooms,accommodates)
 
 
 
-<!-- points <- st_as_sf(model_dat, coords = c("longitude", "latitude"), crs = 4326) -->
 
+points <- st_as_sf(model_dat, coords = c("longitude", "latitude"), crs = 4326)
 
-<!-- points_utm <- st_transform(points, crs = 32618) -->
 
-<!-- points_utm -->
-<!-- coords <- st_coordinates(points_utm)   -->
+points_utm <- st_transform(points, crs = 32618)
 
-<!-- updates <- data.frame( -->
-<!--   price = model_dat$price, -->
-<!--   X = scale(coords[,1]), -->
-<!--   Y = scale(coords[,2]), -->
-<!--   bathrooms = model_dat$bathrooms, -->
-<!--   bedrooms = model_dat$bedrooms, -->
-<!--   beds = model_dat$beds, -->
-<!--   accommodates = model_dat$accommodates -->
-<!-- ) -->
+points_utm
+coords <- st_coordinates(points_utm)
 
-<!-- sum(is.na(updates$price)) -->
-<!-- summary(updates) -->
-<!-- cor(updates$price, updates$Y) -->
+updates <- data.frame(
+  price = model_dat$price,
+  X = scale(coords[,1]),
+  Y = scale(coords[,2]),
+  bathrooms = model_dat$bathrooms,
+  bedrooms = model_dat$bedrooms,
+  beds = model_dat$beds,
+  accommodates = model_dat$accommodates
+)
 
-<!-- cor_matrix <- cor(updates, use = "pairwise.complete.obs", method = "pearson") -->
+sum(is.na(updates$price))
+summary(updates)
+cor(updates$price, updates$Y)
 
+cor_matrix <- cor(updates, use = "pairwise.complete.obs", method = "pearson")
 
 
 
-<!-- impA <- mice(updates, m = 5, method = "pmm", seed = 123) -->
 
-<!-- fit <- with(impA,lm(log(price) ~  -->
-<!--              bedrooms + bathrooms + beds +  -->
-<!--              accommodates +  -->
-<!--              X*Y) ) -->
+impA <- mice(updates, m = 5, method = "pmm", seed = 123)
 
-<!-- pooled <- pool(fit) -->
+fit <- with(impA,lm(log(price) ~
+             bedrooms + bathrooms + beds +
+             accommodates +
+             X*Y) )
 
-<!-- ``` -->
+pooled <- pool(fit)
 
-<!-- ```{r} -->
-<!-- kable(summary(pooled)) -->
-<!-- ``` -->
-<!-- The coefficient estimates above show the imputed model for price with UTM distance variables. This model shows a drastic difference from the previous two models. This shows that not only imputation but which distance based metric used impacts coefficient estimates. The only way to truly see model performance of each model is to compare AIC and BIC measurements for each of the models constructed. -->
+```
 
-<!-- ### Comparing Model Accuracy Between Predictor Sets -->
+```{r}
+kable(summary(pooled))
+```
+The coefficient estimates above show the imputed model for price with UTM distance variables. This model shows a drastic difference from the previous two models. This shows that not only imputation but which distance based metric used impacts coefficient estimates. The only way to truly see model performance of each model is to compare AIC and BIC measurements for each of the models constructed.
 
-<!-- ```{r, echo = F, message = F, warning = F} -->
+### Comparing Model Accuracy Between Predictor Sets
 
+```{r, echo = F, message = F, warning = F}
 
-<!-- get_avg_fit <- function(model) { -->
-<!--   models <- model$analyses   -->
 
-<!--   aic_vals      <- sapply(models, AIC) -->
-<!--   bic_vals <- sapply(models, BIC) -->
+get_avg_fit <- function(model) {
+  models <- model$analyses
 
-<!--   data.frame( -->
-<!--     mean_AIC      = mean(aic_vals), -->
-<!--     mean_BIC = mean(bic_vals) -->
-<!--   ) -->
-<!-- } -->
+  aic_vals      <- sapply(models, AIC)
+  bic_vals <- sapply(models, BIC)
 
+  data.frame(
+    mean_AIC      = mean(aic_vals),
+    mean_BIC = mean(bic_vals)
+  )
+}
 
-<!-- total_fit <- rbind( -->
-<!-- Geographic = get_avg_fit(fit1), -->
-<!-- UTM = get_avg_fit(fit)) -->
-<!-- kable(total_fit) -->
 
-<!-- ``` -->
+total_fit <- rbind(
+Geographic = get_avg_fit(fit1),
+UTM = get_avg_fit(fit))
+kable(total_fit)
 
-<!-- The table above shows the mean AIC and BIC measurements for each imputation predictor set. The AIC and BIC measurements are lower for the geographic coordinates suggesting that they represent the relationship better than UTM. The model comparison give the idea that geographic coordinates could be be a better fit in the model when compared to UTM. This difference can truly be tested by comparing the imputation quality of each method. This will be done by calculating the RMSE for each imputation method.  -->
+```
 
-<!-- ## Comparing Imputation Methods with RMSE -->
+The table above shows the mean AIC and BIC measurements for each imputation predictor set. The AIC and BIC measurements are lower for the geographic coordinates suggesting that they represent the relationship better than UTM. The model comparison give the idea that geographic coordinates could be be a better fit in the model when compared to UTM. This difference can truly be tested by comparing the imputation quality of each method. This will be done by calculating the RMSE for each imputation method.
 
-<!-- ```{r,include = F} -->
-<!-- updates$lat <- model_dat$latitude -->
-<!-- updates$long <- model_dat$longitude -->
+## Comparing Imputation Methods with RMSE
 
+```{r,include = F}
+updates$lat <- model_dat$latitude
+updates$long <- model_dat$longitude
 
-<!-- data_mask <- updates -->
-<!-- data_mask$y2 <- data_mask$Y^2 -->
-<!-- data_mask$x2 <- data_mask$X^2 -->
-<!-- data_mask$xy <- data_mask$X*data_mask$Y -->
-<!-- data_mask$latlong <- data_mask$lat*data_mask$long -->
 
-<!-- mask <- sample(which(!is.na(data_mask$price)), size = floor(0.1 * nrow(data_mask))) -->
-<!-- data_mask$price_mask <- data_mask$price -->
-<!-- data_mask$price_mask[mask] <- NA -->
+data_mask <- updates
+data_mask$y2 <- data_mask$Y^2
+data_mask$x2 <- data_mask$X^2
+data_mask$xy <- data_mask$X*data_mask$Y
+data_mask$latlong <- data_mask$lat*data_mask$long
 
+mask <- sample(which(!is.na(data_mask$price)), size = floor(0.1 * nrow(data_mask)))
+data_mask$price_mask <- data_mask$price
+data_mask$price_mask[mask] <- NA
 
-<!-- # Only impute price -->
-<!-- meth <- make.method(data_mask) -->
-<!-- meth[] <- ""  -->
-<!-- meth["price_mask"] <- "pmm" -->
 
+# Only impute price
+meth <- make.method(data_mask)
+meth[] <- ""
+meth["price_mask"] <- "pmm"
 
-<!-- predA <- make.predictorMatrix(data_mask) -->
-<!-- predA[, ] <- 0 -->
-<!-- predA["price_mask", c("X","Y","xy","beds","bathrooms","bedrooms","accommodates")] <- 1 -->
 
+predA <- make.predictorMatrix(data_mask)
+predA[, ] <- 0
+predA["price_mask", c("X","Y","xy","beds","bathrooms","bedrooms","accommodates")] <- 1
 
-<!-- predB <- make.predictorMatrix(data_mask) -->
-<!-- predB[, ] <- 0 -->
-<!-- predB["price_mask", c("lat","long","latlong","beds","bathrooms","bedrooms","accommodates")] <- 1 -->
 
+predB <- make.predictorMatrix(data_mask)
+predB[, ] <- 0
+predB["price_mask", c("lat","long","latlong","beds","bathrooms","bedrooms","accommodates")] <- 1
 
-<!-- predC <- make.predictorMatrix(data_mask) -->
-<!-- predC[, ] <- 0 -->
-<!-- predC["price_mask", c("X","Y","lat","long","xy","latlong","beds","bathrooms","bedrooms","accommodates")] <- 1 -->
 
+predC <- make.predictorMatrix(data_mask)
+predC[, ] <- 0
+predC["price_mask", c("X","Y","lat","long","xy","latlong","beds","bathrooms","bedrooms","accommodates")] <- 1
 
 
 
-<!-- rmse_mask <- function(imp_obj, mask) { -->
-<!--   # long format to average imputations -->
-<!--   completed <- complete(imp_obj, "long")  # .imp and .id columns -->
-<!--   # average over imputations -->
-<!--   avg_imp <- aggregate(price_mask ~ .id, data = completed, FUN = mean) -->
-<!--    avg_imp <- avg_imp[order(avg_imp$.id), ] -->
 
-<!--   # RMSE on masked indices -->
-<!--   true_vals <- data_mask$price[mask] -->
-<!--   pred_vals <- avg_imp$price_mask[mask] -->
+rmse_mask <- function(imp_obj, mask) {
+  # long format to average imputations
+  completed <- complete(imp_obj, "long")  # .imp and .id columns
+  # average over imputations
+  avg_imp <- aggregate(price_mask ~ .id, data = completed, FUN = mean)
+   avg_imp <- avg_imp[order(avg_imp$.id), ]
 
-<!--   sqrt(mean((pred_vals - true_vals)^2)) -->
-<!-- } -->
+  # RMSE on masked indices
+  true_vals <- data_mask$price[mask]
+  pred_vals <- avg_imp$price_mask[mask]
 
+  sqrt(mean((pred_vals - true_vals)^2))
+}
 
 
 
 
 
-<!-- ``` -->
 
+```
 
 
-<!-- ```{r,include = F} -->
 
+```{r,include = F}
 
-<!-- predictor_sets <- list( -->
-<!--   UTM = predA, -->
-<!--   Geographic = predB -->
-<!-- ) -->
 
+predictor_sets <- list(
+  UTM = predA,
+  Geographic = predB
+)
 
 
 
-<!-- library(mice) -->
 
-<!-- simulate_rmse <- function(data, predictor_sets, n_sim = 10, mask_frac = 0.1, m = 5, seed = 5686432) { -->
+library(mice)
 
-<!--   set.seed(seed) -->
-<!--   results <- list() -->
+simulate_rmse <- function(data, predictor_sets, n_sim = 10, mask_frac = 0.1, m = 5, seed = 5686432) {
 
-<!--   for (pred_name in names(predictor_sets)) { -->
-<!--     rmse_vec <- numeric(n_sim) -->
+  set.seed(seed)
+  results <- list()
 
-<!--     for (i in 1:n_sim) { -->
-<!--       # Mask a fraction of prices -->
-<!--       mask_idx <- sample(which(!is.na(data$price)), size = floor(mask_frac * nrow(data))) -->
-<!--       data$price_mask <- data$price -->
-<!--       data$price_mask[mask_idx] <- NA -->
+  for (pred_name in names(predictor_sets)) {
+    rmse_vec <- numeric(n_sim)
 
-<!--       # Method vector -->
-<!--       meth <- rep("", ncol(data)) -->
-<!--       names(meth) <- colnames(data) -->
-<!--       meth["price_mask"] <- "pmm" -->
+    for (i in 1:n_sim) {
+      # Mask a fraction of prices
+      mask_idx <- sample(which(!is.na(data$price)), size = floor(mask_frac * nrow(data)))
+      data$price_mask <- data$price
+      data$price_mask[mask_idx] <- NA
 
-<!--       # Predictor matrix -->
-<!--       pred <- predictor_sets[[pred_name]] -->
-<!--       pred <- pred[colnames(data), colnames(data)] -->
+      # Method vector
+      meth <- rep("", ncol(data))
+      names(meth) <- colnames(data)
+      meth["price_mask"] <- "pmm"
 
-<!--       # Run mice -->
-<!--       imp <- mice(data, m = m, method = meth, predictorMatrix = pred, seed = seed + i, printFlag = FALSE) -->
+      # Predictor matrix
+      pred <- predictor_sets[[pred_name]]
+      pred <- pred[colnames(data), colnames(data)]
 
-<!--       # Compute RMSE using external function -->
-<!--       rmse_vec[i] <- rmse_mask(imp, mask_idx) -->
-<!--     } -->
+      # Run mice
+      imp <- mice(data, m = m, method = meth, predictorMatrix = pred, seed = seed + i, printFlag = FALSE)
 
-<!--     results[[pred_name]] <- rmse_vec -->
-<!--   } -->
+      # Compute RMSE using external function
+      rmse_vec[i] <- rmse_mask(imp, mask_idx)
+    }
 
-<!--   return(results) -->
-<!-- } -->
+    results[[pred_name]] <- rmse_vec
+  }
 
+  return(results)
+}
 
-<!-- sim_results <- simulate_rmse(data_mask, predictor_sets, n_sim = 10, mask_frac = 0.1) -->
 
-<!-- summary_rmse <- data.frame( -->
-<!--   Predictor_Set = names(sim_results), -->
-<!--   Mean_RMSE = sapply(sim_results, mean), -->
-<!--   SD_RMSE = sapply(sim_results, sd), -->
-<!--   Min_RMSE = sapply(sim_results, min), -->
-<!--   Max_RMSE = sapply(sim_results, max) -->
-<!-- ) -->
+sim_results <- simulate_rmse(data_mask, predictor_sets, n_sim = 10, mask_frac = 0.1)
 
-<!-- summary_rmse$SE <- summary_rmse$SD_RMSE/sqrt(10) -->
-<!-- summary_rmse$CI_lower <- summary_rmse$Mean_RMSE - 1.96*(summary_rmse$SE) -->
-<!-- summary_rmse$CI_upper <- summary_rmse$Mean_RMSE + 1.96*(summary_rmse$SE) -->
+summary_rmse <- data.frame(
+  Predictor_Set = names(sim_results),
+  Mean_RMSE = sapply(sim_results, mean),
+  SD_RMSE = sapply(sim_results, sd),
+  Min_RMSE = sapply(sim_results, min),
+  Max_RMSE = sapply(sim_results, max)
+)
 
+summary_rmse$SE <- summary_rmse$SD_RMSE/sqrt(10)
+summary_rmse$CI_lower <- summary_rmse$Mean_RMSE - 1.96*(summary_rmse$SE)
+summary_rmse$CI_upper <- summary_rmse$Mean_RMSE + 1.96*(summary_rmse$SE)
 
 
-<!-- ``` -->
 
-<!-- ```{r} -->
+```
 
-<!-- kable(summary_rmse) -->
+```{r}
 
-<!-- ``` -->
-<!-- It can be seen in the table above the the predictor set containing UTM as the slightly lower RMSE signifying that it could have higher imputation accuracy. The predictor set with the geographic coordinates does have the lower SE. These results do not give any conclusions. The results in the table above will need to be statistically tested. This can be done with in a anova model, with RMSE as the response variable and the "predictor sets" (UTM vs. Geographic) as the predictor variable.  -->
+kable(summary_rmse)
 
-<!-- ```{r} -->
+```
+It can be seen in the table above the the predictor set containing UTM as the slightly lower RMSE signifying that it could have higher imputation accuracy. The predictor set with the geographic coordinates does have the lower SE. These results do not give any conclusions. The results in the table above will need to be statistically tested. This can be done with in a anova model, with RMSE as the response variable and the "predictor sets" (UTM vs. Geographic) as the predictor variable.
 
-<!-- rmse_list <- data.frame( -->
-<!--   rmse = unlist(sim_results), -->
-<!--   predictors = rep(names(sim_results), times = sapply(sim_results,length)) -->
-<!-- ) -->
+```{r}
 
+rmse_list <- data.frame(
+  rmse = unlist(sim_results),
+  predictors = rep(names(sim_results), times = sapply(sim_results,length))
+)
 
-<!-- rmse_model <- aov(rmse~predictors,rmse_list) -->
 
-<!-- kable(anova(rmse_model)) -->
+rmse_model <- aov(rmse~predictors,rmse_list)
 
+kable(anova(rmse_model))
 
-<!-- ``` -->
 
-<!-- The anova summary above shows that we fail to reject the null hypothesis that the group means are equal. This means that there is no statistical difference in using the predictor set with geographic coordinates or UTM in regards to imputation quality. This shows that overall for the airbnb data set neither the imputation or the model would directly benefit from using UTM over geographic coordinates.  -->
+```
+
+The anova summary above shows that we fail to reject the null hypothesis that the group means are equal. This means that there is no statistical difference in using the predictor set with geographic coordinates or UTM in regards to imputation quality. This shows that overall for the airbnb data set neither the imputation or the model would directly benefit from using UTM over geographic coordinates.
 
 
