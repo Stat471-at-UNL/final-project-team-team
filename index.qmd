@@ -140,7 +140,7 @@ The `price` variable describes the daily price for a listing in its local curren
 filter_df %>% 
   select(price) %>% 
   summary() %>% 
-  kable()
+  kable(.,digits = 3, format = "latex", booktabs = TRUE)
 ```
 
 The `price` variable has a mean of `r paste0("$", round(mean(filter_df$price), 2))` and a median of `r paste0("$", median(filter_df$price))`.
@@ -178,7 +178,7 @@ price_range_table <-
     group_by(price_range) %>% 
     tally()
 price_range_table %>% 
-  kable()
+  kable(.,digits = 3, format = "latex", booktabs = TRUE)
 
 ```
 
@@ -291,7 +291,7 @@ The `bedrooms` variable describes the amount of bedrooms an apartment/house/etc.
 filter_df %>% 
   select(bedrooms) %>% 
   summary() %>% 
-  kable()
+  kable(.,digits = 3, format = "latex", booktabs = TRUE)
 ```
 The expected value of bedrooms in a listing is `r round(mean(filter_df$bedrooms), 2)` bedrooms. Most listings in the dataset have `r paste0(round(median(filter_df$bedrooms), 2),    " ",    ifelse(round(median(filter_df$bedrooms), 2) == 1, "bedroom", "bedrooms") )`.
 
@@ -311,7 +311,7 @@ The `bathrooms` variable describes the amount of bedrooms an apartment/house/etc
 filter_df %>% 
   select(bedrooms) %>% 
   summary() %>% 
-  kable()
+  kable(.,digits = 3, format = "latex", booktabs = TRUE)
 ```
 
 The mean amount of bathrooms in a listing is `r round(mean(filter_df$bathrooms), 2)` bathrooms. Most listings in the dataset have `r paste0(round(median(filter_df$bathrooms), 2),    " ",    ifelse(round(median(filter_df$bathrooms), 2) == 1, "bathroom", "bathrooms") )`.
@@ -415,11 +415,9 @@ variable_selection_section <-
   )
 ```
 
-<<<<<<< HEAD
+
 **START COMMENT: I'm not sure if it is my browser, but the vis_miss() plot seems blurry when it is rendered
-=======
-**COMMENT: I'm not sure if it is my browser, but the vis_miss() plot seems blurry when it is rendered
->>>>>>> 5c96e31971cf0db4e62f00571f595d400030916a
+
 
 To visually understand the completeness of the data, missingness patterns were examined using a `vis_miss()` plot. The plot was arranged by increasing price. 
 
@@ -598,7 +596,7 @@ $$ \log(\text{Price}) = \beta_0 + \beta_1 \cdot \text{bedrooms} + \beta_2 \cdot 
 
 ```{r}
 
-kable(summary(model1)$coefficients)
+kable(summary(model1)$coefficients, digits = 3, format = "latex", booktabs = TRUE)
 
 ```
 
@@ -614,9 +612,8 @@ Geographic coordinates are based on a spherical Earth model and uses degrees to 
 
 filter_df %>%
 
-  select(host_is_superhost, latitude, longitude, accommodates, bathrooms, bedrooms, beds, price) %>%
-
-  md.pattern(., plot = T, rotate.names = T)
+  select(host_is_superhost, latitude, longitude, accommodates, bathrooms, bedrooms, beds, price) %>% md.pattern(., plot = F) %>%
+  kable(., format = "latex", booktabs = TRUE)
 
 ```
 
@@ -658,7 +655,7 @@ pooled <- pool(fit1)
 
 pooled_coefficients <- summary(pooled)[, c('term', 'estimate')]
 
-kable(summary(pooled))
+kable(summary(pooled), digits = 3, format = "latex", booktabs = TRUE)
 
 ```
 
@@ -724,7 +721,7 @@ pooled <- pool(fit)
 
 ```{r}
 
-kable(summary(pooled))
+kable(summary(pooled), digits = 3, format = "latex", booktabs = TRUE)
 
 ```
 
@@ -758,7 +755,7 @@ Geographic = get_avg_fit(fit1),
 
 UTM = get_avg_fit(fit))
 
-kable(total_fit)
+kable(total_fit, digits = 3, format = "latex", booktabs = TRUE)
 
 ```
 
@@ -928,7 +925,7 @@ summary_rmse$CI_upper <- summary_rmse$Mean_RMSE + 1.96*(summary_rmse$SE)
 
 ```{r}
 
-kable(summary_rmse)
+kable(summary_rmse[,-1], digits = 3, format = "latex", booktabs = TRUE)
 
 ```
 
@@ -946,7 +943,7 @@ rmse_list <- data.frame(
 
 rmse_model <- aov(rmse~predictors,rmse_list)
 
-kable(anova(rmse_model))
+kable(anova(rmse_model), digits = 3, format = "latex", booktabs = TRUE)
 
 ```
 
