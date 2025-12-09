@@ -44,8 +44,24 @@ data_documentation <-
     col_names = T) %>% 
   slice(1:(79-4)) # removed the last 4 rows
 ```
+```{r, eval = F}
+## COMMENT: I tried to make this work, but no luck
+## I think our best option is to make another .qmd file called data_documentation
+## and just have it load the kable as html
 
-# Data Cleaning
+## Then here, we can just link to the data_documentation.qmd file, I *think* that would work
+
+
+#| label: data_documentation_table
+#| tbl-cap: Data Dictionary
+data_documentation %>% 
+  filter(!Field == "room_type") %>% 
+  select(1,2,3,4) %>% 
+  kable("latex", booktabs = T)
+```
+
+
+# Data Cleaning {.hidden}
 
 ```{r}
 filter_df <-
@@ -111,7 +127,7 @@ filter_df <-
 
 ## `Price`
 
-The `price` variable describes the daily price for a listing in its local currency. Since all listings in this analysis are from New York City, all prices are in \$USD. There are `r round(sum(!is.na(filter_df$price)), 2)` observations of price where it has a numerical value and it is not missing from the data.
+The `price` variable describes the daily price for a listing in its local currency. Since all listings in this analysis are from New York City, all prices are in \$USD. There are `r format(sum(!is.na(filter_df$price)), scientific = FALSE, big.mark = ",")` observations of price where it has a numerical value and it is not missing from the data.
 
 ### Summary Statistics
 
@@ -244,6 +260,12 @@ filter_df %>%
 ```
 
 **COMMENT: I think these tables, especially the one the tail end of bed observations would be good to include. Maybe discuss how values above 20 should be considered outliers??**
+
+# Variable Discussion and Selection
+
+How do the predictors `beds`, `bedrooms`, `bathrooms`, `latitude`, `longitude`, and `host_is_superhost` relate to the outcome variable `price`?
+
+
 
 # Model Construction
 	
