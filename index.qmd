@@ -613,8 +613,7 @@ Geographic coordinates are based on a spherical Earth model and uses degrees to 
 
 filter_df %>%
 
-  select(host_is_superhost, latitude, longitude, accommodates, bathrooms, bedrooms, beds, price) %>% md.pattern(., plot = F) %>%
-  kable(., format = "latex", booktabs = TRUE)
+  select(host_is_superhost, latitude, longitude, accommodates, bathrooms, bedrooms, beds, price) %>% md.pattern(., plot = F) 
 
 ```
 
