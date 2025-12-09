@@ -1,5 +1,10 @@
 ---
-title: "AirBnB Data Report"
+title: "Airbnb Data Report: Predicting Price of New York City Listings"
+author:
+- "Tyler Davis"
+- "Grey Gergen"
+- "Jack Macfadyen"
+- "Jesus Rodriguez"
 format: pdf
 execute:
   echo: false     
@@ -21,19 +26,13 @@ library(knitr)# added, couldn't render is.empty() w/out it
 source("data_pull.R")
 ```
 
-# Team Information
-
-Team name: Team Team
-
-Members: Grey Gergen, Tyler Davis, Jesus Rodriguez, Jack Macfadyen
-
 # Motivation
 
-There are many considerations that must be made when finding temporary housing, either for vacations or business trips. Airbnb is a popular website that allows individuals or businesses to list potential places for users to choose. These users can choose where they wish to stay based on location, accommodations, how many beds they need, and price. We sought to create a model that predicts the price of an Airbnb listing based on various variables.
+There are many considerations that must be made when finding temporary housing, either for vacations or business trips. Airbnb is a popular website that allows individuals or businesses to list potential places for users to choose. These users can choose where they wish to stay based on location, accommodations, how many beds they need, and price. We sought to create a model that predicts the price of an Airbnb listing based on various variables. This will be useful to both users who wish to find an expected price of an accommodation based on various desired characteristics as well as hosts who want a robust method of finding appropriate pricing for their listing.
 
-Airbnb data has been scraped by a team of contributors and gathered on a website [here](https://insideairbnb.com/get-the-data/). Their motivation is to show transparency in how spaces are being rented to tourists in their communities.
+Airbnb data for major cities across the world has been scraped by a team of contributors and gathered on a website [here](https://insideairbnb.com/get-the-data/) in October 2025. Their motivation is to show transparency in how spaces are being rented to tourists in their communities. For the purposes of this report, we took a sample of all Airbnb listings from New York City.
 
-When coming across this dataset, we found several missing values in the price of different Airbnb listings. Of the `r nrow(df)` listings we found `r sum(rapportools::is.empty(df$price))` missing prices. We believe that we can use the latitude, longitude, beds, bathrooms, and neighborhood location among other variables to impute the missing pricing data for these listings.
+When coming across this dataset, we found several missing values in the price of different Airbnb listings. Of the `r nrow(df)` listings we found `r sum(rapportools::is.empty(df$price))` missing prices. We believe that we can use the latitude, longitude, beds, bathrooms, and neighborhood location among other variables to reliably impute the missing pricing data for these listings.
 
 # Data Documentation
 
@@ -124,13 +123,13 @@ filter_df <-
   )
 ```
 
-# Varaible Overview
+# Variable Overview
 
-The variables selected for analysis were chosen via variable selection explained further in this report. 
+The process for choosing important variables in our model relied on a combination of determining which information is pertinent and relevant to actual usage by both users and hosts. The variable selection used for each variable is explained in the following sections.
 
 ## `Price`
 
-The `price` variable describes the daily price for a listing in its local currency. Since all listings in this analysis are from New York City, all prices are in \$USD. There are `r format(sum(!is.na(filter_df$price)), scientific = FALSE, big.mark = ",")` observations of price where it has a numerical value and it is not missing from the data.
+The `price` variable describes the daily price for a listing in its local currency. Since all listings in this analysis are from New York City, all prices are in \$USD. There are `r format(sum(!is.na(filter_df$price)), scientific = FALSE, big.mark = ",")` valid observations of price where it not missing and has a numerical value.
 
 ### Summary Statistics
 
@@ -140,14 +139,14 @@ The `price` variable describes the daily price for a listing in its local curren
 filter_df %>% 
   select(price) %>% 
   summary() %>% 
-  kable()
+  kable(.,digits = 3, format = "latex", booktabs = TRUE)
 ```
 
 The `price` variable has a mean of `r paste0("$", round(mean(filter_df$price), 2))` and a median of `r paste0("$", median(filter_df$price))`.
 
-Due to cleaning, the max amount of price of limited to \$10000 a night. The smallest price in the dataset is \$10 a night.
+We decided to consider all listings at or above the price of \$10,000 per night an outlier. There were a considerable group of listings above this number, going all the way to \$50,000 per night. Many of the listings we examined manually had different, more realistic prices on the actual Airbnb website, indicating that either the listing was improper during the webscrape, or the webscrape itself had flaws. We chose \$10,000 as the cutoff point as there was a listing at \$9,999 per night that was verifiable. The smallest price in the dataset is \$10 a night.
 
-There are `r sum(is.na(filter_df$price))` missing values in `price`. Which means missing values make up around `r paste0(round(sum(is.na(filter_df$price)) / nrow(filter_df), 4) * 100, "%")` of the observations in the dataset.
+There are `r sum(is.na(filter_df$price))` missing values in `price`, which means missing values account for `r paste0(round(sum(is.na(filter_df$price)) / nrow(filter_df), 4) * 100, "%")` of the observations in the dataset.
 
 ### Histogram and Price Ranges
 
@@ -156,7 +155,7 @@ ggplot(filter_df, aes(x = price)) +
   geom_histogram(bins = 100, fill = "grey", color = "black") + 
   scale_x_continuous(n.breaks = 10) + 
   labs(
-    title = "Distribution of Price of AirBnB Listings",
+    title = "Distribution of Price of Airbnb Listings",
     x = "Price",
     y = "Count"
   )
@@ -178,15 +177,15 @@ price_range_table <-
     group_by(price_range) %>% 
     tally()
 price_range_table %>% 
-  kable()
+  kable(.,digits = 3, format = "latex", booktabs = TRUE)
 
 ```
 
-A histogram of `price` shows that the distribution is very right-skewed, as most of the dataset has listings in the $\le\$1000$ price range. In fact only, `r paste0(round(price_range_table$n[2] / nrow(filter_df), 4) * 100, "%")` of the dataset (including NA values) has AirBnB listings over the $\$1000$ price range.
+A histogram of `price` shows that the distribution is very right-skewed, as most of the dataset has listings in the $\le\$1000$ price range. In fact only, `r paste0(round(price_range_table$n[2] / nrow(filter_df), 4) * 100, "%")` of the dataset (including NA values) has Airbnb listings over the $\$1000$ price range.
 
 ## `Beds`
 
-The `beds` variable describes the amount of beds an apartment/house/etc... will have for guests. This differs from `bedrooms` as there could be more than one bed in a bedroom. There are `r round(sum(!is.na(filter_df$beds)), 2)` observations in `beds` where the value is not missing.
+The `beds` variable describes the amount of beds an apartment/house/etc will have for guests. This differs from `bedrooms` as there could be more than one bed in a bedroom. There are `r round(sum(!is.na(filter_df$beds)), 2)` observations in `beds` where the value is not missing.
 
 ### Summary Statistics
 
@@ -240,23 +239,23 @@ bed_counts <- filter_df %>%
 # Histogram
 ggplot(bed_counts, aes(x = beds, y = n)) +
   geom_col(fill = "grey", color = "black") +
-  geom_text(                                                # this messes around
-    aes(label = n, size = 1/n),                             # with the text on the histogram
-    vjust = -0.5,                                           #
-    color = "blue",                                         #
-    fontface = "bold") +                                    #
-  scale_size_continuous(range = c(1.8,3), guide = "none") + # the range determines the size limits
-  scale_x_continuous(breaks = c(0,5,10,15,20,25,30,35,40)) + 
+  geom_text(
+    aes(label = n, size = 1/n), 
+    vjust = -0.5,
+    color = "blue",
+    fontface = "bold") +
+  scale_size_continuous(range = c(2,3), guide = "none") + 
   labs(
-    title = "Distribution of Amount of Beds in AirBnB Listings",
+    title = "Distribution of Amount of Beds in Airbnb Listings",
     x = "Number of Beds",
     y = "Count"
-  )
-  
+  ) +
+  scale_x_continuous(breaks = c(0,5,10,15,20,25,30,35,40))
 ```
 
 **COMMENT: I think these tables, especially the one the tail end of bed observations would be good to include. Maybe discuss how values above 20 should be considered outliers??**
 
+<<<<<<< HEAD
 <!-- ### Counts of Number of Beds Table -->
 
 <!-- ```{r} -->
@@ -291,7 +290,7 @@ The `bedrooms` variable describes the amount of bedrooms an apartment/house/etc.
 filter_df %>% 
   select(bedrooms) %>% 
   summary() %>% 
-  kable()
+  kable(.,digits = 3, format = "latex", booktabs = TRUE)
 ```
 The expected value of bedrooms in a listing is `r round(mean(filter_df$bedrooms), 2)` bedrooms. Most listings in the dataset have `r paste0(round(median(filter_df$bedrooms), 2),    " ",    ifelse(round(median(filter_df$bedrooms), 2) == 1, "bedroom", "bedrooms") )`.
 
@@ -311,7 +310,7 @@ The `bathrooms` variable describes the amount of bedrooms an apartment/house/etc
 filter_df %>% 
   select(bedrooms) %>% 
   summary() %>% 
-  kable()
+  kable(.,digits = 3, format = "latex", booktabs = TRUE)
 ```
 
 The mean amount of bathrooms in a listing is `r round(mean(filter_df$bathrooms), 2)` bathrooms. Most listings in the dataset have `r paste0(round(median(filter_df$bathrooms), 2),    " ",    ifelse(round(median(filter_df$bathrooms), 2) == 1, "bathroom", "bathrooms") )`.
@@ -319,6 +318,9 @@ The mean amount of bathrooms in a listing is `r round(mean(filter_df$bathrooms),
 The highest number of beds a listing has in the data is `r max(filter_df$bathrooms)`, while the lowest number of beds is `r min(filter_df$bathrooms)`.
 
 There are `r sum(is.na(filter_df$bathrooms))` missing values in the `bedrooms` variable, that is `r paste0(round(sum(is.na(filter_df$bathrooms)) / nrow(filter_df), 4) * 100, "%")` of observations in the dataset.
+=======
+**COMMENT 2: I took out the tables, I think the histogram now does the job, it still would be good to discuss outliers the same however.**
+>>>>>>> 5c96e31971cf0db4e62f00571f595d400030916a
 
 # Variable Selection and Discussion
 
@@ -412,7 +414,9 @@ variable_selection_section <-
   )
 ```
 
+
 **START COMMENT: I'm not sure if it is my browser, but the vis_miss() plot seems blurry when it is rendered
+
 
 To visually understand the completeness of the data, missingness patterns were examined using a `vis_miss()` plot. The plot was arranged by increasing price. 
 
@@ -585,17 +589,19 @@ model1 <-
 
 ```
 
-$$ \log(\text{Price}) = \beta_0 + \beta_1 \cdot \text{bedrooms} + \beta_2 \cdot \text{beds} + \beta_3 \cdot \text{latitude} + \beta_4 \cdot \text{longitude} + \beta_5 \cdot \text{latitude*longitude} + \beta_6 \cdot \text{accomodates} + \beta_7 \cdot \text{bedrooms}$$
+$$ \log(\text{Price}) = \beta_0 + \beta_1 \cdot \text{bedrooms} + \beta_2 \cdot \text{beds} + \beta_3 \cdot \text{latitude} + \beta_4 \cdot \text{longitude} \\ + \beta_5 \cdot \text{latitude*longitude} + \beta_6 \cdot \text{accomodates} + \beta_7 \cdot \text{bedrooms}$$
 
 ### Coefficeint Estimates for Airbnb Model
 
 ```{r}
 
-kable(summary(model1)$coefficients)
+kable(summary(model1)$coefficients, digits = 3, format = "latex", booktabs = TRUE)
 
 ```
 
 The coefficient estimate table above shows that all variables are significant predictors of price. This will then allow us to test the differences in imputation when using geographic coordinates versus Universal Transverse Mercator (UTM).
+
+# Imputation Analysis
 
 The overall goal of this study is to test the imputive quality of different distance based metrics on the price variable from the airbnb dataset. This analysis will then provide information regrading the potential use of UTM more consistently over geographic coordinates.
 
@@ -607,9 +613,8 @@ Geographic coordinates are based on a spherical Earth model and uses degrees to 
 
 filter_df %>%
 
-  select(host_is_superhost, latitude, longitude, accommodates, bathrooms, bedrooms, beds, price) %>%
-
-  md.pattern(., plot = T, rotate.names = T)
+  select(host_is_superhost, latitude, longitude, accommodates, bathrooms, bedrooms, beds, price) %>% md.pattern(., plot = F) %>%
+  kable(., format = "latex", booktabs = TRUE)
 
 ```
 
@@ -651,7 +656,7 @@ pooled <- pool(fit1)
 
 pooled_coefficients <- summary(pooled)[, c('term', 'estimate')]
 
-kable(summary(pooled))
+kable(summary(pooled), digits = 3, format = "latex", booktabs = TRUE)
 
 ```
 
@@ -717,13 +722,13 @@ pooled <- pool(fit)
 
 ```{r}
 
-kable(summary(pooled))
+kable(summary(pooled), digits = 3, format = "latex", booktabs = TRUE)
 
 ```
 
 The coefficient estimates above show the imputed model for price with UTM distance variables. This model shows a drastic difference from the previous two models. This shows that not only imputation but which distance based metric used impacts coefficient estimates. The only way to truly see model performance of each model is to compare AIC and BIC measurements for each of the models constructed.
 
-### Comparing Model Accuracy Between Predictor Sets
+## Comparing Model Accuracy Between Predictor Sets
 
 ```{r, echo = F, message = F, warning = F}
 
@@ -751,7 +756,7 @@ Geographic = get_avg_fit(fit1),
 
 UTM = get_avg_fit(fit))
 
-kable(total_fit)
+kable(total_fit, digits = 3, format = "latex", booktabs = TRUE)
 
 ```
 
@@ -921,7 +926,7 @@ summary_rmse$CI_upper <- summary_rmse$Mean_RMSE + 1.96*(summary_rmse$SE)
 
 ```{r}
 
-kable(summary_rmse)
+kable(summary_rmse[,-1], digits = 3, format = "latex", booktabs = TRUE)
 
 ```
 
@@ -939,8 +944,10 @@ rmse_list <- data.frame(
 
 rmse_model <- aov(rmse~predictors,rmse_list)
 
-kable(anova(rmse_model))
+kable(anova(rmse_model), digits = 3, format = "latex", booktabs = TRUE)
 
 ```
 
 The anova summary above shows that we fail to reject the null hypothesis that the group means are equal. This means that there is no statistical difference in using the predictor set with geographic coordinates or UTM in regards to imputation quality. This shows that overall for the airbnb data set neither the imputation or the model would directly benefit from using UTM over geographic coordinates.
+
+# Conclusion
