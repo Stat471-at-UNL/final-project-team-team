@@ -35,8 +35,6 @@ Airbnb data has been scraped by a team of contributors and gathered on a website
 
 When coming across this dataset, we found several missing values in the price of different Airbnb listings. Of the `r nrow(df)` listings we found `r sum(rapportools::is.empty(df$price))` missing prices. We believe that we can use the latitude, longitude, beds, bathrooms, and neighborhood location among other variables to impute the missing pricing data for these listings.
 
-# Data Documentation
-
 ```{r}
 data_documentation <- 
   readr::read_csv(
@@ -45,8 +43,6 @@ data_documentation <-
     col_names = T) %>% 
   slice(1:(79-4)) # removed the last 4 rows
 ```
-
-# Data Cleaning
 
 ```{r}
 filter_df <-
@@ -159,12 +155,13 @@ price_range_table <-
     ) %>%
     group_by(price_range) %>% 
     tally()
-price_group_table %>% 
+
+price_range_table %>% 
   kable()
 
 ```
 
-A histogram of `price` shows that the distribution is very right-skewed, as most of the dataset has listings in the \$0-\$1000 price range. In fact only, `r paste0(round(price_group_table$n[2] / nrow(filter_df), 2) * 100, "%")` of the dataset (including NA values) has AirBnB listings over the \$1000 price range.  
+A histogram of `price` shows that the distribution is very right-skewed, as most of the dataset has listings in the \$0-\$1000 price range. In fact only, `r paste0(round(price_range_table$n[2] / nrow(filter_df), 2) * 100, "%")` of the dataset (including NA values) has AirBnB listings over the \$1000 price range.  
 
 ## `Beds`
 
@@ -180,8 +177,6 @@ filter_df %>%
   summary() %>% 
   kable()
 ```
-
-
 
 # Model Construction
 
