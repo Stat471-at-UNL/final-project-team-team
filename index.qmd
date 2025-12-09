@@ -590,7 +590,7 @@ model1 <-
 
 ```
 
-$$ \log(\text{Price}) = \beta_0 + \beta_1 \cdot \text{bedrooms} + \beta_2 \cdot \text{beds} + \beta_3 \cdot \text{latitude} + \beta_4 \cdot \text{longitude} + \beta_5 \cdot \text{latitude*longitude} + \beta_6 \cdot \text{accomodates} + \beta_7 \cdot \text{bedrooms}$$
+$$ \log(\text{Price}) = \beta_0 + \beta_1 \cdot \text{bedrooms} + \beta_2 \cdot \text{beds} + \beta_3 \cdot \text{latitude} + \beta_4 \cdot \text{longitude} \\ + \beta_5 \cdot \text{latitude*longitude} + \beta_6 \cdot \text{accomodates} + \beta_7 \cdot \text{bedrooms}$$
 
 ### Coefficeint Estimates for Airbnb Model
 
@@ -601,6 +601,8 @@ kable(summary(model1)$coefficients, digits = 3, format = "latex", booktabs = TRU
 ```
 
 The coefficient estimate table above shows that all variables are significant predictors of price. This will then allow us to test the differences in imputation when using geographic coordinates versus Universal Transverse Mercator (UTM).
+
+# Imputation Analysis
 
 The overall goal of this study is to test the imputive quality of different distance based metrics on the price variable from the airbnb dataset. This analysis will then provide information regrading the potential use of UTM more consistently over geographic coordinates.
 
@@ -727,7 +729,7 @@ kable(summary(pooled), digits = 3, format = "latex", booktabs = TRUE)
 
 The coefficient estimates above show the imputed model for price with UTM distance variables. This model shows a drastic difference from the previous two models. This shows that not only imputation but which distance based metric used impacts coefficient estimates. The only way to truly see model performance of each model is to compare AIC and BIC measurements for each of the models constructed.
 
-### Comparing Model Accuracy Between Predictor Sets
+## Comparing Model Accuracy Between Predictor Sets
 
 ```{r, echo = F, message = F, warning = F}
 
@@ -948,3 +950,5 @@ kable(anova(rmse_model), digits = 3, format = "latex", booktabs = TRUE)
 ```
 
 The anova summary above shows that we fail to reject the null hypothesis that the group means are equal. This means that there is no statistical difference in using the predictor set with geographic coordinates or UTM in regards to imputation quality. This shows that overall for the airbnb data set neither the imputation or the model would directly benefit from using UTM over geographic coordinates.
+
+# Conclusion
