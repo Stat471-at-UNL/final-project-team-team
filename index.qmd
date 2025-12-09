@@ -1,11 +1,12 @@
 ---
-title: "index"
+title: "AirBnB Data Report"
 format: pdf
 execute:
   echo: false     
   warning: false 
   message: false 
-editor: visual
+editor_options: 
+  chunk_output_type: inline
 ---
 
 ```{r setup}
@@ -44,6 +45,7 @@ data_documentation <-
     col_names = T) %>% 
   slice(1:(79-4)) # removed the last 4 rows
 ```
+
 ```{r, eval = F}
 ## COMMENT: I tried to make this work, but no luck
 ## I think our best option is to make another .qmd file called data_documentation
@@ -59,7 +61,6 @@ data_documentation %>%
   select(1,2,3,4) %>% 
   kable("latex", booktabs = T)
 ```
-
 
 # Data Cleaning {.hidden}
 
@@ -123,7 +124,9 @@ filter_df <-
   )
 ```
 
-# Dataset Description
+# Varaible Overview
+
+The variables selected for analysis were chosen via variable selection explained further in this report. 
 
 ## `Price`
 
@@ -202,8 +205,7 @@ The highest number of beds a listing has in the data is 40, while the lowest num
 
 Similarly to `price`, there are `r sum(is.na(filter_df$beds))` missing values in the `beds` variable, that is `r paste0(round(sum(is.na(filter_df$beds)) / nrow(filter_df), 4) * 100, "%")` of observations in the dataset.
 
-*This was supposed to be a `callout` but it had problems rendering as a pdf*
-Taking a look at listings with 0 beds, and I found that there are some like this:
+*This was supposed to be a `callout` but it had problems rendering as a pdf* Taking a look at listings with 0 beds, and I found that there are some like this:
 
 -   [www.airbnb.com/rooms/1111666966430724392](www.airbnb.com/rooms/1111666966430724392)
 
@@ -228,47 +230,288 @@ Overall, the data is very messy, and the `source` of the scrape-`city scrape`-le
 ### Histogram
 
 ```{r}
-filter_df %>% 
-  # filter(beds<40) %>% 
-ggplot(aes(x = beds)) + 
-  geom_histogram(bins = 20, fill = "grey", color = "black")  + 
+# geom_histogram was having problems with geom_text so I had
+# to make do with geom_col()
+
+# counts for the geom_col() histogram
+bed_counts <- filter_df %>%
+  count(beds)
+
+# Histogram
+ggplot(bed_counts, aes(x = beds, y = n)) +
+  geom_col(fill = "grey", color = "black") +
+  geom_text(
+    aes(label = n, size = 1/n), 
+    vjust = -0.5,
+    color = "blue",
+    fontface = "bold") +
+  scale_size_continuous(range = c(2,3), guide = "none") + 
   labs(
     title = "Distribution of Amount of Beds in AirBnB Listings",
-    # subtitle = "Only Measuring Observations Where `beds` < 40",
     x = "Number of Beds",
     y = "Count"
-  )
-```
-
-### Counts of Number of Beds Table
-
-```{r}
-filter_df %>% 
-  group_by(beds) %>% 
-  tally() %>% 
-  head(10) %>% 
-  kable()
-```
-
-```{r}
-filter_df %>% 
-  group_by(beds) %>% 
-  tally() %>% 
-  tail(10) %>% 
-  arrange(desc(beds)) %>% 
-  kable()
+  ) +
+  scale_x_continuous(breaks = c(0,5,10,15,20,25,30,35,40))
 ```
 
 **COMMENT: I think these tables, especially the one the tail end of bed observations would be good to include. Maybe discuss how values above 20 should be considered outliers??**
 
-# Variable Discussion and Selection
+<!-- ### Counts of Number of Beds Table -->
+
+<!-- ```{r} -->
+<!-- filter_df %>%  -->
+<!--   group_by(beds) %>%  -->
+<!--   tally() %>%  -->
+<!--   head(10) %>%  -->
+<!--   kable() -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- filter_df %>%  -->
+<!--   group_by(beds) %>%  -->
+<!--   tally() %>%  -->
+<!--   tail(10) %>%  -->
+<!--   arrange(desc(beds)) %>%  -->
+<!--   kable() -->
+<!-- ``` -->
+
+
+**COMMENT 2: I took out the tables, I think the histogram now does the job, it still would be good to discuss outliers the same however. Feel free to delete the comments above if you don't want to use these two tables**
+
+## `Bedrooms`
+
+The `bedrooms` variable describes the amount of bedrooms an apartment/house/etc... will have for guests. This differs from `beds` as 1 bedroom could possibly contain 1 or more beds, or sometimes even no beds. There are `r round(sum(!is.na(filter_df$bedrooms)), 2)` observations in `bedrooms` where the value is not missing.
+
+### Summary Statistics
+
+```{r}
+#| label: beds_summary_statistics
+#| tbl-cap: "Summary Statistics of `Bedrooms`"
+filter_df %>% 
+  select(bedrooms) %>% 
+  summary() %>% 
+  kable()
+```
+The expected value of bedrooms in a listing is `r round(mean(filter_df$bedrooms), 2)` bedrooms. Most listings in the dataset have `r paste0(round(median(filter_df$bedrooms), 2),    " ",    ifelse(round(median(filter_df$bedrooms), 2) == 1, "bedroom", "bedrooms") )`.
+
+The highest number of beds a listing has in the data is `r max(filter_df$bedrooms)`, while the lowest number of beds is `r min(filter_df$bedrooms)`.
+
+There are `r sum(is.na(filter_df$bedrooms))` missing values in the `bedrooms` variable, that is `r paste0(round(sum(is.na(filter_df$bedrooms)) / nrow(filter_df), 4) * 100, "%")` of observations in the dataset.
+
+## `Bathrooms`
+
+The `bathrooms` variable describes the amount of bedrooms an apartment/house/etc... will have for guests. This differs from `beds` as 1 bedroom could possibly contain 1 or more beds, or sometimes even no beds. There are `r round(sum(!is.na(filter_df$bathrooms)), 2)` observations in `bedrooms` where the value is not missing.
+
+### Summary Statistics
+
+```{r}
+#| label: bedrooms_summary_statistics
+#| tbl-cap: "Summary Statistics of `Bathrooms`"
+filter_df %>% 
+  select(bedrooms) %>% 
+  summary() %>% 
+  kable()
+```
+
+The mean amount of bathrooms in a listing is `r round(mean(filter_df$bathrooms), 2)` bathrooms. Most listings in the dataset have `r paste0(round(median(filter_df$bathrooms), 2),    " ",    ifelse(round(median(filter_df$bathrooms), 2) == 1, "bathroom", "bathrooms") )`.
+
+The highest number of beds a listing has in the data is `r max(filter_df$bathrooms)`, while the lowest number of beds is `r min(filter_df$bathrooms)`.
+
+There are `r sum(is.na(filter_df$bathrooms))` missing values in the `bedrooms` variable, that is `r paste0(round(sum(is.na(filter_df$bathrooms)) / nrow(filter_df), 4) * 100, "%")` of observations in the dataset.
+
+# Variable Selection and Discussion
+
+The variables of interest for modeling and analysis were selected based on their expected influence on `price`, the outcome variable. Only measurable characteristics of the list or host were included, rather than variables related to the web-scrape process itself (ie., `last_scraped`, `source`) or variables such as urls or images. 
+
+The variables were grouped into categories according to the aspect of the listing they represent:
+
+- **Location**
+  - `neighbourhood_group_cleansed`
+  - `neighbourhood_cleansed`
+  - `latitude`
+  - `longitude`
+
+- **Property characteristics**
+  - `property_type`
+  - `room_type`
+  - `accommodates`
+  - `bathrooms`
+  - `bedrooms`
+  - `beds`
+
+- **Booking rule summaries (night requirements)**
+  - `minimum_nights`
+  - `maximum_nights`
+  - `minimum_nights_avg_ntm`
+  - `maximum_nights_avg_ntm`
+  - `minimum_minimum_nights`
+  - `maximum_minimum_nights`
+
+- **Host characteristics**
+  - `host_id`
+  - `host_is_superhost`
+  - `host_response_time`
+  - `host_response_rate`
+  - `host_acceptance_rate`
+  - `host_listings_count`
+  - `host_total_listings_count`
+  - `host_identity_verified`
+
+- **Reviews**
+  - `number_of_reviews`
+  - `review_scores_rating`
+  - `review_scores_cleanliness`
+  - `review_scores_communication`
+  - `review_scores_location`
+  - `review_scores_value`
+  
+```{r}
+variable_selection_section <- 
+  filter_df %>% 
+  select(
+    price,
+    
+    # --- Location ---
+    neighbourhood_group_cleansed,
+    neighbourhood_cleansed,
+    latitude,
+    longitude,
+    
+    # --- Property characteristics ---
+    property_type,
+    room_type,
+    accommodates,
+    bathrooms,
+    bedrooms,
+    beds,
+    
+    # --- Booking rule summaries (night requirements) ---
+    minimum_nights_avg_ntm,
+    maximum_nights_avg_ntm,
+    minimum_minimum_nights,
+    maximum_minimum_nights,
+    
+    # --- Host characteristics ---
+    host_id,
+    host_is_superhost,
+    host_response_time,
+    host_response_rate,
+    host_acceptance_rate,
+    host_listings_count,
+    host_total_listings_count,
+    # host_identity_verified,
+    
+    # --- Reviews ---
+    number_of_reviews,
+    review_scores_rating,
+    review_scores_cleanliness,
+    review_scores_communication,
+    review_scores_location,
+    review_scores_value
+  )
+```
+
+**START COMMENT: I'm not sure if it is my browser, but the vis_miss() plot seems blurry when it is rendered
+
+To visually understand the completeness of the data, missingness patterns were examined using a `vis_miss()` plot. The plot was arranged by increasing price. 
+
+```{r}
+variable_selection_section %>% 
+  arrange(price) %>% 
+  vis_miss(., warn_large_data = F) + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5))
+```
+
+From this plot, missingness in `price` appeared related to variables such as `beds`, `host_response_time`, `host_response_rate`, and perhaps `host_acceptance_rate`. Another pattern can be seen with increasing `price` and all the variables related to reviews. 
+
+**END COMMENT: vis_dat() doesn't work either
+
+Prioritzing interpretability, only variables with simple measures were considered for the final model. These predictors were: `beds`, `bedrooms`, `bathrooms`, `accomodates`, `latitude`, `longitude`, and `host_is_superhost`. 
+
+## Selected Predictors Relation to Price
 
 How do the predictors `beds`, `bedrooms`, `bathrooms`, `latitude`, `longitude`, and `host_is_superhost` relate to the outcome variable `price`?
 
+### `Beds`
 
+```{r, warning = F, echo = F, message = F}
+histogram <- 
+  filter_df %>% 
+  ggplot(aes(beds, fill = is.na(price))) + 
+  geom_histogram(binwidth = 1)
+
+spinogram <- 
+  filter_df %>% 
+  ggplot(aes(beds, fill = is.na(price))) + 
+  geom_histogram(binwidth = 1, position = "fill") + 
+  labs(
+    y = "proportion"
+  )
+
+histogram/spinogram
+```
+
+### `Bedrooms`
+
+```{r, warning = F, echo = F, message = F}
+histogram <- 
+  filter_df %>% 
+  ggplot(aes(bedrooms, fill = is.na(price))) + 
+  geom_histogram(binwidth = 1)
+
+spinogram <- 
+  filter_df %>% 
+  ggplot(aes(bedrooms, fill = is.na(price))) + 
+  geom_histogram(binwidth = 1, position = "fill") + 
+  labs(
+    y = "proportion"
+  )
+
+histogram/spinogram
+```
+
+### `Bathrooms`
+
+```{r, warning = F, echo = F, message = F}
+
+histogram <- 
+  filter_df %>% 
+  ggplot(aes(bathrooms, fill = is.na(price))) + 
+  geom_histogram(binwidth = 1)
+
+spinogram <- 
+  filter_df %>% 
+  ggplot(aes(bathrooms, fill = is.na(price))) + 
+  geom_histogram(binwidth = 1, position = "fill") + 
+  labs(
+    y = "proportion"
+  )
+
+histogram/spinogram
+```
+
+### `Accomodates`
+
+```{r, warning = F, echo = F, message = F}
+
+histogram <- 
+  filter_df %>% 
+  ggplot(aes(accommodates, fill = is.na(price))) + 
+  geom_histogram(binwidth = 1)
+
+spinogram <- 
+  filter_df %>% 
+  ggplot(aes(accommodates, fill = is.na(price))) + 
+  geom_histogram(binwidth = 1, position = "fill") + 
+  labs(
+    y = "proportion"
+  )
+
+histogram/spinogram
+```
 
 # Model Construction
-	
+
 The next step in the analysis will be to build a model with price as the response variable. The predictors will be values that are suspected to be indicators of price such as beds, lat and long, accommodates, bathrooms, etc. This model will then be run and coefficients values and significance will be documented. This will all be done without imputation.
 
 ## Matrix Plot to Assess Variable Correlation
