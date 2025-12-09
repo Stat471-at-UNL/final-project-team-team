@@ -255,7 +255,6 @@ ggplot(bed_counts, aes(x = beds, y = n)) +
 
 **COMMENT: I think these tables, especially the one the tail end of bed observations would be good to include. Maybe discuss how values above 20 should be considered outliers??**
 
-<<<<<<< HEAD
 <!-- ### Counts of Number of Beds Table -->
 
 <!-- ```{r} -->
@@ -318,9 +317,8 @@ The mean amount of bathrooms in a listing is `r round(mean(filter_df$bathrooms),
 The highest number of beds a listing has in the data is `r max(filter_df$bathrooms)`, while the lowest number of beds is `r min(filter_df$bathrooms)`.
 
 There are `r sum(is.na(filter_df$bathrooms))` missing values in the `bedrooms` variable, that is `r paste0(round(sum(is.na(filter_df$bathrooms)) / nrow(filter_df), 4) * 100, "%")` of observations in the dataset.
-=======
+
 **COMMENT 2: I took out the tables, I think the histogram now does the job, it still would be good to discuss outliers the same however.**
->>>>>>> 5c96e31971cf0db4e62f00571f595d400030916a
 
 # Variable Selection and Discussion
 
