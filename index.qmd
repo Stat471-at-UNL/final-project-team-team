@@ -1,5 +1,10 @@
 ---
-title: "AirBnB Data Report"
+title: "Airbnb Data Report: Predicting Price of New York City Listings"
+author:
+- "Tyler Davis"
+- "Grey Gergen"
+- "Jack Macfadyen"
+- "Jesus Rodriguez"
 format: pdf
 execute:
   echo: false     
@@ -20,12 +25,6 @@ library(rapportools)
 library(knitr)# added, couldn't render is.empty() w/out it
 source("data_pull.R")
 ```
-
-# Team Information
-
-Team name: Team Team
-
-Members: Grey Gergen, Tyler Davis, Jesus Rodriguez, Jack Macfadyen
 
 # Motivation
 
@@ -156,7 +155,7 @@ ggplot(filter_df, aes(x = price)) +
   geom_histogram(bins = 100, fill = "grey", color = "black") + 
   scale_x_continuous(n.breaks = 10) + 
   labs(
-    title = "Distribution of Price of AirBnB Listings",
+    title = "Distribution of Price of Airbnb Listings",
     x = "Price",
     y = "Count"
   )
@@ -182,7 +181,7 @@ price_range_table %>%
 
 ```
 
-A histogram of `price` shows that the distribution is very right-skewed, as most of the dataset has listings in the $\le\$1000$ price range. In fact only, `r paste0(round(price_range_table$n[2] / nrow(filter_df), 4) * 100, "%")` of the dataset (including NA values) has AirBnB listings over the $\$1000$ price range.
+A histogram of `price` shows that the distribution is very right-skewed, as most of the dataset has listings in the $\le\$1000$ price range. In fact only, `r paste0(round(price_range_table$n[2] / nrow(filter_df), 4) * 100, "%")` of the dataset (including NA values) has Airbnb listings over the $\$1000$ price range.
 
 ## `Beds`
 
@@ -247,7 +246,7 @@ ggplot(bed_counts, aes(x = beds, y = n)) +
     fontface = "bold") +
   scale_size_continuous(range = c(2,3), guide = "none") + 
   labs(
-    title = "Distribution of Amount of Beds in AirBnB Listings",
+    title = "Distribution of Amount of Beds in Airbnb Listings",
     x = "Number of Beds",
     y = "Count"
   ) +
