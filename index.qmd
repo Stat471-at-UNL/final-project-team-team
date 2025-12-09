@@ -124,7 +124,7 @@ filter_df <-
   )
 ```
 
-# Varaible Overview
+# Variable Overview
 
 The process for choosing important variables in our model relied on a combination of determining which information is pertinent and relevant to actual usage by both users and hosts. The variable selection used for each variable is explained in the following sections.
 
@@ -186,7 +186,7 @@ A histogram of `price` shows that the distribution is very right-skewed, as most
 
 ## `Beds`
 
-The `beds` variable describes the amount of beds an apartment/house/etc... will have for guests. This differs from `bedrooms` as there could be more than one bed in a bedroom. There are `r round(sum(!is.na(filter_df$beds)), 2)` observations in `beds` where the value is not missing.
+The `beds` variable describes the amount of beds an apartment/house/etc will have for guests. This differs from `bedrooms` as there could be more than one bed in a bedroom. There are `r round(sum(!is.na(filter_df$beds)), 2)` observations in `beds` where the value is not missing.
 
 ### Summary Statistics
 
