@@ -9,7 +9,7 @@ format: pdf
 execute:
   echo: false     
   warning: false 
-  message: false 
+  message: false
 editor_options: 
   chunk_output_type: inline
 ---
@@ -136,10 +136,28 @@ The `price` variable describes the daily price for a listing in its local curren
 ```{r}
 #| label: price_summary_statistics
 #| tbl-cap: "Summary Statistics of `Price`"
+#| layout-ncol: 2
+
 filter_df %>% 
   select(price) %>% 
   summary() %>% 
   kable(.,digits = 3, format = "latex", booktabs = TRUE)
+
+filter_df %>%
+  select(beds) %>%
+  summary() %>%
+  kable()
+
+filter_df %>%
+  select(bedrooms) %>%
+  summary() %>%
+  kable(.,digits = 3, format = "latex", booktabs = TRUE)
+
+filter_df %>%
+  select(bathrooms) %>%
+  summary() %>%
+  kable(.,digits = 3, format = "latex", booktabs = TRUE)
+
 ```
 
 The `price` variable has a mean of `r paste0("$", round(mean(filter_df$price), 2))` and a median of `r paste0("$", median(filter_df$price))`.
@@ -148,267 +166,56 @@ We decided to consider all listings at or above the price of \$10,000 per night 
 
 There are `r sum(is.na(filter_df$price))` missing values in `price`, which means missing values account for `r paste0(round(sum(is.na(filter_df$price)) / nrow(filter_df), 4) * 100, "%")` of the observations in the dataset.
 
-### Histogram and Price Ranges
 
-```{r}
-ggplot(filter_df, aes(x = price)) + 
-  geom_histogram(bins = 100, fill = "grey", color = "black") + 
-  scale_x_continuous(n.breaks = 10) + 
-  labs(
-    title = "Distribution of Price of Airbnb Listings",
-    x = "Price",
-    y = "Count"
-  )
-```
-
-```{r}
-#| label: price_range_table
-#| tbl-cap: Number of Listings in Each Price Range
-
-price_range_table <-
-  filter_df %>% 
-    mutate(
-      price_range = case_when(
-        is.na(price) ~ "N/A",
-        price <= 1000 ~ "<=1000",
-        TRUE ~ ">1000"
-      )
-    ) %>%
-    group_by(price_range) %>% 
-    tally()
-price_range_table %>% 
-  kable(.,digits = 3, format = "latex", booktabs = TRUE)
-
-```
-
-A histogram of `price` shows that the distribution is very right-skewed, as most of the dataset has listings in the $\le\$1000$ price range. In fact only, `r paste0(round(price_range_table$n[2] / nrow(filter_df), 4) * 100, "%")` of the dataset (including NA values) has Airbnb listings over the $\$1000$ price range.
-
-## `Beds`
-
-The `beds` variable describes the amount of beds an apartment/house/etc will have for guests. This differs from `bedrooms` as there could be more than one bed in a bedroom. There are `r round(sum(!is.na(filter_df$beds)), 2)` observations in `beds` where the value is not missing.
-
-### Summary Statistics
-
-```{r}
-#| label: besd_summary_statistics
-#| tbl-cap: "Summary Statistics of `Beds`"
-filter_df %>% 
-  select(beds) %>% 
-  summary() %>% 
-  kable()
-```
-
-The expected value of beds in a listing is `r round(mean(filter_df$beds), 2)` beds. Most listings in the dataset have `r paste0(round(median(filter_df$beds), 2),    " ",    ifelse(round(median(filter_df$beds), 2) == 1, "bed", "beds") )`.
-
-The highest number of beds a listing has in the data is 40, while the lowest number of beds is 0. **COMMENT: The value of 40 is very likely an outlier!**
-
-Similarly to `price`, there are `r sum(is.na(filter_df$beds))` missing values in the `beds` variable, that is `r paste0(round(sum(is.na(filter_df$beds)) / nrow(filter_df), 4) * 100, "%")` of observations in the dataset.
-
-*This was supposed to be a `callout` but it had problems rendering as a pdf* Taking a look at listings with 0 beds, and I found that there are some like this:
-
--   [www.airbnb.com/rooms/1111666966430724392](www.airbnb.com/rooms/1111666966430724392)
-
--   <https://www.airbnb.com/rooms/21456>
-
-where it is scraped as a 1 bedroom, 0 beds listings, however it does indeed have a bed.
-
-When looking at listings with 0 beds AND 0 bedrooms:
-
--   <https://www.airbnb.com/rooms/6359111>
-    -   A loft meant for gatherings/parties... There doesn't seem to be any beds, but there are plenty of couches
--   <https://www.airbnb.com/rooms/1936633>
-    -   A "Great 1BD waterfront City Island NY"
-        -   Literally has 1 bedroom in the name, and yes it does have a bed.
-
-Vice versa (0 bedrooms, 1 bed) seems fine however, as there are mostly studio apartments like the following. <https://www.airbnb.com/rooms/2595>
-
-Overall, the data is very messy, and the `source` of the scrape-`city scrape`-leaves a lot of listings that are very inaccurate to what is actually listed on the website.
-
-*End of callout, at this time, I think the model with imputation Tyler has done is good that we don't have to worry about these cases and innaccuracies, but it might be a good idea to include it in a discussion/limitations section*
-
-### Histogram
-
-```{r}
-# geom_histogram was having problems with geom_text so I had
-# to make do with geom_col()
-
-# counts for the geom_col() histogram
-bed_counts <- filter_df %>%
-  count(beds)
-
-# Histogram
-ggplot(bed_counts, aes(x = beds, y = n)) +
-  geom_col(fill = "grey", color = "black") +
-  geom_text(
-    aes(label = n, size = 1/n), 
-    vjust = -0.5,
-    color = "blue",
-    fontface = "bold") +
-  scale_size_continuous(range = c(2,3), guide = "none") + 
-  labs(
-    title = "Distribution of Amount of Beds in Airbnb Listings",
-    x = "Number of Beds",
-    y = "Count"
-  ) +
-  scale_x_continuous(breaks = c(0,5,10,15,20,25,30,35,40))
-```
-
-**COMMENT: I think these tables, especially the one the tail end of bed observations would be good to include. Maybe discuss how values above 20 should be considered outliers??**
-
-<!-- ### Counts of Number of Beds Table -->
-
-<!-- ```{r} -->
-<!-- filter_df %>%  -->
-<!--   group_by(beds) %>%  -->
-<!--   tally() %>%  -->
-<!--   head(10) %>%  -->
-<!--   kable() -->
-<!-- ``` -->
-
-<!-- ```{r} -->
-<!-- filter_df %>%  -->
-<!--   group_by(beds) %>%  -->
-<!--   tally() %>%  -->
-<!--   tail(10) %>%  -->
-<!--   arrange(desc(beds)) %>%  -->
-<!--   kable() -->
-<!-- ``` -->
-
-
-**COMMENT 2: I took out the tables, I think the histogram now does the job, it still would be good to discuss outliers the same however. Feel free to delete the comments above if you don't want to use these two tables**
-
-## `Bedrooms`
-
-The `bedrooms` variable describes the amount of bedrooms an apartment/house/etc... will have for guests. This differs from `beds` as 1 bedroom could possibly contain 1 or more beds, or sometimes even no beds. There are `r round(sum(!is.na(filter_df$bedrooms)), 2)` observations in `bedrooms` where the value is not missing.
-
-### Summary Statistics
-
-```{r}
-#| label: beds_summary_statistics
-#| tbl-cap: "Summary Statistics of `Bedrooms`"
-filter_df %>% 
-  select(bedrooms) %>% 
-  summary() %>% 
-  kable(.,digits = 3, format = "latex", booktabs = TRUE)
-```
-The expected value of bedrooms in a listing is `r round(mean(filter_df$bedrooms), 2)` bedrooms. Most listings in the dataset have `r paste0(round(median(filter_df$bedrooms), 2),    " ",    ifelse(round(median(filter_df$bedrooms), 2) == 1, "bedroom", "bedrooms") )`.
-
-The highest number of beds a listing has in the data is `r max(filter_df$bedrooms)`, while the lowest number of beds is `r min(filter_df$bedrooms)`.
-
-There are `r sum(is.na(filter_df$bedrooms))` missing values in the `bedrooms` variable, that is `r paste0(round(sum(is.na(filter_df$bedrooms)) / nrow(filter_df), 4) * 100, "%")` of observations in the dataset.
-
-## `Bathrooms`
-
-The `bathrooms` variable describes the amount of bedrooms an apartment/house/etc... will have for guests. This differs from `beds` as 1 bedroom could possibly contain 1 or more beds, or sometimes even no beds. There are `r round(sum(!is.na(filter_df$bathrooms)), 2)` observations in `bedrooms` where the value is not missing.
-
-### Summary Statistics
-
-```{r}
-#| label: bedrooms_summary_statistics
-#| tbl-cap: "Summary Statistics of `Bathrooms`"
-filter_df %>% 
-  select(bedrooms) %>% 
-  summary() %>% 
-  kable(.,digits = 3, format = "latex", booktabs = TRUE)
-```
-
-The mean amount of bathrooms in a listing is `r round(mean(filter_df$bathrooms), 2)` bathrooms. Most listings in the dataset have `r paste0(round(median(filter_df$bathrooms), 2),    " ",    ifelse(round(median(filter_df$bathrooms), 2) == 1, "bathroom", "bathrooms") )`.
-
-The highest number of beds a listing has in the data is `r max(filter_df$bathrooms)`, while the lowest number of beds is `r min(filter_df$bathrooms)`.
-
-There are `r sum(is.na(filter_df$bathrooms))` missing values in the `bedrooms` variable, that is `r paste0(round(sum(is.na(filter_df$bathrooms)) / nrow(filter_df), 4) * 100, "%")` of observations in the dataset.
-
-**COMMENT 2: I took out the tables, I think the histogram now does the job, it still would be good to discuss outliers the same however.**
 
 # Variable Selection and Discussion
 
 The variables of interest for modeling and analysis were selected based on their expected influence on `price`, the outcome variable. Only measurable characteristics of the list or host were included, rather than variables related to the web-scrape process itself (ie., `last_scraped`, `source`) or variables such as urls or images. 
 
-The variables were grouped into categories according to the aspect of the listing they represent:
 
-- **Location**
-  - `neighbourhood_group_cleansed`
-  - `neighbourhood_cleansed`
-  - `latitude`
-  - `longitude`
-
-- **Property characteristics**
-  - `property_type`
-  - `room_type`
-  - `accommodates`
-  - `bathrooms`
-  - `bedrooms`
-  - `beds`
-
-- **Booking rule summaries (night requirements)**
-  - `minimum_nights`
-  - `maximum_nights`
-  - `minimum_nights_avg_ntm`
-  - `maximum_nights_avg_ntm`
-  - `minimum_minimum_nights`
-  - `maximum_minimum_nights`
-
-- **Host characteristics**
-  - `host_id`
-  - `host_is_superhost`
-  - `host_response_time`
-  - `host_response_rate`
-  - `host_acceptance_rate`
-  - `host_listings_count`
-  - `host_total_listings_count`
-  - `host_identity_verified`
-
-- **Reviews**
-  - `number_of_reviews`
-  - `review_scores_rating`
-  - `review_scores_cleanliness`
-  - `review_scores_communication`
-  - `review_scores_location`
-  - `review_scores_value`
-  
 ```{r}
 variable_selection_section <- 
   filter_df %>% 
   select(
     price,
     
-    # --- Location ---
-    neighbourhood_group_cleansed,
-    neighbourhood_cleansed,
+    # # --- Location ---
+    # neighbourhood_group_cleansed,
+    # neighbourhood_cleansed,
     latitude,
     longitude,
     
-    # --- Property characteristics ---
-    property_type,
-    room_type,
+    # # --- Property characteristics ---
+    # property_type,
+    # room_type,
     accommodates,
     bathrooms,
     bedrooms,
     beds,
     
-    # --- Booking rule summaries (night requirements) ---
-    minimum_nights_avg_ntm,
-    maximum_nights_avg_ntm,
-    minimum_minimum_nights,
-    maximum_minimum_nights,
+    # # --- Booking rule summaries (night requirements) ---
+    # minimum_nights_avg_ntm,
+    # maximum_nights_avg_ntm,
+    # minimum_minimum_nights,
+    # maximum_minimum_nights,
     
-    # --- Host characteristics ---
-    host_id,
+    # # --- Host characteristics ---
+    # host_id,
     host_is_superhost,
-    host_response_time,
-    host_response_rate,
-    host_acceptance_rate,
-    host_listings_count,
-    host_total_listings_count,
-    # host_identity_verified,
+    # host_response_time,
+    # host_response_rate,
+    # host_acceptance_rate,
+    # host_listings_count,
+    # host_total_listings_count,
+    # # host_identity_verified,
     
-    # --- Reviews ---
-    number_of_reviews,
-    review_scores_rating,
-    review_scores_cleanliness,
-    review_scores_communication,
-    review_scores_location,
-    review_scores_value
+    # # --- Reviews ---
+    # number_of_reviews,
+    # review_scores_rating,
+    # review_scores_cleanliness,
+    # review_scores_communication,
+    # review_scores_location,
+    # review_scores_value
   )
 ```
 
@@ -519,7 +326,7 @@ The next step in the analysis will be to build a model with price as the respons
 
 ## Matrix Plot to Assess Variable Correlation
 
-```{r, echo = F, message = F, warning = F, include = F}
+```{r, echo = F, message = F, warning = F}
 
 library(psych)
 
