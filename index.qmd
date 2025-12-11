@@ -42,7 +42,7 @@ When it comes to creating a model that includes location or coordinate data, the
 
 # Data Description
 
-Airbnb data for major cities across the world has been scraped by a team of contributors and gathered on a website [here](https://insideairbnb.com/get-the-data/) in October 2025 to show how spaces are being rented to non-locals. We took a sample of all Airbnb listings from New York City to use for our models. Data documentation can be found in @appendix-A
+Airbnb data for major cities across the world has been scraped by a team of contributors and gathered on a website [here](https://insideairbnb.com/get-the-data/) in October 2025 to show how spaces are being rented to non-locals. We took a sample of all Airbnb listings from New York City to use for our models. Data documentation can be found in Appendix A.
 
 When examining the dataset, there were a large proportion of missing values for the price of Airbnb listings. Of the `r nrow(df)` listings in the data, `r sum(rapportools::is.empty(df$price))` (41%) had missing price values, giving us an opportunity to use various variables, including location with our two coordinate systems, to reliably impute the missing pricing data for these listings.
 
@@ -115,7 +115,7 @@ filter_df <-
 
 # Variable Overview
 
-Of the various variables that were included in the dataset, there were a few that we considered strong, interpretable predictors of price for our model: the number of bedrooms, beds, and bathrooms; the total amount of people who could be accommodated; and the location (latitude and longitude). A list of all variables in the dataset, their selection process, and missingness patterns can be found in @appendix-B.
+Of the various variables that were included in the dataset, there were a few that we considered strong, interpretable predictors of price for our model: the number of bedrooms, beds, and bathrooms; the total amount of people who could be accommodated; and the location (latitude and longitude). A list of all variables in the dataset, their selection process, and missingness patterns can be found in Appendix B.
 
 ```{r, echo = FALSE, include = FALSE}
 variable_selection_section <- 
@@ -431,13 +431,18 @@ data_documentation <-
   slice(1:(79-4)) # removed the last 4 rows
 
 variables <- data_documentation[c(19,31,32,35,36,38,39,41), -c(3,5)]
+
+variables <- variables %>%
+  mutate(Description = str_wrap(Description, 20))
+
 knitr::kable(variables) %>% kableExtra::kable_styling(bootstrap_options = "striped") %>% 
-    kableExtra::scroll_box(width = "100%", height = "500px")
+    kableExtra::scroll_box(width = "100%", height = "500px") %>%
+  column_spec(3, width = "10em")
 ```
 
 # Appendix B {#appendix-B}
 
-## Variable Selection and Discussion
+## Variables and Selection
 
 The variables of interest for modeling and analysis were selected based on their expected influence on `price`, the outcome variable. Only measurable characteristics of the list or host were included, rather than variables related to the web-scrape process itself (ie., `last_scraped`, `source`) or variables that were urls or images. 
 
@@ -504,16 +509,10 @@ variable_selection_section <-
   )
 ```
 
-```{r, echo = FALSE}
-variable_selection_section %>% 
-  arrange(price) %>% 
-  vis_miss(., warn_large_data = F) + 
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5))
-```
+## Price
+
 
 <!--
-From this plot, missingness in `price` appeared related to variables such as `beds`, `host_response_time`, `host_response_rate`, and perhaps `host_acceptance_rate`. Another pattern can be seen with increasing `price` and all the variables related to reviews.
-
 The `price` variable describes the daily price for a listing in its local currency. Since all listings in this analysis are from New York City, all prices are in \$USD. There are `r format(sum(!is.na(filter_df$price)), scientific = FALSE, big.mark = ",")` valid observations of price where it not missing and has a numerical value.
 -->
 
@@ -565,12 +564,24 @@ price_range_table <-
     tally()
 price_range_table %>% 
   kable(.,digits = 3, format = "latex", booktabs = TRUE)
-
 ```
 
 <!--
 A histogram of `price` shows that the distribution is very right-skewed, with less than 1% of listing being over \$1000 per night.
+-->
 
+```{r, echo = FALSE}
+variable_selection_section %>% 
+  arrange(price) %>% 
+  vis_miss(., warn_large_data = F) + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5))
+```
+
+<!--
+From this plot, missingness in `price` appeared related to variables such as `beds`, `host_response_time`, `host_response_rate`, and perhaps `host_acceptance_rate`. Another pattern can be seen with increasing `price` and all the variables related to reviews.
+-->
+
+<!--
 The `beds` variable describes the amount of beds an apartment/house/etc will have for guests. This differs from `bedrooms` as there could be more than one bed in a bedroom. There are `r round(sum(!is.na(filter_df$beds)), 2)` observations in `beds` where the value is not missing.
 -->
 
