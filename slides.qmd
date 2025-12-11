@@ -126,7 +126,7 @@ The amount of bedrooms available in the listing.
 histogram <- 
   filter_df %>% 
   ggplot(aes(bedrooms)) + 
-  geom_histogram(binwidth = 1)
+  geom_histogram(binwidth = 1, color = 'black', fill = "grey")
 
 histogram
 ```
@@ -139,7 +139,7 @@ The total amount of beds in the listing.
 histogram <- 
   filter_df %>% 
   ggplot(aes(beds)) + 
-  geom_histogram(binwidth = 1)
+  geom_histogram(binwidth = 1, color = 'black', fill = "grey")
 
 histogram
 ```
@@ -152,7 +152,7 @@ The amount of available bathrooms in the listing.
 histogram <- 
   filter_df %>% 
   ggplot(aes(bathrooms)) + 
-  geom_histogram(binwidth = 1)
+  geom_histogram(binwidth = 1, color = 'black', fill = "grey")
 
 histogram
 ```
@@ -165,7 +165,7 @@ The total amount of people that can be accommodated in the listing.
 histogram <- 
   filter_df %>% 
   ggplot(aes(accommodates)) + 
-  geom_histogram(binwidth = 1)
+  geom_histogram(binwidth = 1, color = 'black', fill = "grey")
 
 histogram
 ```

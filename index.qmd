@@ -115,7 +115,7 @@ filter_df <-
 
 # Variable Overview
 
-Of the various variables that were included in the dataset, there were a few that we considered strong, interpretable predictors of price for our model: the number of bedrooms, beds, and bathrooms; the total amount of people who could be accommodated; and the location (latitude and longitude). A list of all variables in the dataset, their selection process, and missingness patterns can be found in Appendix B.
+Of the various variables that were included in the dataset, there were a few that we considered strong, interpretable predictors of price for our model: the number of bedrooms, beds, and bathrooms; the total amount of people who could be accommodated; and the location (latitude and longitude). A list of all variables in the dataset, their selection process, summary statistics, and missingness patterns can be found in Appendix B.
 
 ```{r, echo = FALSE, include = FALSE}
 variable_selection_section <- 
@@ -511,21 +511,31 @@ variable_selection_section <-
   )
 ```
 
-## Price
-
-
-<!--
-The `price` variable describes the daily price for a listing in its local currency. Since all listings in this analysis are from New York City, all prices are in \$USD. There are `r format(sum(!is.na(filter_df$price)), scientific = FALSE, big.mark = ",")` valid observations of price where it not missing and has a numerical value.
--->
 
 ```{r}
+#| label: summary-statistisc
+#| tbl-cap: Summary Statistics for Outcome `Price` and Predictors 
+#| tbl-pos: hold
+filter_df %>%
+  select(price, beds, bedrooms, bathrooms, accommodates) %>%
+  summary() %>%
+  kable(digits = 2, format = "latex", booktabs = TRUE) %>% 
+  kableExtra::kable_styling(latex_options = "HOLD_position")
+```
+
+
+<!-- <!-- -->
+<!-- The `price` variable describes the daily price for a listing in its local currency. Since all listings in this analysis are from New York City, all prices are in \$USD. There are `r format(sum(!is.na(filter_df$price)), scientific = FALSE, big.mark = ",")` valid observations of price where it not missing and has a numerical value. -->
+<!-- --> -->
+
+```{r, include = F}
 #| label: price_summary_statistics
 #| tbl-cap: "Summary Statistics of `Price`"
 #| tbl-pos: H
 
-filter_df %>% 
-  select(price) %>% 
-  summary() %>% 
+filter_df %>%
+  select(price) %>%
+  summary() %>%
   kable(.,digits = 3, format = "latex", booktabs = TRUE) %>%
   kableExtra::kable_styling(latex_options = "HOLD_position")
 ```
@@ -587,14 +597,14 @@ From this plot, missingness in `price` appeared related to variables such as `be
 The `beds` variable describes the amount of beds an apartment/house/etc will have for guests. This differs from `bedrooms` as there could be more than one bed in a bedroom. There are `r round(sum(!is.na(filter_df$beds)), 2)` observations in `beds` where the value is not missing.
 -->
 
-```{r, include = FALSE}
-#| label: besd_summary_statistics
-#| tbl-cap: "Summary Statistics of `Beds`"
-filter_df %>% 
-  select(beds) %>% 
-  summary() %>% 
-  kable()
-```
+<!-- ```{r, include = FALSE} -->
+<!-- #| label: besd_summary_statistics -->
+<!-- #| tbl-cap: "Summary Statistics of `Beds`" -->
+<!-- filter_df %>%  -->
+<!--   select(beds) %>%  -->
+<!--   summary() %>%  -->
+<!--   kable() -->
+<!-- ``` -->
 
 <!--
 The expected value of beds in a listing is `r round(mean(filter_df$beds), 2)` beds. Most listings in the dataset have `r paste0(round(median(filter_df$beds), 2),    " ",    ifelse(round(median(filter_df$beds), 2) == 1, "bed", "beds") )`.
@@ -691,6 +701,7 @@ The highest number of beds a listing has in the data is `r max(filter_df$bathroo
 There are `r sum(is.na(filter_df$bathrooms))` missing values in the `bedrooms` variable, that is `r paste0(round(sum(is.na(filter_df$bathrooms)) / nrow(filter_df), 4) * 100, "%")` of observations in the dataset.
 -->
 
+
 ## Selected Predictors Relation to Price
 
 ```{r, warning = F, echo = F, message = F}
@@ -760,3 +771,5 @@ spinogram <-
 
 histogram/spinogram
 ```
+
+
