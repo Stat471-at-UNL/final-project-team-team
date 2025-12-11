@@ -22,7 +22,8 @@ library(skimr)
 library(visdat)
 library(mice)
 library(rapportools) 
-library(knitr)# added, couldn't render is.empty() w/out it
+library(knitr)
+library(kableExtra)# added, couldn't render is.empty() w/out it
 source("data_pull.R")
 ```
 
@@ -517,49 +518,7 @@ histogram/spinogram
 
 # Model Construction
 
-The next step in the analysis will be to build a model with price as the response variable. The predictors will be values that are suspected to be indicators of price such as beds, lat and long, accommodates, bathrooms, etc. This model will then be run and coefficients values and significance will be documented. This will all be done without imputation.
-
-## Matrix Plot to Assess Variable Correlation
-
-```{r, echo = F, message = F, warning = F, include = F}
-
-library(psych)
-
-filter_df %>%
-
-  select(
-
-      price,
-
-      bedrooms, beds,
-
-      latitude, longitude,
-
-      accommodates, bathrooms,
-
-      host_is_superhost
-
-    ) %>%
-
-pairs.panels(.,
-
-             method = "pearson", # this is the correlation method
-
-             hist.col = "#00AFBB",
-
-             density = TRUE, # this shows density plots
-
-             ellipses = TRUE, # show correlation ellipses
-
-             lm = TRUE
-
-)
-
-```
-
-## Model Building
-
-The airbnb model that will be used for this study will be attempting to predict the price variable. The predictors are beds, bathrooms, latitude, longitude, accommodates, and bedrooms. The final model was developed from a variety of model building techniques, along with understanding our predictors of interest. This model will create a basis for comparing imputation methods with different coordinate points.
+The next step in the analysis will be to build a model with price as the response variable. The predictor variables will be values that are suspected to be indicators of price such as beds, geographic coordinates or UTM, accommodates, bathrooms, etc. This model will then be run and model accuracy will be analyzed. The price variable will be imputed first using geographic coordinates in the predictor set then UTM. The final model was developed from a variety of model building techniques, along with understanding our predictors of interest. This model will create a basis for comparing imputation methods with different coordinate points.
 
 ```{r,include = F}
 
@@ -588,42 +547,42 @@ model1 <-
   lm(log(price) ~ bedrooms + beds + latitude*longitude + accommodates + bathrooms, data = .)
 
 ```
+## Statistical Model
 
-$$ \log(\text{Price}) = \beta_0 + \beta_1 \cdot \text{bedrooms} + \beta_2 \cdot \text{beds} + \beta_3 \cdot \text{latitude} + \beta_4 \cdot \text{longitude} \\ + \beta_5 \cdot \text{latitude*longitude} + \beta_6 \cdot \text{accomodates} + \beta_7 \cdot \text{bedrooms}$$
+\begin{align}
+\log(\text{Price}) &= \beta_0 + \beta_1 \cdot \text{bedrooms} + \beta_2 \cdot \text{beds} + \beta_3 \cdot \text{latitude} \\
+&+ \beta_4 \cdot \text{longitude} + \beta_5 \cdot (\text{latitude} \times \text{longitude}) \\
+&+ \beta_6 \cdot \text{accommodates} + \beta_7 \cdot \text{bedrooms}
+\end{align}
 
-### Coefficeint Estimates for Airbnb Model
 
-```{r}
+<!-- ## Coefficeint Estimates for Airbnb Model -->
 
-kable(summary(model1)$coefficients, digits = 3, format = "latex", booktabs = TRUE)
+```{r,include = F}
+#| label: Orginal_Model_Coef
+#| tbl-cap: Non - Imputed AirBnb Model 
+
+kable(summary(model1)$coefficients, digits = 3, format = "latex", booktabs = TRUE) %>%
+  kableExtra::kable_styling(latex_options = "hold_position")
 
 ```
 
-The coefficient estimate table above shows that all variables are significant predictors of price. This will then allow us to test the differences in imputation when using geographic coordinates versus Universal Transverse Mercator (UTM).
+<!-- The coefficient estimate table above shows that all variables are significant predictors of price. This will then allow us to test the differences in imputation when using geographic coordinates versus Universal Transverse Mercator (UTM). -->
 
 # Imputation Analysis
 
-The overall goal of this study is to test the imputive quality of different distance based metrics on the price variable from the airbnb dataset. This analysis will then provide information regrading the potential use of UTM more consistently over geographic coordinates.
+The overall goal of this study is to test the imputive quality of different distance based metrics on the price variable from the AirBnb data set. This analysis will then provide information regrading the potential use of UTM more consistently over geographic coordinates. The response variable of our model, price, is the variable that is going to be imputed. The model accuracy of both the imputation with geographic coordinates and UTM will be compared using AIC and BIC. The RMSE of each imputation method will also be calculated and the difference will be statistically tested. The imputation analysis throughout this study will be using the mice package in R. The mice package contains a variety of methods for imputation, for this analysis predictive mean matching (pmm) will be used. The price variable and the entire predictor set are all quantitative variables for which pmm is the recommended method of imputation. 
 
-Geographic coordinates are based on a spherical Earth model and uses degrees to measure distance. This can create issues with interpretation as degrees are not uniform in distance and can add necessary complications to a model. Geographic coordinates are usually measured in latitude and longitude. UTM is a projected coordinate system which is based on 60 zones across the Earth. These coordinates are more easily interpreted on a linear scale. UTM is usually measure on a x and y scale. The hypothesis on this study is that if UTM is in the predictor set the imputation will have more accuracy than if geographic coordinates are in the predictor set. The first step is to analyze the missing value patterns of our price variable.
+<!-- Geographic coordinates are based on a spherical Earth model and uses degrees to measure distance. This can create issues with interpretation as degrees are not uniform in distance and can add necessary complications to a model. Geographic coordinates are usually measured in latitude and longitude. UTM is a projected coordinate system which is based on 60 zones across the Earth. These coordinates are more easily interpreted on a linear scale. UTM is usually measure on a x and y scale. The hypothesis on this study is that if UTM is in the predictor set the imputation will have more accuracy than if geographic coordinates are in the predictor set. The first step is to analyze the missing value patterns of our price variable. -->
 
 ## Missing Values of Price
 
-```{r, echo = F, message = F, warning = F}
+We know there are 14783 missing values in `price`. There are 355 occurrences when `price` is the only missing value. The `price` variable is missing the most when `beds` is also missing. The second most time `price` is missing is when `beds` AND `bedrooms` are missing. Note that, `latitude`, `longitude`, and `accomodates` are the only variables of interest that do not have any missing values. The variable of most interest to us is the price variable and how imputation predictor sets impact potential results. 
 
-filter_df %>%
+<!-- ## Imputing Missing Values with Geographic Coordinates -->
 
-  select(host_is_superhost, latitude, longitude, accommodates, bathrooms, bedrooms, beds, price) %>% md.pattern(., plot = F) 
 
-```
-
-We know there are 14783 missing values in `price`. There are 355 occurrences when `price` is the only missing value. It looks like `price` is missing the most when `beds` is also missing. The second most time `price` is missing is when `beds` AND `bedrooms` are missing. Note that, `latitude`, `longitude`, and `accomodates` are the only variables of interest that do not have any missing values.
-
-## Imputing Missing Values with Geographic Coordinates
-
-The imputation process throughout this study will be using the mice package in R. The mice package contains a variety of methods for imputation for this analysis predictive mean matching (pmm) will be used. The price variable and the entire predictor set are all quantitative variables for which pmm is the recommended method of imputation.
-
-```{r, output = F, message = F, warning = F,include = F}
+```{r,include = F}
 
 # Run multiple imputation
 
@@ -639,8 +598,10 @@ airbnb_imputation <-
 
 ```
 
-```{r, echo = F, message = F, warning = F,include = F}
-
+```{r,include = F}
+#| label: Geo_Model_Coef
+#| tbl-cap: Imputed AirBnb Model with Geographic Coordinates
+#| tbl-pos: hold
 completed_list <- complete(airbnb_imputation, "all") %>% map(as_tibble)
 
 fit1 <- with(airbnb_imputation,lm(log(price) ~
@@ -655,15 +616,17 @@ pooled <- pool(fit1)
 
 pooled_coefficients <- summary(pooled)[, c('term', 'estimate')]
 
-kable(summary(pooled), digits = 3, format = "latex", booktabs = TRUE)
+kable(summary(pooled), digits = 3, format = "latex", booktabs = TRUE) %>%
+  kableExtra::kable_styling(latex_options = "hold_position")
+
 
 ```
 
-The table above shows the estimates for the airbnb model with the price variable imputed. The coefficient estimates for the model are slightly different from the original model showing that imputation does have an impact in this data set and model. The next step of the analysis to replace geographic coordinates (latitude and longitude) with UTM based distance measurements.
+<!-- The table above shows the estimates for the airbnb model with the price variable imputed. The coefficient estimates for the model are slightly different from the original model showing that imputation does have an impact in this data set and model. The next step of the analysis to replace geographic coordinates (latitude and longitude) with UTM based distance measurements. -->
 
-## Imputing Missing Values with Universal Transverse Mercator
+<!-- ## Imputing Missing Values with Universal Transverse Mercator -->
 
-```{r, echo = F, message = F, warning = F,include = F}
+```{r,include = F}
 
 library(sf)
 
@@ -715,22 +678,28 @@ fit <- with(impA,lm(log(price) ~
 
              X*Y) )
 
-pooled <- pool(fit)
+pooled1 <- pool(fit)
 
 ```
 
-```{r}
+```{r, include = F}
+#| label: utm_Model_Coef
+#| tbl-cap: Imputed AirBnb Model with UTM
+#| tbl-pos: hold
+ kable(summary(pooled1), digits = 3, format = "latex", booktabs = TRUE) %>%
+   kableExtra::kable_styling(latex_options = "hold_position")
 
-kable(summary(pooled), digits = 3, format = "latex", booktabs = TRUE)
 
 ```
 
-The coefficient estimates above show the imputed model for price with UTM distance variables. This model shows a drastic difference from the previous two models. This shows that not only imputation but which distance based metric used impacts coefficient estimates. The only way to truly see model performance of each model is to compare AIC and BIC measurements for each of the models constructed.
+<!-- The coefficient estimates above show the imputed model for price with UTM distance variables. This model shows a drastic difference from the previous two models. This shows that not only imputation but which distance based metric used impacts coefficient estimates. The only way to truly see model performance of each model is to compare AIC and BIC measurements for each of the models constructed. -->
 
 ## Comparing Model Accuracy Between Predictor Sets
 
-```{r, echo = F, message = F, warning = F}
-
+```{r}
+#| label: model_comp
+#| tbl-cap: Comparing Model Fit Between Geographic vs. UTM
+#| tbl-pos: hold
 get_avg_fit <- function(model) {
 
   models <- model$analyses
@@ -741,9 +710,10 @@ get_avg_fit <- function(model) {
 
   data.frame(
 
-    mean_AIC      = mean(aic_vals),
+    `Mean AIC`      = mean(aic_vals),
 
-    mean_BIC = mean(bic_vals)
+      `Mean BIC` = mean(bic_vals),
+    check.names = F
 
   )
 
@@ -755,14 +725,16 @@ Geographic = get_avg_fit(fit1),
 
 UTM = get_avg_fit(fit))
 
-kable(total_fit, digits = 3, format = "latex", booktabs = TRUE)
+kable(total_fit, digits = 3, format = "latex", booktabs = TRUE) %>%
+  kableExtra::kable_styling(latex_options = "hold_position")
 
 ```
 
-The table above shows the mean AIC and BIC measurements for each imputation predictor set. The AIC and BIC measurements are lower for the geographic coordinates suggesting that they represent the relationship better than UTM. The model comparison give the idea that geographic coordinates could be be a better fit in the model when compared to UTM. This difference can truly be tested by comparing the imputation quality of each method. This will be done by calculating the RMSE for each imputation method.
+The imputation was run on the price variable using both geographic coordinates and UTM. The table above shows the mean AIC and BIC measurements for each imputation predictor set. The AIC and BIC measurements are lower for the geographic coordinates suggesting that they represent the relationship better than UTM. The model comparison gives the idea that geographic coordinates could be be a better fit for the model when compared to UTM. 
 
 ## Comparing Imputation Methods with RMSE
 
+The predictor set containing geographic coordinates seems to be a slightly better fit in our model. Yet, AIC and BIC do not have anything to say about imputation quality.This difference can truly be tested by comparing RMSE for each imputation method. This will be done by masking 10 percent of the price values that are not missing, then imputing using each predictor set and calculating the RMSE. This process will then be simulated 10 times and the mean RMSE value will be calculated and compared. 
 ```{r,include = F}
 
 updates$lat <- model_dat$latitude
@@ -903,35 +875,44 @@ sim_results <- simulate_rmse(data_mask, predictor_sets, n_sim = 10, mask_frac = 
 
 summary_rmse <- data.frame(
 
-  Predictor_Set = names(sim_results),
+  `Predictor Set` = names(sim_results),
 
-  Mean_RMSE = sapply(sim_results, mean),
+  `Mean RMSE` = sapply(sim_results, mean),
 
   SD_RMSE = sapply(sim_results, sd),
 
   Min_RMSE = sapply(sim_results, min),
 
-  Max_RMSE = sapply(sim_results, max)
+  Max_RMSE = sapply(sim_results, max),
+  check.names = F
 
 )
 
 summary_rmse$SE <- summary_rmse$SD_RMSE/sqrt(10)
 
-summary_rmse$CI_lower <- summary_rmse$Mean_RMSE - 1.96*(summary_rmse$SE)
+summary_rmse$`CI (95%)` <- paste0("(",round(summary_rmse$`Mean RMSE` - 1.96*(summary_rmse$SE),2)," - ",round(summary_rmse$`Mean RMSE` + 1.96*(summary_rmse$SE),2),")")
 
-summary_rmse$CI_upper <- summary_rmse$Mean_RMSE + 1.96*(summary_rmse$SE)
 
 ```
 
 ```{r}
-
-kable(summary_rmse[,-1], digits = 3, format = "latex", booktabs = TRUE)
+#| label: rmse_table
+#| tbl-cap: Impuation Analysis using RMSE
+#| tbl-pos: hold
+kable(summary_rmse[,-c(1,3,4,5)], digits = 3, format = "latex", booktabs = TRUE)%>%
+  kableExtra::kable_styling(latex_options = "hold_position")
 
 ```
 
-It can be seen in the table above the the predictor set containing UTM as the slightly lower RMSE signifying that it could have higher imputation accuracy. The predictor set with the geographic coordinates does have the lower SE. These results do not give any conclusions. The results in the table above will need to be statistically tested. This can be done with in a anova model, with RMSE as the response variable and the "predictor sets" (UTM vs. Geographic) as the predictor variable.
+It can be seen in the table above the the predictor set containing UTM has the slightly lower RMSE signifying that it could have higher imputation accuracy. The predictor set with the geographic coordinates does have the lower SE which indicates slightly less variability. These results do not give any significant conclusions, and will need to be statistically tested. This can be done with an anova test, which will show if the the two predictors sets mean RMSE values are different from each other. 
+
+### Anova Testing
 
 ```{r}
+#| label: rmse_comparison
+#| tbl-cap: Anova Testing RMSE vs. Predictor Sets
+#| tbl-pos: hold
+
 
 rmse_list <- data.frame(
 
@@ -943,10 +924,17 @@ rmse_list <- data.frame(
 
 rmse_model <- aov(rmse~predictors,rmse_list)
 
-kable(anova(rmse_model), digits = 3, format = "latex", booktabs = TRUE)
+
+kable(anova(rmse_model), digits = 3, format = "latex", booktabs = TRUE)%>%
+  kableExtra::kable_styling(latex_options = "hold_position")
+
 
 ```
 
-The anova summary above shows that we fail to reject the null hypothesis that the group means are equal. This means that there is no statistical difference in using the predictor set with geographic coordinates or UTM in regards to imputation quality. This shows that overall for the airbnb data set neither the imputation or the model would directly benefit from using UTM over geographic coordinates.
+
+The anova test above shows that we fail to reject the null hypothesis, (p - value > .05), which is that the predictor sets mean RMSE values are equal. This shows that there is no statistical difference in using the predictor set with geographic coordinates or UTM in regards to imputation quality. It can be said that neither the imputation or the model would directly benefit from using UTM over geographic coordinates.
 
 # Conclusion
+
+Overall, the study that has been completed shows that geographic coordinates and UTM do not differ in imputation quality in the AirBnb data set for New York City. This conclusion is supported the the fact the RMSE values were shown to be not significantly different. The result from this study can be used in further analysis of this data to further build a more complex model to model price and test its predictive quality. This conclusion does not support the earlier hypothesis that UTM is a better distance based measure for regression and imputation, due to its more linear qualities when compared to geographic coordinates. This relationship could be impacted by the size of the analysis area (New York City), and might be impacted if a larger or smaller area was considered. This study leaves the door open for analyzing the imputive quality of more linear distance based measures such as UTM.
+
