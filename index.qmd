@@ -185,7 +185,8 @@ model1 <-
 
 ## Statistical Model
 
-$$ \text{log(price)} = \beta_0 + \beta_1(\text{bedrooms}) + \beta_2(\text{beds}) + \beta_3(\text{latitude}) + \beta_4(\text{longitude}) + $$ $$ \beta_5(\text{latitude x longitude}) + \beta_6(\text{accommodates}) + \beta_7(\text{bathrooms}) $$
+$$ \text{log(price)} = \beta_0 + \beta_1(\text{bedrooms}) + \beta_2(\text{beds}) + \beta_3(\text{latitude}) + \beta_4(\text{longitude}) + $$
+$$ \beta_5(\text{latitude x longitude}) + \beta_6(\text{accommodates}) + \beta_7(\text{bathrooms})$$
 
 ```{r, include = F}
 #| label: Orginal_Model_Coef
@@ -273,11 +274,11 @@ pooled1 <- pool(fit)
 
 ## Comparing Model Accuracy Between Predictor Sets
 
-@tbl_model_comp shows the mean AIC and BIC measurements for each imputation predictor set. For both metrics, the model with GCS-imputed data has a lower value, suggesting that the model is a better fit and represents the relationship to price better than the dataset imputed with UTM.
+@tbl-model_comp shows the mean AIC and BIC measurements for each imputation predictor set. For both metrics, the model with GCS-imputed data has a lower value, suggesting that the model is a better fit and represents the relationship to price better than the dataset imputed with UTM.
 
 ```{r}
-#| label: tbl_model_comp
-#| tbl-cap: Comparing Model Fit Between GCS vs UTM
+#| label: tbl-model_comp
+#| tbl-cap: Comparing Model Fit Between GCS vs. UTM
 #| tbl-pos: H
 
 get_avg_fit <- function(model) {
@@ -293,8 +294,8 @@ get_avg_fit <- function(model) {
 total_fit <- rbind(
 GCS = get_avg_fit(fit1),
 UTM = get_avg_fit(fit))
-kable(total_fit, digits = 3, format = "latex", booktabs = TRUE)%>%
-kableExtra::kable_styling(latex_options = "HOLD_position")
+kable(total_fit, digits = 3, format = "latex", booktabs = TRUE) %>%
+  kableExtra::kable_styling(latex_options = "HOLD_position")
 ```
 
 ## Comparing Imputation Methods with RMSE
@@ -388,7 +389,7 @@ summary_rmse <- summary_rmse %>%
 ```
 
 ```{r}
-#| label: tbl_rmse_table
+#| label: tbl-rmse_table
 #| tbl-cap: Impuation Analysis using RMSE
 #| tbl-pos: H
 
@@ -396,11 +397,11 @@ kable(summary_rmse[,-c(1,3,4,5)], digits = 3, format = "latex", booktabs = TRUE)
   kableExtra::kable_styling(latex_options = "HOLD_position")
 ```
 
-@tbl_rmse_table shows the UTM predictor set has the slightly lower RMSE, signifying that it could have higher imputation accuracy. The predictor set with the geographic coordinates does have the lower SE which indicates slightly less variability. These results do not give any significant conclusions, and will need to be statistically tested. This can be done with ANOVA, which will show if the mean RMSE of the two predictor sets are different from each other.
+@tbl-rmse_table shows the UTM predictor set has the slightly lower RMSE, signifying that it could have higher imputation accuracy. The predictor set with the geographic coordinates does have the lower SE which indicates slightly less variability. These results do not give any significant conclusions, and will need to be statistically tested. This can be done with ANOVA, which will show if the mean RMSE of the two predictor sets are different from each other. 
 
 ```{r}
-#| label: tbl_rmse_comparison
-#| tbl-cap: Anova Testing RMSE vs Predictor Sets
+#| label: tbl-rmse_comparison
+#| tbl-cap: Anova Testing RMSE vs. Predictor Sets
 #| tbl-pos: H
 rmse_list <- data.frame(
   rmse = unlist(sim_results),
@@ -411,7 +412,7 @@ kable(anova(rmse_model), digits = 3, format = "latex", booktabs = TRUE)%>%
   kableExtra::kable_styling(latex_options = "HOLD_position")
 ```
 
-The ANOVA shows that we fail to reject the null hypothesis, (p-value = 0.94), which is that the predictor sets mean RMSE values are equal (@tbl_rmse_comparison). This shows that there is no significant difference in using the predictor set with geographic coordinates or UTM in regards to imputation quality. It can be said that neither the imputation or the model would directly benefit from using UTM over geographic coordinates.
+The ANOVA shows that we fail to reject the null hypothesis, (p-value = 0.94), which is that the predictor sets mean RMSE values are equal (@tbl-rmse_comparison). This shows that there is no significant difference in using the predictor set with geographic coordinates or UTM in regards to imputation quality. It can be said that neither the imputation or the model would directly benefit from using UTM over geographic coordinates.
 
 # Conclusion
 
@@ -421,7 +422,7 @@ Overall, this study shows that geographic coordinates and UTM do not differ in i
 
 # Appendix A {#appendix-A}
 
-## Data Documentation for Model
+## Data Documentation for Model 
 
 ```{r}
 data_documentation <- 
@@ -443,29 +444,28 @@ knitr::kable(variables) %>% kableExtra::kable_styling(bootstrap_options = "strip
 
 # Appendix B {#appendix-B}
 
-
 ## Variables and Selection
 
 The variables of interest for modeling and analysis were selected based on their expected influence on `price`, the outcome variable. Only measurable characteristics of the list or host were included, rather than variables related to the web-scrape process itself (ie., `last_scraped`, `source`) or variables that were urls or images. 
 
-
 The variables were grouped into categories according to the aspect of the listing they represent:
 
--   **Location**
-    -   `neighbourhood_group_cleansed`, `neighbourhood_cleansed`, `latitude`, `longitude`
--   **Property characteristics**
-    -   `property_type`, `room_type`, `accommodates`, `bathrooms`, `bedrooms`, `beds`
--   **Booking rule summaries (night requirements)**
-    -   `minimum_nights`, `maximum_nights`, `minimum_nights_avg_ntm`, `maximum_nights_avg_ntm`, `minimum_minimum_nights`, `maximum_minimum_nights`
--   **Host characteristics**
-    -   `host_id`, `host_is_superhost`, `host_response_time`, `host_response_rate`, `host_acceptance_rate`, `host_listings_count`, `host_total_listings_count`, `host_identity_verified`
--   **Reviews**
-    -   `number_of_reviews`, `review_scores_rating`, `review_scores_cleanliness`, `review_scores_communication`, `review_scores_location`, `review_scores_value`
+- **Location**
+  - `neighbourhood_group_cleansed`, `neighbourhood_cleansed`, `latitude`, `longitude`
 
-view_scores_location`, `review_scores_value`
+- **Property characteristics**
+  - `property_type`, `room_type`, `accommodates`, `bathrooms`, `bedrooms`, `beds`
+
+- **Booking rule summaries (night requirements)**
+  - `minimum_nights`, `maximum_nights`, `minimum_nights_avg_ntm`, `maximum_nights_avg_ntm`, `minimum_minimum_nights`, `maximum_minimum_nights`
+
+- **Host characteristics**
+  - `host_id`, `host_is_superhost`, `host_response_time`, `host_response_rate`, `host_acceptance_rate`, `host_listings_count`, `host_total_listings_count`, `host_identity_verified`
+
+- **Reviews**
+  - `number_of_reviews`, `review_scores_rating`, `review_scores_cleanliness`, `review_scores_communication`, `review_scores_location`, `review_scores_value`
   
 ```{r, echo = FALSE}
-
 variable_selection_section <- 
   filter_df %>% 
   select(
@@ -511,11 +511,12 @@ variable_selection_section <-
   )
 ```
 
-To visually understand the completeness of the data, missingness patterns were examined using a `vis_miss()` plot. The plot was arranged by increasing price.
-
-
 ## Price
 
+
+<!--
+The `price` variable describes the daily price for a listing in its local currency. Since all listings in this analysis are from New York City, all prices are in \$USD. There are `r format(sum(!is.na(filter_df$price)), scientific = FALSE, big.mark = ",")` valid observations of price where it not missing and has a numerical value.
+-->
 
 ```{r}
 #| label: price_summary_statistics
@@ -650,11 +651,9 @@ ggplot(bed_counts, aes(x = beds, y = n)) +
   scale_x_continuous(breaks = c(0,5,10,15,20,25,30,35,40))
 ```
 
-
-
-## `Bedrooms`
-
-
+<!--
+The `bedrooms` variable describes the amount of bedrooms an apartment/house/etc... will have for guests. This differs from `beds` as 1 bedroom could possibly contain 1 or more beds, or sometimes even no beds. There are `r round(sum(!is.na(filter_df$bedrooms)), 2)` observations in `bedrooms` where the value is not missing.
+-->
 
 ```{r, include = FALSE}
 #| label: beds_summary_statistics
@@ -665,7 +664,15 @@ filter_df %>%
   kable(.,digits = 3, format = "latex", booktabs = TRUE)
 ```
 
+<!--
+The expected value of bedrooms in a listing is `r round(mean(filter_df$bedrooms), 2)` bedrooms. Most listings in the dataset have `r paste0(round(median(filter_df$bedrooms), 2),    " ",    ifelse(round(median(filter_df$bedrooms), 2) == 1, "bedroom", "bedrooms") )`.
 
+The highest number of beds a listing has in the data is `r max(filter_df$bedrooms)`, while the lowest number of beds is `r min(filter_df$bedrooms)`.
+
+There are `r sum(is.na(filter_df$bedrooms))` missing values in the `bedrooms` variable, that is `r paste0(round(sum(is.na(filter_df$bedrooms)) / nrow(filter_df), 4) * 100, "%")` of observations in the dataset.
+
+The `bathrooms` variable describes the amount of bedrooms an apartment/house/etc... will have for guests. This differs from `beds` as 1 bedroom could possibly contain 1 or more beds, or sometimes even no beds. There are `r round(sum(!is.na(filter_df$bathrooms)), 2)` observations in `bedrooms` where the value is not missing.
+-->
 
 ```{r, include = FALSE}
 #| label: bedrooms_summary_statistics
@@ -676,8 +683,13 @@ filter_df %>%
   kable(.,digits = 3, format = "latex", booktabs = TRUE)
 ```
 
+<!--
+The mean amount of bathrooms in a listing is `r round(mean(filter_df$bathrooms), 2)` bathrooms. Most listings in the dataset have `r paste0(round(median(filter_df$bathrooms), 2),    " ",    ifelse(round(median(filter_df$bathrooms), 2) == 1, "bathroom", "bathrooms") )`.
 
+The highest number of beds a listing has in the data is `r max(filter_df$bathrooms)`, while the lowest number of beds is `r min(filter_df$bathrooms)`.
 
+There are `r sum(is.na(filter_df$bathrooms))` missing values in the `bedrooms` variable, that is `r paste0(round(sum(is.na(filter_df$bathrooms)) / nrow(filter_df), 4) * 100, "%")` of observations in the dataset.
+-->
 
 ## Selected Predictors Relation to Price
 
