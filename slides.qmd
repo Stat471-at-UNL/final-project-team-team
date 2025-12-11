@@ -157,7 +157,7 @@ histogram <-
 histogram
 ```
 
-## Accomodates
+## Accommodates
 
 The total amount of people that can be accommodated in the listing.
 
@@ -183,7 +183,7 @@ histogram
 $$\text{log(price)} = \beta_0 + \beta_1(\text{bedrooms}) + \beta_2(\text{beds}) +$$
 $$\beta_3(\text{latitude}) + \beta_4(\text{longitude}) +$$
 
-$$\beta_5(\text{latitude} \times \text{longitude}) + \beta_6(\text{accommodates}+ \beta_7(\text{bathrooms})$$
+$$\beta_5(\text{latitude} \times \text{longitude}) + \beta_6(\text{accommodates})+ \beta_7(\text{bathrooms})$$
 
 ```{r model}
 model1 <-
