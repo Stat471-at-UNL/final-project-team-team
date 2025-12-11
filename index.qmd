@@ -29,7 +29,6 @@ library(visdat)
 library(mice)
 library(rapportools) 
 library(knitr)
-library(kableExtra)# added, couldn't render is.empty() w/out it
 library(kableExtra)
 library(sf)
 library(psych)
@@ -43,7 +42,7 @@ When it comes to creating a model that includes location or coordinate data, the
 
 # Data Description
 
-Airbnb data for major cities across the world has been scraped by a team of contributors and gathered on a website [here](https://insideairbnb.com/get-the-data/) in October 2025 to show how spaces are being rented to non-locals. We took a sample of all Airbnb listings from New York City to use for our models. Data documentation can be found in @appendix-A
+Airbnb data for major cities across the world has been scraped by a team of contributors and gathered on a website [here](https://insideairbnb.com/get-the-data/) in October 2025 to show how spaces are being rented to non-locals. We took a sample of all Airbnb listings from New York City to use for our models. Data documentation can be found in Appendix A.
 
 When examining the dataset, there were a large proportion of missing values for the price of Airbnb listings. Of the `r nrow(df)` listings in the data, `r sum(rapportools::is.empty(df$price))` (41%) had missing price values, giving us an opportunity to use various variables, including location with our two coordinate systems, to reliably impute the missing pricing data for these listings.
 
@@ -116,7 +115,7 @@ filter_df <-
 
 # Variable Overview
 
-Of the various variables that were included in the dataset, there were a few that we considered strong, interpretable predictors of price for our model: the number of bedrooms, beds, and bathrooms; the total amount of people who could be accommodated; and the location (latitude and longitude). A list of all variables in the dataset, their selection process, and missingness patterns can be found in @appendix-B.
+Of the various variables that were included in the dataset, there were a few that we considered strong, interpretable predictors of price for our model: the number of bedrooms, beds, and bathrooms; the total amount of people who could be accommodated; and the location (latitude and longitude). A list of all variables in the dataset, their selection process, and missingness patterns can be found in Appendix B.
 
 ```{r, echo = FALSE, include = FALSE}
 variable_selection_section <- 
@@ -384,6 +383,8 @@ summary_rmse <- data.frame(
 )
 summary_rmse$SE <- summary_rmse$SD_RMSE/sqrt(10)
 summary_rmse$`CI (95%)` <- paste0("(",round(summary_rmse$`Mean RMSE` - 1.96*(summary_rmse$SE),2)," - ",round(summary_rmse$`Mean RMSE` + 1.96*(summary_rmse$SE),2),")")
+summary_rmse <- summary_rmse %>%
+  arrange(desc(row_number()))
 ```
 
 ```{r}
@@ -418,7 +419,7 @@ Overall, this study shows that geographic coordinates and UTM do not differ in i
 
 \newpage
 
-# Appendix A: Data Documentation {#appendix-A}
+# Appendix A {#appendix-A}
 
 ## Data Documentation for Model
 
@@ -431,13 +432,22 @@ data_documentation <-
   slice(1:(79-4)) # removed the last 4 rows
 
 variables <- data_documentation[c(19,31,32,35,36,38,39,41), -c(3,5)]
+
+variables <- variables %>%
+  mutate(Description = str_wrap(Description, 20))
+
 knitr::kable(variables) %>% kableExtra::kable_styling(bootstrap_options = "striped") %>% 
-    kableExtra::scroll_box(width = "100%", height = "500px")
+    kableExtra::scroll_box(width = "100%", height = "500px") %>%
+  column_spec(3, width = "10em")
 ```
 
-## Variable Selection and Discussion
+# Appendix B {#appendix-B}
 
-The variables of interest for modeling and analysis were selected based on their expected influence on `price`, the outcome variable. Only measurable characteristics of the list or host were included, rather than variables related to the web-scrape process itself (ie., `last_scraped`, `source`) or variables such as urls or images.
+
+## Variables and Selection
+
+The variables of interest for modeling and analysis were selected based on their expected influence on `price`, the outcome variable. Only measurable characteristics of the list or host were included, rather than variables related to the web-scrape process itself (ie., `last_scraped`, `source`) or variables that were urls or images. 
+
 
 The variables were grouped into categories according to the aspect of the listing they represent:
 
@@ -452,7 +462,10 @@ The variables were grouped into categories according to the aspect of the listin
 -   **Reviews**
     -   `number_of_reviews`, `review_scores_rating`, `review_scores_cleanliness`, `review_scores_communication`, `review_scores_location`, `review_scores_value`
 
-```{r}
+view_scores_location`, `review_scores_value`
+  
+```{r, echo = FALSE}
+
 variable_selection_section <- 
   filter_df %>% 
   select(
@@ -500,20 +513,9 @@ variable_selection_section <-
 
 To visually understand the completeness of the data, missingness patterns were examined using a `vis_miss()` plot. The plot was arranged by increasing price.
 
-```{r}
-variable_selection_section %>% 
-  arrange(price) %>% 
-  vis_miss(., warn_large_data = F) + 
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5))
-```
-
-From this plot, missingness in `price` appeared related to variables such as `beds`, `host_response_time`, `host_response_rate`, and perhaps `host_acceptance_rate`. Another pattern can be seen with increasing `price` and all the variables related to reviews.
-
-# Appendix B: Variables and Variable Selection {#appendix-B}
 
 ## Price
 
-The `price` variable describes the daily price for a listing in its local currency. Since all listings in this analysis are from New York City, all prices are in \$USD. There are `r format(sum(!is.na(filter_df$price)), scientific = FALSE, big.mark = ",")` valid observations of price where it not missing and has a numerical value.
 
 ```{r}
 #| label: price_summary_statistics
@@ -527,11 +529,13 @@ filter_df %>%
   kableExtra::kable_styling(latex_options = "HOLD_position")
 ```
 
+<!--
 The `price` variable has a mean of `r paste0("$", round(mean(filter_df$price), 2))` and a median of `r paste0("$", median(filter_df$price))`.
 
 We decided to consider all listings at or above the price of \$10,000 per night an outlier. There were a considerable group of listings above this number, going all the way to \$50,000 per night. Many of the listings we examined manually had different, more realistic prices on the actual Airbnb website, indicating that either the listing was improper during the webscrape, or the webscrape itself had flaws. We chose \$10,000 as the cutoff point as there was a listing at \$9,999 per night that was verifiable. The smallest price in the dataset is \$10 a night.
 
 There are `r sum(is.na(filter_df$price))` missing values in `price`, which means missing values account for `r paste0(round(sum(is.na(filter_df$price)) / nrow(filter_df), 4) * 100, "%")` of the observations in the dataset.
+-->
 
 ```{r}
 ggplot(filter_df, aes(x = price)) + 
@@ -544,7 +548,7 @@ ggplot(filter_df, aes(x = price)) +
   )
 ```
 
-```{r}
+```{r, include = FALSE}
 #| label: price_range_table
 #| tbl-cap: Number of Listings in Each Price Range
 
@@ -561,18 +565,28 @@ price_range_table <-
     tally()
 price_range_table %>% 
   kable(.,digits = 3, format = "latex", booktabs = TRUE)
-
 ```
 
+<!--
 A histogram of `price` shows that the distribution is very right-skewed, with less than 1% of listing being over \$1000 per night.
+-->
 
-## `Beds`
+```{r, echo = FALSE}
+variable_selection_section %>% 
+  arrange(price) %>% 
+  vis_miss(., warn_large_data = F) + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5))
+```
 
+<!--
+From this plot, missingness in `price` appeared related to variables such as `beds`, `host_response_time`, `host_response_rate`, and perhaps `host_acceptance_rate`. Another pattern can be seen with increasing `price` and all the variables related to reviews.
+-->
+
+<!--
 The `beds` variable describes the amount of beds an apartment/house/etc will have for guests. This differs from `bedrooms` as there could be more than one bed in a bedroom. There are `r round(sum(!is.na(filter_df$beds)), 2)` observations in `beds` where the value is not missing.
+-->
 
-### Summary Statistics
-
-```{r}
+```{r, include = FALSE}
 #| label: besd_summary_statistics
 #| tbl-cap: "Summary Statistics of `Beds`"
 filter_df %>% 
@@ -581,11 +595,12 @@ filter_df %>%
   kable()
 ```
 
+<!--
 The expected value of beds in a listing is `r round(mean(filter_df$beds), 2)` beds. Most listings in the dataset have `r paste0(round(median(filter_df$beds), 2),    " ",    ifelse(round(median(filter_df$beds), 2) == 1, "bed", "beds") )`.
 
-The highest number of beds a listing has in the data is 40, while the lowest number of beds is 0. **COMMENT: The value of 40 is very likely an outlier!**
+The highest number of beds a listing has in the data is 40, which is likely an outlier, while the lowest number of beds is 0.
 
-Similarly to `price`, there are `r sum(is.na(filter_df$beds))` missing values in the `beds` variable, that is `r paste0(round(sum(is.na(filter_df$beds)) / nrow(filter_df), 4) * 100, "%")` of observations in the dataset.
+Similarly to `price`, there are `r sum(is.na(filter_df$beds))` missing values in the `beds` variable, which is `r paste0(round(sum(is.na(filter_df$beds)) / nrow(filter_df), 4) * 100, "%")` of observations in the dataset.
 
 *This was supposed to be a `callout` but it had problems rendering as a pdf* Taking a look at listings with 0 beds, and I found that there are some like this:
 
@@ -608,10 +623,9 @@ Vice versa (0 bedrooms, 1 bed) seems fine however, as there are mostly studio ap
 Overall, the data is very messy, and the `source` of the scrape-`city scrape`-leaves a lot of listings that are very inaccurate to what is actually listed on the website.
 
 *End of callout, at this time, I think the model with imputation Tyler has done is good that we don't have to worry about these cases and innaccuracies, but it might be a good idea to include it in a discussion/limitations section*
+-->
 
-### Histogram
-
-```{r}
+```{r, include = FALSE}
 # geom_histogram was having problems with geom_text so I had
 # to make do with geom_col()
 
@@ -636,49 +650,13 @@ ggplot(bed_counts, aes(x = beds, y = n)) +
   scale_x_continuous(breaks = c(0,5,10,15,20,25,30,35,40))
 ```
 
-**COMMENT: I think these tables, especially the one the tail end of bed observations would be good to include. Maybe discuss how values above 20 should be considered outliers??**
 
-\<\<\<\<\<\<\< HEAD <!-- ### Counts of Number of Beds Table -->
-
-<!-- ```{r} -->
-
-<!-- filter_df %>%  -->
-
-<!--   group_by(beds) %>%  -->
-
-<!--   tally() %>%  -->
-
-<!--   head(10) %>%  -->
-
-<!--   kable() -->
-
-<!-- ``` -->
-
-<!-- ```{r} -->
-
-<!-- filter_df %>%  -->
-
-<!--   group_by(beds) %>%  -->
-
-<!--   tally() %>%  -->
-
-<!--   tail(10) %>%  -->
-
-<!--   arrange(desc(beds)) %>%  -->
-
-<!--   kable() -->
-
-<!-- ``` -->
-
-**COMMENT 2: I took out the tables, I think the histogram now does the job, it still would be good to discuss outliers the same however. Feel free to delete the comments above if you don't want to use these two tables**
 
 ## `Bedrooms`
 
-The `bedrooms` variable describes the amount of bedrooms an apartment/house/etc... will have for guests. This differs from `beds` as 1 bedroom could possibly contain 1 or more beds, or sometimes even no beds. There are `r round(sum(!is.na(filter_df$bedrooms)), 2)` observations in `bedrooms` where the value is not missing.
 
-### Summary Statistics
 
-```{r}
+```{r, include = FALSE}
 #| label: beds_summary_statistics
 #| tbl-cap: "Summary Statistics of `Bedrooms`"
 filter_df %>% 
@@ -687,19 +665,9 @@ filter_df %>%
   kable(.,digits = 3, format = "latex", booktabs = TRUE)
 ```
 
-The expected value of bedrooms in a listing is `r round(mean(filter_df$bedrooms), 2)` bedrooms. Most listings in the dataset have `r paste0(round(median(filter_df$bedrooms), 2),    " ",    ifelse(round(median(filter_df$bedrooms), 2) == 1, "bedroom", "bedrooms") )`.
 
-The highest number of beds a listing has in the data is `r max(filter_df$bedrooms)`, while the lowest number of beds is `r min(filter_df$bedrooms)`.
 
-There are `r sum(is.na(filter_df$bedrooms))` missing values in the `bedrooms` variable, that is `r paste0(round(sum(is.na(filter_df$bedrooms)) / nrow(filter_df), 4) * 100, "%")` of observations in the dataset.
-
-## `Bathrooms`
-
-The `bathrooms` variable describes the amount of bedrooms an apartment/house/etc... will have for guests. This differs from `beds` as 1 bedroom could possibly contain 1 or more beds, or sometimes even no beds. There are `r round(sum(!is.na(filter_df$bathrooms)), 2)` observations in `bedrooms` where the value is not missing.
-
-### Summary Statistics
-
-```{r}
+```{r, include = FALSE}
 #| label: bedrooms_summary_statistics
 #| tbl-cap: "Summary Statistics of `Bathrooms`"
 filter_df %>% 
@@ -708,20 +676,11 @@ filter_df %>%
   kable(.,digits = 3, format = "latex", booktabs = TRUE)
 ```
 
-The mean amount of bathrooms in a listing is `r round(mean(filter_df$bathrooms), 2)` bathrooms. Most listings in the dataset have `r paste0(round(median(filter_df$bathrooms), 2),    " ",    ifelse(round(median(filter_df$bathrooms), 2) == 1, "bathroom", "bathrooms") )`.
 
-The highest number of beds a listing has in the data is `r max(filter_df$bathrooms)`, while the lowest number of beds is `r min(filter_df$bathrooms)`.
 
-There are `r sum(is.na(filter_df$bathrooms))` missing values in the `bedrooms` variable, that is `r paste0(round(sum(is.na(filter_df$bathrooms)) / nrow(filter_df), 4) * 100, "%")` of observations in the dataset.
-
-# Appendix B {#appendix-b}
 
 ## Selected Predictors Relation to Price
 
-How do the predictors `beds`, `bedrooms`, `bathrooms`, `latitude`, `longitude`, and `host_is_superhost` relate to the outcome variable `price`?
-
-### `Beds`
-
 ```{r, warning = F, echo = F, message = F}
 histogram <- 
   filter_df %>% 
@@ -739,8 +698,6 @@ spinogram <-
 histogram/spinogram
 ```
 
-### `Bedrooms`
-
 ```{r, warning = F, echo = F, message = F}
 histogram <- 
   filter_df %>% 
@@ -755,10 +712,8 @@ spinogram <-
     y = "proportion"
   )
 
-histogram/spinogram
+# histogram/spinogram
 ```
-
-### `Bathrooms`
 
 ```{r, warning = F, echo = F, message = F}
 histogram <- 
@@ -776,8 +731,6 @@ spinogram <-
 
 histogram/spinogram
 ```
-
-### `Accomodates`
 
 ```{r, warning = F, echo = F, message = F}
 histogram <- 

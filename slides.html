@@ -14,7 +14,7 @@
   <meta name="author" content="Grey Gergen">
   <meta name="author" content="Jack Macfadyen">
   <meta name="author" content="Jesus Rodriguez">
-  <title>Comparing Imputation Quality of Global Coordinate System and Universal Transverse Mercator for Statistical Modeling</title>
+  <title>Comparing Imputation Quality of Different Coordinate Systems for Statistical Modeling</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -329,7 +329,7 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">Comparing Imputation Quality of Global Coordinate System and Universal Transverse Mercator for Statistical Modeling</h1>
+  <h1 class="title">Comparing Imputation Quality of Different Coordinate Systems for Statistical Modeling</h1>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
@@ -358,19 +358,19 @@ Jesus Rodriguez
 <section id="motivation" class="slide level2">
 <h2>Motivation</h2>
 <ul>
-<li><p>The <strong>Geographic Coordinate System (GCS)</strong> is a non-Cartesian, global standard that communicates position using latitude and longitude</p></li>
-<li><p>The <strong>Universal Transverse Mercator (UTM)</strong> is a projection-based mapping of Earth that creates 60 zones with coordinates more easily interpreted on a linear scale</p></li>
-<li><p>Want to see whether this different mapping of coordinate data has an effect on imputation and creating a model</p></li>
-<li><p>By conducting imputation using latitude/longitude and then again with UTM, we can compare the coordinate systems for imputation before modeling</p></li>
+<li><p>The <strong>Geographic Coordinate System (GCS)</strong> is a non-Cartesian, global standard that communicates position using latitude and longitude.</p></li>
+<li><p>The <strong>Universal Transverse Mercator (UTM)</strong> is a projection-based mapping of Earth that creates 60 zones with coordinates more easily interpreted on a linear scale.</p></li>
+<li><p>Do different coordinate systems lead to different imputations, and does that affect modeling?</p></li>
+<li><p>We will use New York Airbnb data as a case study.</p></li>
 </ul>
 </section>
 <section id="data-description" class="slide level2">
 <h2>Data Description</h2>
 <ul>
-<li><p>Airbnb data for major cities has been scraped by contributors and gathered on <a href="https://insideairbnb.com/get-the-data/">insideairbnb.com</a> in October 2025</p></li>
-<li><p>We took a sample of all Airbnb listings from New York City</p></li>
-<li><p>Of the 36111 listings in the data, 14783 (41%) had missing price values</p></li>
-<li><p>This gives us an opportunity to use various variables, including location with our two coordinate systems, to reliably impute the missing pricing data</p></li>
+<li><p>Airbnb data for major cities has been scraped by contributors and gathered on <a href="https://insideairbnb.com/get-the-data/">insideairbnb.com</a> in October 2025.</p></li>
+<li><p>We took a sample of all Airbnb listings from New York City.</p></li>
+<li><p>Of the 36111 listings in the data, 14783 (41%) had missing price values.</p></li>
+<li><p>This gives us an opportunity to use various variables, including location with our two coordinate systems, to reliably impute the missing pricing data.</p></li>
 </ul>
 </section>
 <section id="variable-overview" class="slide level2">
@@ -384,33 +384,57 @@ Jesus Rodriguez
 <li><strong>Location</strong> (latitude and longitude)</li>
 </ul>
 </section>
+<section id="bedrooms" class="slide level2">
+<h2>Bedrooms</h2>
+<p>The amount of bedrooms available in the listing.</p>
+
+<img data-src="slides_files/figure-revealjs/unnamed-chunk-1-1.png" width="960" class="r-stretch"></section>
+<section id="beds" class="slide level2">
+<h2>Beds</h2>
+<p>The total amount of beds in the listing.</p>
+
+<img data-src="slides_files/figure-revealjs/unnamed-chunk-2-1.png" width="960" class="r-stretch"></section>
+<section id="bathrooms" class="slide level2">
+<h2>Bathrooms</h2>
+<p>The amount of available bathrooms in the listing.</p>
+
+<img data-src="slides_files/figure-revealjs/unnamed-chunk-3-1.png" width="960" class="r-stretch"></section>
+<section id="accomodates" class="slide level2">
+<h2>Accomodates</h2>
+<p>The total amount of people that can be accommodated in the listing.</p>
+
+<img data-src="slides_files/figure-revealjs/unnamed-chunk-4-1.png" width="960" class="r-stretch"></section>
 <section id="model-construction" class="slide level2">
 <h2>Model Construction</h2>
 <ul>
-<li><p>The price variable will be imputed first using geographic coordinates and then once more with UTM as a separate dataset</p></li>
-<li><p>The model will then be run with each dataset and model accuracy will be analyzed</p></li>
-<li><p>The final model was developed from a variety of model building techniques, along with understanding our predictors of interest</p></li>
+<li><p>The price variable will be imputed first using geographic coordinates and then once more with UTM as a separate dataset.</p></li>
+<li><p>The model will then be run with each dataset and model accuracy will be analyzed.</p></li>
+<li><p>The final model was developed from a variety of model building techniques, along with understanding our predictors of interest.</p></li>
 </ul>
 </section>
 <section id="statistical-model" class="slide level2">
 <h2>Statistical Model</h2>
-<p><span class="math display">\[\text{log(price)} = \beta_0 + \beta_1(\text{bedrooms}) + \beta_2(\text{beds}) + \beta_3(\text{latitude}) + \beta_4(\text{longitude}) +\]</span></p>
+<p><span class="math display">\[\text{log(price)} = \beta_0 + \beta_1(\text{bedrooms}) + \beta_2(\text{beds}) +\]</span> <span class="math display">\[\beta_3(\text{latitude}) + \beta_4(\text{longitude}) +\]</span></p>
 <p><span class="math display">\[\beta_5(\text{latitude} \times \text{longitude}) + \beta_6(\text{accommodates})\]</span></p>
 </section>
 <section id="imputation-analysis" class="slide level2">
 <h2>Imputation Analysis</h2>
 <ul>
-<li><p>Of the 14783 missing price values, there are only 355 occurrences when price is the only missing variable</p></li>
-<li><p>Most commonly, when price is missing, beds is also missing</p></li>
-<li><p>There were no observations where latitude, longitude, or accommodates were missing</p></li>
-<li><p>Price is imputed using <strong>predictive mean matching</strong> from the <code>mice</code> package in R</p></li>
+<li><p>Of the 14783 missing price values, there are only 355 occurrences when price is the only missing variable.</p></li>
+<li><p>Most commonly, when price is missing, beds is also missing.</p></li>
+<li><p>There were no observations where latitude, longitude, or accommodates were missing.</p></li>
+<li><p>Price is imputed using <strong>predictive mean matching</strong> from the <code>mice</code> package in R.</p></li>
 </ul>
 </section>
+<section id="missing-values" class="slide level2">
+<h2>Missing values</h2>
+
+<img data-src="missing_plot.png" class="r-stretch"></section>
 <section id="imputation-process" class="slide level2">
 <h2>Imputation Process</h2>
 <ul>
-<li><p>Model accuracy of both imputations will be compared using <strong>AIC</strong> and <strong>BIC</strong></p></li>
-<li><p><strong>Root Mean Square Error (RMSE)</strong> of each imputation method will also be calculated and statistically tested</p></li>
+<li><p>Model accuracy of both imputations will be compared using <strong>AIC</strong> and <strong>BIC</strong>.</p></li>
+<li><p><strong>Root Mean Square Error (RMSE)</strong> of each imputation method will also be calculated and statistically tested.</p></li>
 </ul>
 </section>
 <section id="comparing-model-accuracy-between-predictor-sets" class="slide level2">
@@ -445,10 +469,10 @@ Jesus Rodriguez
 <section id="comparing-imputation-methods-with-rmse" class="slide level2">
 <h2>Comparing Imputation Methods with RMSE</h2>
 <ul>
-<li><p>AIC and BIC do not have anything to say about imputation <em>quality</em></p></li>
-<li><p>This difference can be tested by comparing RMSE for each imputation method</p></li>
-<li><p>We mask 10% of the price values that are not missing, then impute using each predictor set and calculate the RMSE</p></li>
-<li><p>This process is simulated 10 times and the mean RMSE values are compared</p></li>
+<li><p>AIC and BIC do not have anything to say about imputation <em>quality</em>.</p></li>
+<li><p>This difference can be tested by comparing RMSE for each imputation method.</p></li>
+<li><p>We mask 10% of the price values that are not missing, then impute using each predictor set and calculate the RMSE.</p></li>
+<li><p>This process is simulated 10 times and the mean RMSE values are compared.</p></li>
 </ul>
 </section>
 <section id="rmse-results" class="slide level2">
@@ -466,25 +490,25 @@ Jesus Rodriguez
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">UTM</td>
-<td style="text-align: right;">456.015</td>
-<td style="text-align: right;">17.995</td>
-<td style="text-align: left;">(420.75 - 491.28)</td>
-</tr>
-<tr class="even">
 <td style="text-align: left;">GCS</td>
 <td style="text-align: right;">457.920</td>
 <td style="text-align: right;">17.204</td>
 <td style="text-align: left;">(424.2 - 491.64)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">UTM</td>
+<td style="text-align: right;">456.015</td>
+<td style="text-align: right;">17.995</td>
+<td style="text-align: left;">(420.75 - 491.28)</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
 <ul>
-<li><p>UTM predictor set has the slightly lower RMSE, signifying it could have higher imputation accuracy</p></li>
-<li><p>GCS predictor set has the lower SE which indicates slightly less variability</p></li>
-<li><p>These results do not give significant conclusions and need to be statistically tested</p></li>
+<li><p>UTM predictor set has the slightly lower RMSE, signifying it could have higher imputation accuracy.</p></li>
+<li><p>GCS predictor set has the lower SE which indicates slightly less variability.</p></li>
+<li><p>These results do not give significant conclusions and need to be statistically tested.</p></li>
 </ul>
 </section>
 <section id="anova-rmse-vs.-predictor-sets" class="slide level2">
@@ -528,17 +552,17 @@ Jesus Rodriguez
 <section id="conclusion" class="slide level2">
 <h2>Conclusion</h2>
 <ul>
-<li><p>Geographic coordinates and UTM <strong>do not differ</strong> in imputation quality in the case of Airbnb data for New York City</p></li>
-<li><p>The RMSE values were shown to be <strong>not significantly different</strong></p></li>
-<li><p>We cannot claim that switching to UTM as a distance-based coordinate system leads to better imputation for modeling than GCS</p></li>
-<li><p>This outcome could have been influenced by the <strong>size of the analysis area</strong> (New York City) and have different results if a differently-sized area was considered</p></li>
+<li><p>Geographic coordinates and UTM <strong>do not differ</strong> in imputation quality in the case of Airbnb data for New York City.</p></li>
+<li><p>The RMSE values were shown to be <strong>not significantly different</strong>.</p></li>
+<li><p>We cannot claim that switching to UTM as a distance-based coordinate system leads to better imputation for modeling than GCS.</p></li>
+<li><p>This outcome could have been influenced by the <strong>size of the analysis area</strong> (New York City) and have different results if a differently-sized area was considered.</p></li>
 </ul>
 </section>
 <section id="future-directions" class="slide level2">
 <h2>Future Directions</h2>
 <ul>
-<li><p>The procedure from this study can potentially be used for analyzing the imputation quality of <strong>other coordinate systems</strong></p></li>
-<li><p>Further analysis of this data to build a <strong>more complex model</strong> and test its predictive quality</p></li>
+<li><p>The procedure from this study can potentially be used for analyzing the imputation quality of <strong>other coordinate systems</strong>.</p></li>
+<li><p>Further analysis of this data to build a <strong>more complex model</strong> and test its predictive quality.</p></li>
 </ul>
 <div class="quarto-auto-generated-content">
 <div class="footer footer-default">
