@@ -384,6 +384,8 @@ summary_rmse <- data.frame(
 )
 summary_rmse$SE <- summary_rmse$SD_RMSE/sqrt(10)
 summary_rmse$`CI (95%)` <- paste0("(",round(summary_rmse$`Mean RMSE` - 1.96*(summary_rmse$SE),2)," - ",round(summary_rmse$`Mean RMSE` + 1.96*(summary_rmse$SE),2),")")
+summary_rmse <- summary_rmse %>%
+  arrange(desc(row_number()))
 ```
 
 ```{r}
@@ -722,7 +724,7 @@ spinogram <-
     y = "proportion"
   )
 
-histogram/spinogram
+# histogram/spinogram
 ```
 
 ```{r, warning = F, echo = F, message = F}
