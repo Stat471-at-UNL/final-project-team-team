@@ -1,5 +1,5 @@
 ---
-title: "Comparing Imputation Quality of Global Coordinate System and Universal Transverse Mercator for Statistical Modeling"
+title: "Comparing Imputation Quality of Different Coordinate Systems for Statistical Modeling"
 author:
   - "Tyler Davis"
   - "Grey Gergen"
@@ -90,23 +90,23 @@ filter_df <-
 
 ## Motivation
 
-- The **Geographic Coordinate System (GCS)** is a non-Cartesian, global standard that communicates position using latitude and longitude
+- The **Geographic Coordinate System (GCS)** is a non-Cartesian, global standard that communicates position using latitude and longitude.
 
-- The **Universal Transverse Mercator (UTM)** is a projection-based mapping of Earth that creates 60 zones with coordinates more easily interpreted on a linear scale
+- The **Universal Transverse Mercator (UTM)** is a projection-based mapping of Earth that creates 60 zones with coordinates more easily interpreted on a linear scale.
 
-- Want to see whether this different mapping of coordinate data has an effect on imputation and creating a model
+- Do different coordinate systems lead to different imputations, and does that affect modeling?
 
-- By conducting imputation using latitude/longitude and then again with UTM, we can compare the coordinate systems for imputation before modeling
+- We will use New York Airbnb data as a case study.
 
 ## Data Description
 
-- Airbnb data for major cities has been scraped by contributors and gathered on [insideairbnb.com](https://insideairbnb.com/get-the-data/) in October 2025
+- Airbnb data for major cities has been scraped by contributors and gathered on [insideairbnb.com](https://insideairbnb.com/get-the-data/) in October 2025.
 
-- We took a sample of all Airbnb listings from New York City
+- We took a sample of all Airbnb listings from New York City.
 
-- Of the `r nrow(df)` listings in the data, `r sum(rapportools::is.empty(df$price))` (41%) had missing price values
+- Of the `r nrow(df)` listings in the data, `r sum(rapportools::is.empty(df$price))` (41%) had missing price values.
 
-- This gives us an opportunity to use various variables, including location with our two coordinate systems, to reliably impute the missing pricing data
+- This gives us an opportunity to use various variables, including location with our two coordinate systems, to reliably impute the missing pricing data.
 
 ## Variable Overview
 
@@ -118,17 +118,70 @@ Of the various variables in the dataset, we considered strong, interpretable pre
 - Total amount of people who could be **accommodated**
 - **Location** (latitude and longitude)
 
+## Bedrooms
+
+The amount of bedrooms available in the listing.
+
+```{r}
+histogram <- 
+  filter_df %>% 
+  ggplot(aes(bedrooms)) + 
+  geom_histogram(binwidth = 1)
+
+histogram
+```
+
+## Beds
+
+The total amount of beds in the listing.
+
+```{r}
+histogram <- 
+  filter_df %>% 
+  ggplot(aes(beds)) + 
+  geom_histogram(binwidth = 1)
+
+histogram
+```
+
+## Bathrooms
+
+The amount of available bathrooms in the listing.
+
+```{r}
+histogram <- 
+  filter_df %>% 
+  ggplot(aes(bathrooms)) + 
+  geom_histogram(binwidth = 1)
+
+histogram
+```
+
+## Accomodates
+
+The total amount of people that can be accommodated in the listing.
+
+```{r}
+histogram <- 
+  filter_df %>% 
+  ggplot(aes(accommodates)) + 
+  geom_histogram(binwidth = 1)
+
+histogram
+```
+
 ## Model Construction
 
-- The price variable will be imputed first using geographic coordinates and then once more with UTM as a separate dataset
+- The price variable will be imputed first using geographic coordinates and then once more with UTM as a separate dataset.
 
-- The model will then be run with each dataset and model accuracy will be analyzed
+- The model will then be run with each dataset and model accuracy will be analyzed.
 
-- The final model was developed from a variety of model building techniques, along with understanding our predictors of interest
+- The final model was developed from a variety of model building techniques, along with understanding our predictors of interest.
 
 ## Statistical Model
 
-$$\text{log(price)} = \beta_0 + \beta_1(\text{bedrooms}) + \beta_2(\text{beds}) + \beta_3(\text{latitude}) + \beta_4(\text{longitude}) +$$
+$$\text{log(price)} = \beta_0 + \beta_1(\text{bedrooms}) + \beta_2(\text{beds}) +$$
+$$\beta_3(\text{latitude}) + \beta_4(\text{longitude}) +$$
 
 $$\beta_5(\text{latitude} \times \text{longitude}) + \beta_6(\text{accommodates})$$
 
@@ -140,13 +193,17 @@ model1 <-
 
 ## Imputation Analysis
 
-- Of the `r sum(rapportools::is.empty(df$price))` missing price values, there are only 355 occurrences when price is the only missing variable
+- Of the `r sum(rapportools::is.empty(df$price))` missing price values, there are only 355 occurrences when price is the only missing variable.
 
-- Most commonly, when price is missing, beds is also missing
+- Most commonly, when price is missing, beds is also missing.
 
-- There were no observations where latitude, longitude, or accommodates were missing
+- There were no observations where latitude, longitude, or accommodates were missing.
 
-- Price is imputed using **predictive mean matching** from the `mice` package in R
+- Price is imputed using **predictive mean matching** from the `mice` package in R.
+
+## Missing values
+
+![](missing_plot.png)
 
 ## Imputation Process
 
@@ -193,9 +250,9 @@ fit <- with(impA, lm(log(price) ~
 pooled1 <- pool(fit)
 ```
 
-- Model accuracy of both imputations will be compared using **AIC** and **BIC**
+- Model accuracy of both imputations will be compared using **AIC** and **BIC**.
 
-- **Root Mean Square Error (RMSE)** of each imputation method will also be calculated and statistically tested
+- **Root Mean Square Error (RMSE)** of each imputation method will also be calculated and statistically tested.
 
 ## Comparing Model Accuracy Between Predictor Sets
 
@@ -223,13 +280,13 @@ For both metrics, the model with **GCS-imputed data** has a lower value, suggest
 
 ## Comparing Imputation Methods with RMSE
 
-- AIC and BIC do not have anything to say about imputation *quality*
+- AIC and BIC do not have anything to say about imputation *quality*.
 
-- This difference can be tested by comparing RMSE for each imputation method
+- This difference can be tested by comparing RMSE for each imputation method.
 
-- We mask 10% of the price values that are not missing, then impute using each predictor set and calculate the RMSE
+- We mask 10% of the price values that are not missing, then impute using each predictor set and calculate the RMSE.
 
-- This process is simulated 10 times and the mean RMSE values are compared
+- This process is simulated 10 times and the mean RMSE values are compared.
 
 ```{r rmse-setup}
 #| warning: false
@@ -318,14 +375,16 @@ summary_rmse$`CI (95%)` <- paste0("(",round(summary_rmse$`Mean RMSE` - 1.96*(sum
 ## RMSE Results
 
 ```{r rmse-table}
+summary_rmse <- summary_rmse %>%
+  arrange(desc(row_number()))
 kable(summary_rmse[,-c(1,3,4,5)], digits = 3)
 ```
 
-- UTM predictor set has the slightly lower RMSE, signifying it could have higher imputation accuracy
+- UTM predictor set has the slightly lower RMSE, signifying it could have higher imputation accuracy.
 
-- GCS predictor set has the lower SE which indicates slightly less variability
+- GCS predictor set has the lower SE which indicates slightly less variability.
 
-- These results do not give significant conclusions and need to be statistically tested
+- These results do not give significant conclusions and need to be statistically tested.
 
 ## ANOVA: RMSE vs. Predictor Sets
 
@@ -342,16 +401,16 @@ We **fail to reject the null hypothesis** (p-value = 0.94), which is that the pr
 
 ## Conclusion
 
-- Geographic coordinates and UTM **do not differ** in imputation quality in the case of Airbnb data for New York City
+- Geographic coordinates and UTM **do not differ** in imputation quality in the case of Airbnb data for New York City.
 
-- The RMSE values were shown to be **not significantly different**
+- The RMSE values were shown to be **not significantly different**.
 
-- We cannot claim that switching to UTM as a distance-based coordinate system leads to better imputation for modeling than GCS
+- We cannot claim that switching to UTM as a distance-based coordinate system leads to better imputation for modeling than GCS.
 
-- This outcome could have been influenced by the **size of the analysis area** (New York City) and have different results if a differently-sized area was considered
+- This outcome could have been influenced by the **size of the analysis area** (New York City) and have different results if a differently-sized area was considered.
 
 ## Future Directions
 
-- The procedure from this study can potentially be used for analyzing the imputation quality of **other coordinate systems**
+- The procedure from this study can potentially be used for analyzing the imputation quality of **other coordinate systems**.
 
-- Further analysis of this data to build a **more complex model** and test its predictive quality
+- Further analysis of this data to build a **more complex model** and test its predictive quality.
