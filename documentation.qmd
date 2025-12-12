@@ -1,0 +1,13 @@
+---
+title: "Documentation"
+format: html
+editor: visual
+---
+
+## Code Book
+
+https://docs.google.com/spreadsheets/d/1iWCNJcSutYqpULSQHlNyGInUvHg2BoUGoNRIGa6Szc4/edit?gid=1322284596#gid=1322284596
+
+## Website
+
+https://insideairbnb.com/get-the-data/

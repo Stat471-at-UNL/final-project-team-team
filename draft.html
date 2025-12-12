@@ -1,0 +1,1840 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<<<<<<< HEAD
+<meta name="generator" content="quarto-1.4.548">
+=======
+<<<<<<< HEAD
+<meta name="generator" content="quarto-1.7.29">
+=======
+<meta name="generator" content="quarto-1.7.33">
+>>>>>>> de015d0508975436347fd698950aa23bf7e0bda1
+>>>>>>> f4792ff5d67f10081c0b9e790676f3b22e77241a
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>draft</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="draft_files/libs/clipboard/clipboard.min.js"></script>
+<script src="draft_files/libs/quarto-html/quarto.js"></script>
+<script src="draft_files/libs/quarto-html/popper.min.js"></script>
+<script src="draft_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="draft_files/libs/quarto-html/anchor.min.js"></script>
+<link href="draft_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<<<<<<< HEAD
+<link href="draft_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+=======
+<<<<<<< HEAD
+<link href="draft_files/libs/quarto-html/quarto-syntax-highlighting-0815c480559380816a4d1ea211a47e91.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+=======
+<link href="draft_files/libs/quarto-html/quarto-syntax-highlighting-ea385d0e468b0dd5ea5bf0780b1290d9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+>>>>>>> de015d0508975436347fd698950aa23bf7e0bda1
+>>>>>>> f4792ff5d67f10081c0b9e790676f3b22e77241a
+<script src="draft_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="draft_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="draft_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">draft</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="motivation" class="level2">
+<h2 class="anchored" data-anchor-id="motivation">1. Motivation</h2>
+<p>There are many considerations that must be made when finding temporary housing, either for vacations or business trips. Airbnb is a popular website that allows individuals or businesses to list potential places for users to choose. These users can choose where they wish to stay based on location, accommodations, how many beds they need, and price. We sought to create a model that predicts the price of an Airbnb listing based on various variables.</p>
+<p>Airbnb data has been scraped by a team of contributors and gathered on a website <a href="https://insideairbnb.com/get-the-data/">here</a>. Their motivation is to show transparency in how spaces are being rented to tourists in their communities.</p>
+<p>When coming across this dataset, we found several missing values in the price of different Airbnb listings. Of the 36111 listings we found 14783 missing prices. We believe that we can use the latitude, longitude, beds, bathrooms, and neighborhood location among other variables to impute the missing pricing data for these listings.</p>
+</section>
+<section id="data-documentation" class="level2">
+<h2 class="anchored" data-anchor-id="data-documentation">2. Data Documentation</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+  Field        Type     Calculated Description                         Reference
+  &lt;chr&gt;        &lt;chr&gt;    &lt;chr&gt;      &lt;chr&gt;                               &lt;chr&gt;    
+1 id           integer  &lt;NA&gt;       "Airbnb's unique identifier for th… &lt;NA&gt;     
+2 listing_url  text     y           &lt;NA&gt;                               &lt;NA&gt;     
+3 scrape_id    bigint   y          "Inside Airbnb \"Scrape\" this was… &lt;NA&gt;     
+4 last_scraped datetime y          "UTC. The date and time this listi… &lt;NA&gt;     
+5 source       text     &lt;NA&gt;       "One of \"neighbourhood search\" o… &lt;NA&gt;     
+6 name         text     &lt;NA&gt;       "Name of the listing"               &lt;NA&gt;     </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+  Field                                   Type  Calculated Description Reference
+  &lt;chr&gt;                                   &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;       &lt;chr&gt;    
+1 instant_bookable                        bool… &lt;NA&gt;       "[t=true; … &lt;NA&gt;     
+2 calculated_host_listings_count          inte… y          "The numbe… &lt;NA&gt;     
+3 calculated_host_listings_count_entire_… inte… y          "The numbe… &lt;NA&gt;     
+4 calculated_host_listings_count_private… inte… y          "The numbe… &lt;NA&gt;     
+5 calculated_host_listings_count_shared_… inte… y          "The numbe… &lt;NA&gt;     
+6 reviews_per_month                       nume… y          "The avera… &lt;NA&gt;     </code></pre>
+</div>
+</div>
+<p>From the given data documentation (<a href="https://docs.google.com/spreadsheets/d/1iWCNJcSutYqpULSQHlNyGInUvHg2BoUGoNRIGa6Szc4/edit?gid=1322284596#gid=1322284596">codebook</a> and <a href="https://insideairbnb.com/get-the-data/">website</a>), it is missing four variables that are present in the listing dataset from Inside Airbnb.</p>
+<p>These four variables are:</p>
+<ul>
+<li><code>availability_eoy</code></li>
+<li><code>number_of_reviews_ly</code></li>
+<li><code>estimtaed_occupancy_l365d</code></li>
+<li><code>estimtaed_revenue_l365d</code></li>
+</ul>
+</section>
+<section id="team-information" class="level2">
+<h2 class="anchored" data-anchor-id="team-information">3. Team Information</h2>
+<p>Team name: Team Team</p>
+<p>Members: Grey Gergen, Tyler Davis, Jesus Rodriguez, Jack Macfadyen</p>
+</section>
+<section id="plan-of-action-and-brief-look-at-data-with-some-cleaning" class="level2">
+<h2 class="anchored" data-anchor-id="plan-of-action-and-brief-look-at-data-with-some-cleaning">4. Plan of Action and Brief Look at Data (with some cleaning)</h2>
+<p>The data was downloaded from <a href="insideairbnb.com/get-the-data">Inside Airbnb</a>.</p>
+<p>This data is for New York City, New York, United States. The original data set has 36111 observations of 79 variables. Columns that were not relevant for analysis or provided important information were removed from the data in order for a cleaner data set to work with for further analysis.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 27 × 3
+   Field                 Type    Description                                    
+   &lt;chr&gt;                 &lt;chr&gt;   &lt;chr&gt;                                          
+ 1 id                    integer Airbnb's unique identifier for the listing     
+ 2 name                  text    Name of the listing                            
+ 3 description           text    Detailed description of the listing            
+ 4 neighborhood_overview text    Host's description of the neighbourhood        
+ 5 host_id               integer Airbnb's unique identifier for the host/user   
+ 6 host_since            date    The date the host/user was created. For hosts …
+ 7 host_about            text    Description about the host                     
+ 8 host_response_time    &lt;NA&gt;    &lt;NA&gt;                                           
+ 9 host_response_rate    &lt;NA&gt;    &lt;NA&gt;                                           
+10 host_acceptance_rate  &lt;NA&gt;    That rate at which a host accepts booking requ…
+# ℹ 17 more rows</code></pre>
+</div>
+</div>
+<section id="data-description" class="level3">
+<h3 class="anchored" data-anchor-id="data-description">Data Description</h3>
+<p>The <code>price</code> variable is our variable of interest since we found that several observations had missing price variables. Based on other variables such as <code>beds</code>, <code>bathrooms</code>, <code>property_type</code>, and <code>neighborhood</code>, we believe that we could accurately predict the missing prices for NYC Airbnbs. All of the variables that we deemed important are listed above along with their description.</p>
+<<<<<<< HEAD
+<section id="price" class="level4">
+<h4 class="anchored" data-anchor-id="price"><code>Price</code></h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>filter_df <span class="sc">%&gt;%</span> </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(price) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">skim</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 10%">
+<col style="width: 7%">
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 12%">
+<col style="width: 14%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_type</th>
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">character.min</th>
+<th style="text-align: right;">character.max</th>
+<th style="text-align: right;">character.empty</th>
+<th style="text-align: right;">character.n_unique</th>
+<th style="text-align: right;">character.whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">character</td>
+<td style="text-align: left;">price</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">14783</td>
+<td style="text-align: right;">1151</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+=======
+>>>>>>> c9abdcf508180aab89bc17c107ab74e7b3387324
+<p>Some more small cleaning was done in order to visualize and find missing values. Some missing values were listing as <code>N/A</code> or left blank . This was fixed so that all missing values were listed as <code>NA</code> values.</p>
+<p>The <code>price</code> variable, which is our variable of interest, is also formatted as character. This needed to be changed so that <code>price</code> should be numeric. Since, values were listed as <code>$xxx.00</code> or <code>$xx,xxx.00</code>, all dollar signs and commas were removed in order for there to be no missing values added due to coercion before the format of price was changed.</p>
+<p>We decided to consider all listings at or above the price of $10,000 per night an outlier. There were a considerable amount of listings above this number, going all the way to $50,000 per night. Many of the listings we examined manually had different, more realistic prices on the actual Airbnb website, indicating that either the listing was improper during the webscrape, or the webscrape itself had flaws. We chose $10,000 as the cutoff point as there were multiple listings at or below $9,999 per night that were verifiable. We removed all listings that were $10,000 per night or greater.</p>
+<p>One more step in cleaning was cleaning the <code>bathrooms</code> column. There was some missing values, however the <code>bathrooms_text</code> column provided the number of bathrooms the listing had, so the number of bathrooms was extracted from the <code>bathrooms_text</code> if needed.</p>
+<<<<<<< HEAD
+</section>
+=======
+>>>>>>> c9abdcf508180aab89bc17c107ab74e7b3387324
+</section>
+<section id="info-about-data-skim" class="level3">
+<h3 class="anchored" data-anchor-id="info-about-data-skim">Info about data, <code>skim()</code></h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Name</td>
+<td style="text-align: left;">filter_df</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Number of rows</td>
+<td style="text-align: left;">35893</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Number of columns</td>
+<td style="text-align: left;">27</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">_______________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Column type frequency:</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">character</td>
+<td style="text-align: left;">16</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">factor</td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">numeric</td>
+<td style="text-align: left;">10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">________________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Group variables</td>
+<td style="text-align: left;">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 32%">
+<col style="width: 11%">
+<col style="width: 15%">
+<col style="width: 4%">
+<col style="width: 5%">
+<col style="width: 6%">
+<col style="width: 10%">
+<col style="width: 12%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">min</th>
+<th style="text-align: right;">max</th>
+<th style="text-align: right;">empty</th>
+<th style="text-align: right;">n_unique</th>
+<th style="text-align: right;">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">name</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">154</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">34241</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">description</td>
+<td style="text-align: right;">953</td>
+<td style="text-align: right;">0.97</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1000</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">29803</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">neighborhood_overview</td>
+<td style="text-align: right;">17405</td>
+<td style="text-align: right;">0.52</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1012</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">13980</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">host_since</td>
+<td style="text-align: right;">1167</td>
+<td style="text-align: right;">0.97</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">5176</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">host_about</td>
+<td style="text-align: right;">16307</td>
+<td style="text-align: right;">0.55</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">7094</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">11250</td>
+<td style="text-align: right;">22</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">host_response_time</td>
+<td style="text-align: right;">15772</td>
+<td style="text-align: right;">0.56</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">host_response_rate</td>
+<td style="text-align: right;">15772</td>
+<td style="text-align: right;">0.56</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">70</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">host_acceptance_rate</td>
+<td style="text-align: right;">15593</td>
+<td style="text-align: right;">0.57</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">97</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">host_is_superhost</td>
+<td style="text-align: right;">384</td>
+<td style="text-align: right;">0.99</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">neighbourhood</td>
+<td style="text-align: right;">17390</td>
+<td style="text-align: right;">0.52</td>
+<td style="text-align: right;">23</td>
+<td style="text-align: right;">23</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">neighbourhood_cleansed</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">26</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">224</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">neighbourhood_group_cleansed</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">property_type</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">34</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">74</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">room_type</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">bathrooms_text</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">amenities</td>
+<td style="text-align: right;">116</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">2162</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">29254</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: factor</strong></p>
+<table class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 11%">
+<col style="width: 16%">
+<col style="width: 9%">
+<col style="width: 10%">
+<col style="width: 36%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: left;">ordered</th>
+<th style="text-align: right;">n_unique</th>
+<th style="text-align: left;">top_counts</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">id</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">35893</td>
+<td style="text-align: left;">259: 1, 684: 1, 687: 1, 699: 1</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 18%">
+<col style="width: 7%">
+<col style="width: 10%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 5%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 4%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">mean</th>
+<th style="text-align: right;">sd</th>
+<th style="text-align: right;">p0</th>
+<th style="text-align: right;">p25</th>
+<th style="text-align: right;">p50</th>
+<th style="text-align: right;">p75</th>
+<th style="text-align: right;">p100</th>
+<th style="text-align: left;">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">host_id</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">173623777.40</td>
+<td style="text-align: right;">193023319.13</td>
+<td style="text-align: right;">1678.00</td>
+<td style="text-align: right;">17775359.00</td>
+<td style="text-align: right;">86144066.00</td>
+<td style="text-align: right;">305738569.00</td>
+<td style="text-align: right;">721443059.00</td>
+<td style="text-align: left;">▇▂▁▂▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">host_listings_count</td>
+<td style="text-align: right;">1167</td>
+<td style="text-align: right;">0.97</td>
+<td style="text-align: right;">101.44</td>
+<td style="text-align: right;">569.91</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">8.00</td>
+<td style="text-align: right;">5478.00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">host_total_listings_count</td>
+<td style="text-align: right;">1167</td>
+<td style="text-align: right;">0.97</td>
+<td style="text-align: right;">168.20</td>
+<td style="text-align: right;">811.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">3.00</td>
+<td style="text-align: right;">11.75</td>
+<td style="text-align: right;">9764.00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">latitude</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">40.73</td>
+<td style="text-align: right;">0.06</td>
+<td style="text-align: right;">40.50</td>
+<td style="text-align: right;">40.69</td>
+<td style="text-align: right;">40.73</td>
+<td style="text-align: right;">40.76</td>
+<td style="text-align: right;">40.91</td>
+<td style="text-align: left;">▁▂▇▅▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">longitude</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">-73.95</td>
+<td style="text-align: right;">0.06</td>
+<td style="text-align: right;">-74.25</td>
+<td style="text-align: right;">-73.98</td>
+<td style="text-align: right;">-73.95</td>
+<td style="text-align: right;">-73.93</td>
+<td style="text-align: right;">-73.71</td>
+<td style="text-align: left;">▁▁▇▂▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">accommodates</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">2.72</td>
+<td style="text-align: right;">1.85</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">4.00</td>
+<td style="text-align: right;">16.00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">bathrooms</td>
+<td style="text-align: right;">44</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.17</td>
+<td style="text-align: right;">0.50</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">15.50</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">bedrooms</td>
+<td style="text-align: right;">5949</td>
+<td style="text-align: right;">0.83</td>
+<td style="text-align: right;">1.39</td>
+<td style="text-align: right;">0.95</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">16.00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">beds</td>
+<td style="text-align: right;">14468</td>
+<td style="text-align: right;">0.60</td>
+<td style="text-align: right;">1.63</td>
+<td style="text-align: right;">1.21</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">40.00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">price</td>
+<td style="text-align: right;">14783</td>
+<td style="text-align: right;">0.59</td>
+<td style="text-align: right;">234.53</td>
+<td style="text-align: right;">353.85</td>
+<td style="text-align: right;">10.00</td>
+<td style="text-align: right;">88.00</td>
+<td style="text-align: right;">152.00</td>
+<td style="text-align: right;">272.00</td>
+<td style="text-align: right;">10000.00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>It is important to note that some columns, such as <code>host_response_rate</code> is listed as a character variable because their values are formatted as “50%”, “32%”, “xx%”…</p>
+<p>Further analysis should make sure the columns selected are formatted correctly.</p>
+<p>The next step in the analysis will be to analyze the missing pattern in our data especially for the price variable. ### <code>vis_miss</code> visualization</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="draft_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The <code>vis_miss()</code> plot shows that occurence of missing values in our data.</p>
+</section>
+<section id="histogram-and-spinogram-for-each-variable-of-interest" class="level3">
+<h3 class="anchored" data-anchor-id="histogram-and-spinogram-for-each-variable-of-interest">Histogram and Spinogram for each Variable of Interest</h3>
+<section id="bedrooms" class="level4">
+<h4 class="anchored" data-anchor-id="bedrooms"><code>Bedrooms</code></h4>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<<<<<<< HEAD
+=======
+<p><img src="draft_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="beds" class="level4">
+<h4 class="anchored" data-anchor-id="beds"><code>Beds</code></h4>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+>>>>>>> c9abdcf508180aab89bc17c107ab74e7b3387324
+<p><img src="draft_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<<<<<<< HEAD
+<section id="beds" class="level4">
+<h4 class="anchored" data-anchor-id="beds"><code>Beds</code></h4>
+=======
+<section id="bathrooms" class="level4">
+<h4 class="anchored" data-anchor-id="bathrooms"><code>Bathrooms</code></h4>
+>>>>>>> c9abdcf508180aab89bc17c107ab74e7b3387324
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="draft_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="accomodates" class="level4">
+<h4 class="anchored" data-anchor-id="accomodates"><code>Accomodates</code></h4>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="draft_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<<<<<<< HEAD
+<section id="accomodates" class="level4">
+<h4 class="anchored" data-anchor-id="accomodates"><code>Accomodates</code></h4>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="draft_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+=======
+>>>>>>> c9abdcf508180aab89bc17c107ab74e7b3387324
+<section id="host-response-rate" class="level4">
+<h4 class="anchored" data-anchor-id="host-response-rate">Host Response Rate</h4>
+</section>
+<section id="host-acceptance-rate" class="level4">
+<h4 class="anchored" data-anchor-id="host-acceptance-rate">Host Acceptance Rate</h4>
+</section>
+</section>
+<section id="mcar_test" class="level3">
+<h3 class="anchored" data-anchor-id="mcar_test"><code>mcar_test</code></h3>
+<p>Here are a few missing completely at random test. We believe that we can use the beds, bathrooms, and neighborhood location among other variables to impute the missing pricing data for these listings.</p>
+<p>These tests show that there are some missing patterns in our data.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 4
+  statistic    df p.value missing.patterns
+      &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;            &lt;int&gt;
+1      240.     2       0                2</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 4
+  statistic    df    p.value missing.patterns
+      &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt;            &lt;int&gt;
+1      24.5     2 0.00000467                4</code></pre>
+</div>
+</div>
+<p>The price variable was tested against beds along with latitude and longitude with little’s MCAR test. The results show that the data is not missing completely at random which is shown by the significance in the previous tests. These tests results tell us that the price variable’s missingness is dependent upon other variables within the data.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="draft_files/figure-html/cleaning%20and%20dotplot%20chunk-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="draft_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The next step in the analysis will be to build a model with price as the response variable. The predictors will be values that are suspected to be indicators of price such as beds, lat and long, accommodates, bathrooms, etc. This model will then be run and coefficients values and significance will be documented. This will all be done without imputation.</p>
+<p>The price data will then be imputed by the predictors used in the model in the current form they are in. The mice package will be used to complete the imputation and it will be done multiple times. The multiple imputations will then be pooled and a model for price will then be created and ran. The predictors will be the same. We will then document the coefficients and significance values from the model summary.</p>
+<p>The price data will then be imputed by the predictors with a transformation done to the latitude and longitude. The transformation will change the latitude and longitude from degrees to Universal Transverse Mercator (UTM). This transformations will hopefully give our regression model a better sense of overall distance between units in NYC. The UTM is a flat coordinate system that is measured in meters and allows the regression model to better pick up distances. This imputation will be run and then the same model will be run to predict price. The coefficients and significance of the model will then be documented.</p>
+<p>The next step is the comparison between the three models run and their coefficients. We can then compare the coefficients by looking at the pooled estimates and the standard errors across all three models. We can do this with an understanding of Rubin’s Rules and how they apply to pooled models. These results will allow us to gain insight into the models and how the two imputed models differ and if they differ from the unimputed model.</p>
+<p>This alone may not allow us to make a strong conclusion on which imputation predictors are better for our price variable. This will then lead us to do a comparison test by testing the correlation between the imputed and true values of our price variable between our two methods. This can be done by masking values that we already have in our price variable, then imputing these values using both methods. We will then calculate the correlation between the true and imputed values testing which predictor set is better, degrees or UTM. This will show any major differences between the two methods and give us a sense for price which method is better. This alone will not tell us if using UTM vs degrees is better in all cases but it could open the door for further discussion and digging into the topic.</p>
+</section>
+</section>
+<section id="modeling" class="level1">
+<h1>Modeling</h1>
+<blockquote class="blockquote">
+<p>The next step in the analysis will be to build a model with price as the response variable. The predictors will be values that are suspected to be indicators of price such as beds, lat and long, accommodates, bathrooms, etc. This model will then be run and coefficients values and significance will be documented. This will all be done without imputation.</p>
+</blockquote>
+<section id="matrix-plot" class="level2">
+<h2 class="anchored" data-anchor-id="matrix-plot">Matrix Plot</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="draft_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The matrix plot shows that price isn’t really correlated substantially with any other variable.</p>
+<p>Perhaps a log transformation would help better model the effect of the variables of interest with price.</p>
+<p>Is it also worthy to note that bedrooms, bathrooms, and beds seem to be correlated, so maybe in further analysis, multicollinearity should be checked.</p>
+</section>
+<section id="model-before-imputation" class="level2">
+<h2 class="anchored" data-anchor-id="model-before-imputation">Model before Imputation</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = log(price) ~ bedrooms + beds + latitude * longitude + 
+    accommodates + bathrooms + host_is_superhost - 1, data = .)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-2.9470 -0.4417 -0.0363  0.4013  4.8598 
+
+Coefficients:
+                     Estimate Std. Error t value Pr(&gt;|t|)    
+bedrooms           -8.163e-02  5.771e-03 -14.146  &lt; 2e-16 ***
+beds                4.217e-02  5.532e-03   7.622 2.60e-14 ***
+latitude           -3.208e+03  7.871e+01 -40.754  &lt; 2e-16 ***
+longitude           1.762e+03  4.332e+01  40.676  &lt; 2e-16 ***
+accommodates        1.994e-01  3.183e-03  62.667  &lt; 2e-16 ***
+bathrooms           5.729e-02  9.121e-03   6.280 3.44e-10 ***
+host_is_superhostf  1.302e+05  3.203e+03  40.661  &lt; 2e-16 ***
+host_is_superhostt  1.302e+05  3.203e+03  40.661  &lt; 2e-16 ***
+latitude:longitude -4.340e+01  1.065e+00 -40.770  &lt; 2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.625 on 20665 degrees of freedom
+  (15219 observations deleted due to missingness)
+Multiple R-squared:  0.9852,    Adjusted R-squared:  0.9852 
+F-statistic: 1.531e+05 on 9 and 20665 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                           GVIF Df GVIF^(1/(2*Df))
+bedrooms           5.006629e+00  1    2.237550e+00
+beds               6.748917e+00  1    2.597868e+00
+latitude           5.439541e+11  1    7.375325e+05
+longitude          5.432835e+11  1    7.370777e+05
+accommodates       6.513627e+00  1    2.552181e+00
+bathrooms          7.605294e+00  1    2.757770e+00
+host_is_superhost  5.488812e+11  2    8.607352e+02
+latitude:longitude 5.440892e+11  1    7.376240e+05</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                 GVIF Df GVIF^(1/(2*Df)) Interacts With
+bedrooms     1.738823  1        1.318644           --  
+beds         2.380748  1        1.542967           --  
+latitude     1.023351  3        1.003854      longitude
+longitude    1.023351  3        1.003854       latitude
+accommodates 2.137557  1        1.462038           --  
+bathrooms    1.331149  1        1.153754           --  
+                                                   Other Predictors
+bedrooms         beds, latitude, longitude, accommodates, bathrooms
+beds         bedrooms, latitude, longitude, accommodates, bathrooms
+latitude                    bedrooms, beds, accommodates, bathrooms
+longitude                   bedrooms, beds, accommodates, bathrooms
+accommodates         bedrooms, beds, latitude, longitude, bathrooms
+bathrooms         bedrooms, beds, latitude, longitude, accommodates</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="frequency-table-and-plot" class="level1">
+<h1>Frequency Table and Plot</h1>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="draft_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      latitude longitude accommodates bathrooms host_is_superhost bedrooms
+20674        1         1            1         1                 1        1
+355          1         1            1         1                 1        1
+40           1         1            1         1                 1        1
+8497         1         1            1         1                 1        1
+79           1         1            1         1                 1        0
+1            1         1            1         1                 1        0
+1            1         1            1         1                 1        0
+5818         1         1            1         1                 1        0
+303          1         1            1         1                 0        1
+32           1         1            1         1                 0        1
+6            1         1            1         1                 0        0
+43           1         1            1         1                 0        0
+7            1         1            1         0                 1        1
+36           1         1            1         0                 1        1
+1            1         1            1         0                 1        0
+             0         0            0        44               384     5949
+       beds price      
+20674     1     1     0
+355       1     0     1
+40        0     1     1
+8497      0     0     2
+79        1     1     1
+1         1     0     2
+1         0     1     2
+5818      0     0     3
+303       1     1     1
+32        0     0     3
+6         1     1     2
+43        0     0     4
+7         1     1     1
+36        0     0     3
+1         0     0     4
+      14468 14783 35628</code></pre>
+</div>
+</div>
+<p>We know there are 14783 missing values in <code>price</code>.</p>
+<p>There are 355 occurences when <code>price</code> is the only missing value.</p>
+<p>It looks like <code>price</code> is missing the most when <code>beds</code> is also missing.</p>
+<p>The second most time <code>price</code> is missing is when <code>beds</code> AND <code>bedrooms</code> are missing.</p>
+<p>Note that, <code>latitude</code>, <code>longitude</code>, and <code>accomodates</code> are the only variables of interest that do not have any missing values.</p>
+</section>
+<section id="imputing-missing-values-using-mice" class="level1">
+<h1>Imputing Missing Values Using <code>mice</code></h1>
+<p>Imputing missing values for the variables of interest using predictive multiple matching.</p>
+<div class="cell">
+<<<<<<< HEAD
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run multiple imputation</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>airbnb_imputation <span class="ot">&lt;-</span> </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  filter_df <span class="sc">%&gt;%</span> </span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(host_is_superhost, latitude, longitude, accommodates, bathrooms, bedrooms, beds, price) <span class="sc">%&gt;%</span>    <span class="fu">mice</span>(<span class="at">data =</span> ., <span class="at">m =</span> <span class="dv">5</span>, <span class="at">method =</span> <span class="st">"pmm"</span>, <span class="at">seed =</span> <span class="dv">20251125</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+=======
+>>>>>>> c9abdcf508180aab89bc17c107ab74e7b3387324
+<div class="cell-output cell-output-stdout">
+<pre><code>Class: mids
+Number of multiple imputations:  5 
+Imputation methods:
+host_is_superhost          latitude         longitude      accommodates 
+               ""                ""                ""                "" 
+        bathrooms          bedrooms              beds             price 
+            "pmm"             "pmm"             "pmm"             "pmm" 
+PredictorMatrix:
+                  host_is_superhost latitude longitude accommodates bathrooms
+host_is_superhost                 0        0         0            0         0
+latitude                          0        0         1            1         1
+longitude                         0        1         0            1         1
+accommodates                      0        1         1            0         1
+bathrooms                         0        1         1            1         0
+bedrooms                          0        1         1            1         1
+                  bedrooms beds price
+host_is_superhost        0    0     0
+latitude                 1    1     1
+longitude                1    1     1
+accommodates             1    1     1
+bathrooms                1    1     1
+bedrooms                 0    1     1
+Number of logged events:  1 
+  it im dep     meth               out
+1  0  0     constant host_is_superhost</code></pre>
+</div>
+</div>
+<section id="mice-diagnostics" class="level2">
+<h2 class="anchored" data-anchor-id="mice-diagnostics"><code>mice</code> diagnostics</h2>
+<section id="density-plot" class="level3">
+<h3 class="anchored" data-anchor-id="density-plot">Density Plot</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="draft_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>In these density plots, the blue are the actual observed values and the magenta are the imputed values. These plots show us how close the imputed values are distributed compared to the observed values for the variables: <code>host_is_superhost</code>, <code>bathrooms</code>, <code>bedrooms</code>, <code>beds</code>, and <code>price</code>.</p>
+<p>In a perfect world, the imputed values should follow closely the distribution of the observed values. Here, <code>bathrooms</code> seems to be the biggest outlier.</p>
+</section>
+</section>
+</section>
+<section id="restructure-the-model-with-the-imputed-values" class="level1">
+<h1>Restructure the model with the imputed values</h1>
+</section>
+<section id="comparing-model-before-and-after-imputation" class="level1">
+<h1>Comparing model before and after imputation</h1>
+<section id="before-imp." class="level2">
+<h2 class="anchored" data-anchor-id="before-imp.">Before Imp.</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>                        Estimate   Std. Error    t value     Pr(&gt;|t|)
+bedrooms           -8.163383e-02 5.770766e-03 -14.146100 3.209921e-45
+beds                4.216613e-02 5.532001e-03   7.622220 2.600856e-14
+latitude           -3.207635e+03 7.870815e+01 -40.753533 0.000000e+00
+longitude           1.762273e+03 4.332411e+01  40.676489 0.000000e+00
+accommodates        1.994383e-01 3.182501e-03  62.667145 0.000000e+00
+bathrooms           5.728619e-02 9.121341e-03   6.280457 3.443104e-10
+host_is_superhostf  1.302440e+05 3.203155e+03  40.661159 0.000000e+00
+host_is_superhostt  1.302440e+05 3.203155e+03  40.661148 0.000000e+00
+latitude:longitude -4.340249e+01 1.064563e+00 -40.770239 0.000000e+00</code></pre>
+</div>
+</div>
+</section>
+<section id="after-imp." class="level2">
+<h2 class="anchored" data-anchor-id="after-imp.">After Imp.</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>                term      estimate    std.error  statistic        df
+1        (Intercept)  1.067996e+05 3.095699e+03  34.499357 183.53308
+2           bedrooms -7.302638e-02 5.614368e-03 -13.007054  69.87288
+3          bathrooms  1.398640e-01 1.006440e-02  13.896906  26.59801
+4               beds  3.943453e-03 5.143954e-03   0.766619  94.33543
+5       accommodates  2.038013e-01 3.483309e-03  58.507961  22.72611
+6           latitude -2.631138e+03 7.604614e+01 -34.599228 184.24303
+7          longitude  1.445182e+03 4.187682e+01  34.510308 182.78661
+8 latitude:longitude -3.560519e+01 1.028708e+00 -34.611577 183.49369
+       p.value
+1 3.792281e-82
+2 2.443924e-20
+3 1.037220e-13
+4 4.452223e-01
+5 2.753700e-26
+6 1.588969e-82
+7 5.544883e-82
+8 2.313323e-82</code></pre>
+</div>
+</div>
+</section>
+<section id="interpretation" class="level2">
+<h2 class="anchored" data-anchor-id="interpretation">Interpretation</h2>
+<p>It looks like after imputation, there are a few changes to our results.</p>
+<ul>
+<li>The <code>beds</code> predictor variable becomes smaller and is found to be no longer significant in the model, while the <code>bathrooms</code> predictor variable increases and stays significant</li>
+<li>Effects of other varibales change slightly, but not enough for any significant difference</li>
+</ul>
+<p>This suggests that msising data in variables <code>bathrooms</code> and <code>beds</code> may have been introducing bias or instability in the original model.</p>
+<p>Despite these differences, location indicators <code>latitude</code> and <code>longitude</code> and whether the host is a classified as a superhost (<code>host_is_superhost</code>) effect the model greatly and stay very significant, indicating that imputation only helped improve these relationships by improving reliability for other variables with missing values.</p>
+<section id="using-utm-in-imputation" class="level3">
+<h3 class="anchored" data-anchor-id="using-utm-in-imputation">Using UTM in imputation</h3>
+<div class="cell">
+<<<<<<< HEAD
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">exp</span>(pooled<span class="sc">$</span>pooled<span class="sc">$</span>estimate))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+=======
+<div class="cell-output cell-output-stdout">
+<pre><code>Simple feature collection with 35893 features and 6 fields
+Geometry type: POINT
+Dimension:     XY
+Bounding box:  xmin: 563382.4 ymin: 4483573 xmax: 608778.6 ymax: 4529571
+Projected CRS: WGS 84 / UTM zone 18N
+First 10 features:
+   price bedrooms beds bathrooms accommodates host_is_superhost
+1     66        1    1         1            1                 t
+2     NA        1   NA         1            2                 f
+3     NA       NA   NA         1            1                 f
+4     NA        1   NA         1            1                 f
+5     76        1    1         2            1                 t
+6     97        2    3         1            6                 t
+7     NA       NA   NA         1            2                 f
+8     60        2    1         1            1                 t
+9    425        3    3         4            6                 f
+10   240        0    1         1            1                 f
+                   geometry
+1    POINT (591377 4511233)
+2  POINT (585024.9 4508511)
+3  POINT (584083.7 4499944)
+4  POINT (587785.9 4504165)
+5  POINT (585916.3 4508336)
+6  POINT (597565.2 4504131)
+7  POINT (591786.7 4505416)
+8  POINT (589273.8 4507453)
+9  POINT (589482.1 4503121)
+10 POINT (585631.1 4511895)</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 14783</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     price               X                 Y              bathrooms     
+ Min.   :   10.0   Min.   :-5.4882   Min.   :-4.07892   Min.   : 0.000  
+ 1st Qu.:   88.0   1st Qu.:-0.6607   1st Qu.:-0.70797   1st Qu.: 1.000  
+ Median :  152.0   Median :-0.1414   Median :-0.04645   Median : 1.000  
+ Mean   :  234.5   Mean   : 0.0000   Mean   : 0.00000   Mean   : 1.168  
+ 3rd Qu.:  272.0   3rd Qu.: 0.3502   3rd Qu.: 0.60001   3rd Qu.: 1.000  
+ Max.   :10000.0   Max.   : 4.2717   Max.   : 3.26809   Max.   :15.500  
+ NA's   :14783                                          NA's   :44      
+    bedrooms           beds         accommodates   
+ Min.   : 0.000   Min.   : 0.000   Min.   : 1.000  
+ 1st Qu.: 1.000   1st Qu.: 1.000   1st Qu.: 2.000  
+ Median : 1.000   Median : 1.000   Median : 2.000  
+ Mean   : 1.385   Mean   : 1.634   Mean   : 2.723  
+ 3rd Qu.: 2.000   3rd Qu.: 2.000   3rd Qu.: 4.000  
+ Max.   :16.000   Max.   :40.000   Max.   :16.000  
+ NA's   :5949     NA's   :14468                    </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] NA</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ iter imp variable
+  1   1  price  bathrooms  bedrooms  beds
+  1   2  price  bathrooms  bedrooms  beds
+  1   3  price  bathrooms  bedrooms  beds
+  1   4  price  bathrooms  bedrooms  beds
+  1   5  price  bathrooms  bedrooms  beds
+  2   1  price  bathrooms  bedrooms  beds
+  2   2  price  bathrooms  bedrooms  beds
+  2   3  price  bathrooms  bedrooms  beds
+  2   4  price  bathrooms  bedrooms  beds
+  2   5  price  bathrooms  bedrooms  beds
+  3   1  price  bathrooms  bedrooms  beds
+  3   2  price  bathrooms  bedrooms  beds
+  3   3  price  bathrooms  bedrooms  beds
+  3   4  price  bathrooms  bedrooms  beds
+  3   5  price  bathrooms  bedrooms  beds
+  4   1  price  bathrooms  bedrooms  beds
+  4   2  price  bathrooms  bedrooms  beds
+  4   3  price  bathrooms  bedrooms  beds
+  4   4  price  bathrooms  bedrooms  beds
+  4   5  price  bathrooms  bedrooms  beds
+  5   1  price  bathrooms  bedrooms  beds
+  5   2  price  bathrooms  bedrooms  beds
+  5   3  price  bathrooms  bedrooms  beds
+  5   4  price  bathrooms  bedrooms  beds
+  5   5  price  bathrooms  bedrooms  beds</code></pre>
+</div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 19%">
+<col style="width: 16%">
+<col style="width: 15%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">term</th>
+<th style="text-align: right;">estimate</th>
+<th style="text-align: right;">std.error</th>
+<th style="text-align: right;">statistic</th>
+<th style="text-align: right;">df</th>
+<th style="text-align: right;">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">4.4337415</td>
+<td style="text-align: right;">0.0102707</td>
+<td style="text-align: right;">431.690343</td>
+<td style="text-align: right;">84.276261</td>
+<td style="text-align: right;">0.0000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">bedrooms</td>
+<td style="text-align: right;">-0.0664399</td>
+<td style="text-align: right;">0.0064109</td>
+<td style="text-align: right;">-10.363582</td>
+<td style="text-align: right;">23.811081</td>
+<td style="text-align: right;">0.0000000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">bathrooms</td>
+<td style="text-align: right;">0.1292279</td>
+<td style="text-align: right;">0.0083531</td>
+<td style="text-align: right;">15.470649</td>
+<td style="text-align: right;">354.923050</td>
+<td style="text-align: right;">0.0000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">beds</td>
+<td style="text-align: right;">0.0137633</td>
+<td style="text-align: right;">0.0072911</td>
+<td style="text-align: right;">1.887691</td>
+<td style="text-align: right;">10.916969</td>
+<td style="text-align: right;">0.0859201</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">accommodates</td>
+<td style="text-align: right;">0.1977896</td>
+<td style="text-align: right;">0.0039064</td>
+<td style="text-align: right;">50.632007</td>
+<td style="text-align: right;">14.007389</td>
+<td style="text-align: right;">0.0000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">X</td>
+<td style="text-align: right;">-0.2750749</td>
+<td style="text-align: right;">0.0044886</td>
+<td style="text-align: right;">-61.282494</td>
+<td style="text-align: right;">40.484154</td>
+<td style="text-align: right;">0.0000000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Y</td>
+<td style="text-align: right;">0.0993012</td>
+<td style="text-align: right;">0.0068342</td>
+<td style="text-align: right;">14.530062</td>
+<td style="text-align: right;">7.307948</td>
+<td style="text-align: right;">0.0000012</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">X:Y</td>
+<td style="text-align: right;">-0.1112607</td>
+<td style="text-align: right;">0.0038699</td>
+<td style="text-align: right;">-28.750012</td>
+<td style="text-align: right;">23.889664</td>
+<td style="text-align: right;">0.0000000</td>
+</tr>
+</tbody>
+</table>
+</div>
+>>>>>>> f4792ff5d67f10081c0b9e790676f3b22e77241a
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">x</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">84.2460342</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.9357191</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1.1379495</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1.0138584</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1.2187060</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.7595152</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1.1043989</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.8947055</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: right;">mean_AIC</th>
+<th style="text-align: right;">mean_BIC</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Total_Fit_latlong</td>
+<td style="text-align: right;">70683.87</td>
+<td style="text-align: right;">70760.27</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Total_Fit_utm</td>
+<td style="text-align: right;">70911.21</td>
+<td style="text-align: right;">70987.61</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(rmse_results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Predictor_Set</th>
+<th style="text-align: right;">RMSE</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">UTM</td>
+<td style="text-align: right;">309.6458</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">LatLong</td>
+<td style="text-align: right;">325.5020</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Combined</td>
+<td style="text-align: right;">309.6458</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(summary_rmse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 16%">
+<col style="width: 11%">
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: left;">Predictor_Set</th>
+<th style="text-align: right;">Mean_RMSE</th>
+<th style="text-align: right;">SD_RMSE</th>
+<th style="text-align: right;">Min_RMSE</th>
+<th style="text-align: right;">Max_RMSE</th>
+<th style="text-align: right;">SE</th>
+<th style="text-align: right;">CI_lower</th>
+<th style="text-align: right;">CI_upper</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">UTM</td>
+<td style="text-align: left;">UTM</td>
+<td style="text-align: right;">374.9342</td>
+<td style="text-align: right;">44.21232</td>
+<td style="text-align: right;">327.9770</td>
+<td style="text-align: right;">445.1195</td>
+<td style="text-align: right;">13.98116</td>
+<td style="text-align: right;">347.5311</td>
+<td style="text-align: right;">402.3373</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">LatLong</td>
+<td style="text-align: left;">LatLong</td>
+<td style="text-align: right;">381.1517</td>
+<td style="text-align: right;">48.37308</td>
+<td style="text-align: right;">321.7033</td>
+<td style="text-align: right;">473.1839</td>
+<td style="text-align: right;">15.29691</td>
+<td style="text-align: right;">351.1697</td>
+<td style="text-align: right;">411.1336</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Combined</td>
+<td style="text-align: left;">Combined</td>
+<td style="text-align: right;">374.5124</td>
+<td style="text-align: right;">44.71092</td>
+<td style="text-align: right;">325.3098</td>
+<td style="text-align: right;">445.1195</td>
+<td style="text-align: right;">14.13884</td>
+<td style="text-align: right;">346.8003</td>
+<td style="text-align: right;">402.2245</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>rmse_list <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">rmse =</span> <span class="fu">unlist</span>(sim_results),</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">predictors =</span> <span class="fu">rep</span>(<span class="fu">names</span>(sim_results), <span class="at">times =</span> <span class="fu">sapply</span>(sim_results,length))</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>rmse_model <span class="ot">&lt;-</span> <span class="fu">aov</span>(rmse<span class="sc">~</span>predictors,rmse_list)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">anova</span>(rmse_model))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: right;">Df</th>
+<th style="text-align: right;">Sum Sq</th>
+<th style="text-align: right;">Mean Sq</th>
+<th style="text-align: right;">F value</th>
+<th style="text-align: right;">Pr(&gt;F)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">predictors</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">276.3822</td>
+<td style="text-align: right;">138.1911</td>
+<td style="text-align: right;">0.0658706</td>
+<td style="text-align: right;">0.936402</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Residuals</td>
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">56643.7624</td>
+<td style="text-align: right;">2097.9171</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
